@@ -1,4 +1,6 @@
 # Static script to generate lookup table for optimal *Strongyloides* codons
+#b2fasta('AFDrGC(35).gb','AFDrGC(35).fasta')
+
 
 ## Load *Strongyloides* codon usage charts
 codonChart <- read_csv('Static/codon_usage_chart.csv', 

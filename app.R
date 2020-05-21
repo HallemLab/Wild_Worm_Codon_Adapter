@@ -4,6 +4,7 @@
 library(shiny)
 library(seqinr)
 library(tidyverse)
+library(htmltools)
 
 ## --- end_of_chunk ---
 
@@ -14,32 +15,20 @@ source('Static/generate_codon_lut.R', local = TRUE)
 
 ## --- UI ---
 ui <- fluidPage(
-    
+    tags$head(
+    tags$style(HTML("
+    #sequence{
+    font-family: monospace;
+    }
+                    "))
+    ),
     # Application title
     titlePanel("Strongyloides Codon Adapter"),
     
-    sidebarLayout(
+    fluidRow(
+        source('UI/sidebar-ui.R', local = TRUE)$value,
         
-        ## Options
-        sidebarPanel(
-            ### Codon usage threshold (pulldown?)
-            ### Option to add introns (pulldown)
-        ),
-        
-        ## Sequence
-        mainPanel(
-            ### Name (optional, text input)
-            ### Sequence (text box)
-            ### Option to upload .fasta sequence?
-        ),
-        
-        ## Results
-        mainPanel(
-            ### Optimized sequence
-            ### Optimization details
-            #### GC content of Original vs Optimized
-            #### Some kind of interactive mode that allows user to click on a codon and see alternatives, and update results?
-        )
+        source('UI/mainPanel-ui.R', local = TRUE)$value
     )
 )
 
@@ -48,6 +37,11 @@ ui <- fluidPage(
 ## --- Server ---
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+    print_seq <- eventReactive(input$goButton, {
+        splitseq(s2c(input$seqtext), word = 3)
+    })
+    
+    output$OG_seq <- renderText(print_seq())
     
     # The bits that have to be responsive start here.
     ## Load example for debugging
