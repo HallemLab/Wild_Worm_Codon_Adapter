@@ -67,7 +67,7 @@ body <- dashboardBody(
             p('This Shiny app codon optimizes genetic sequences for 
             expression in',em('Strongyloides'), 'species. 
             Codon bias in nematode transcripts can vary as a function of gene 
-            expression  levels such that highly expressed genes appeart ot 
+            expression  levels such that highly expressed genes appear to 
             have the greatest degree of codon bias. Therefore, optimization 
               rules are based on the codon usage weights of highly expressed', 
               em('Stronyloides ratti'), 
@@ -118,7 +118,7 @@ body <- dashboardBody(
                     em('Genome Biology'),'7: R75.')),
                 tags$li(tags$a(
                     href = "https://pubmed.ncbi.nlm.nih.gov/3547335/",
-                    'Sharp and Li, (1987). The Codon Adaptation Index: a 
+                    'Sharp and Li (1987). The Codon Adaptation Index: a 
                     measure of directional synonymous codon usage bias, and its 
                     potential applications.', 
                     em('Nucleic Acids Research'),'15: 1281-95.')),
