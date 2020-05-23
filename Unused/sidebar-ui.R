@@ -1,5 +1,5 @@
 #sidebar-ui
-column(4,
+sidebarPanel(
        wellPanel(
            ## Sequence Upload
            div(h4('Sequence')),
@@ -15,9 +15,9 @@ column(4,
                          resize = "vertical"),
            
            ### Option to upload .fasta sequence?
-           fileInput('loadfile',
-                     'Load a .fasta file',
-                     multiple = FALSE),
+           # fileInput('loadfile',
+           #           'Load a .fasta file',
+           #           multiple = FALSE),
            
            ## Options
            div(h4('Options')),

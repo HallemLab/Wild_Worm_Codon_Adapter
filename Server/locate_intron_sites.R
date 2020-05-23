@@ -1,15 +1,20 @@
 # Script to identify intron insertion sites
 
-insertSites <- c('aagg', 'aaga', 'cagg', 'caga') ## The important thing here is the AGR (AGG or AGA), which is the consensus sequence for C. elegans exon splice sites. These more stringent options are taken from Redemann et al 2011.
+insertSites <- c('AAGG', 'AAGA', 'CAGG', 'CAGA') ## The important thing here is 
+## the AGR (AGG or AGA), which is the consensus sequence for C. elegans 
+## exon splice sites. These more stringent options are taken from 
+## Redemann et al 2011.
 strict_iS <- TRUE
 
 x <- c2s(cds_opt)
 
-num_Int <- 3 ## number of desired introns
+num_Int <- as.numeric(input$num_Int) ## number of desired introns
 num_Ex <- num_Int + 1 ## number of "exons
 length_x <- str_length(x)
 ## Break up the sequence into segments numbering 1 + # desired introns
-opt_iS <- seq(from = floor(length_x/num_Ex), to = length_x, by = floor(length_x/num_Ex))
+opt_iS <- seq(from = floor(length_x/num_Ex), 
+              to = length_x, 
+              by = floor(length_x/num_Ex))
 opt_iS <- opt_iS[1:num_Int]
 
 
@@ -23,14 +28,15 @@ index_iS <- index_iS[,1]
 ##  use the minimal consensus sequences
 ##  Reference (see Fig. 3): https://www.ncbi.nlm.nih.gov/books/NBK20075/
 if (is_empty(index_iS) || length(index_iS) < num_Int) {
-    insertSites_alt <-c('agg', 'aga')
+    insertSites_alt <-c('AGG', 'AGA')
     index_iS <- str_locate_all(x, insertSites_alt) %>%
         do.call(rbind, .)
     index_iS <- index_iS[,1]
     strict_iS <- FALSE
 }
 
-## Generate nucleotide locations of splice sites where an intron can be inserted
+## Generate nucleotide locations of splice sites 
+## where an intron can be inserted
 loc_iS <- sapply(opt_iS, function(x) {which.min(abs(index_iS-x[1]))}) %>%
     index_iS[.] %>%
     magrittr::add(3)
@@ -38,7 +44,9 @@ loc_iS <- sapply(opt_iS, function(x) {which.min(abs(index_iS-x[1]))}) %>%
 ## QUALITY CONTROL NOTE
 ## We'd like these sites to be roughly equidistant from each other. 
 ## Ideally, we might check to make sure the distance between these elements
-## is close to optimal, or greater than a certain value. But rather than making assumptions,
+## is close to optimal, or greater than a certain value. 
+## 
+## But rather than making assumptions,
 ## the user can choose to manually delete an artifical intron.
 
 ## QUALITY CONTROL 3

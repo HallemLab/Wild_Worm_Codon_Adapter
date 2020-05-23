@@ -21,7 +21,8 @@ lut <- codonChart %>%
     ungroup() %>%
     add_row(AA = '*', Codon = 'taa')
 
-## Arrange relative adaptiveness values into format readable by seqinr::cai function
+## Arrange relative adaptiveness values into 
+## format readable by seqinr::cai function
 w <- codonChart %>%
     arrange(-desc(Codon)) %>%
     ungroup() %>%
