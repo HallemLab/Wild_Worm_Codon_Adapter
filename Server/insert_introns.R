@@ -19,7 +19,7 @@ if (num_Int > length(loc_iS)) {num_Int <- length(loc_iS)}
 intronic_opt<-sapply(1:num_Int, function(x) {
     paste0(segmented_x[[x]], syntrons[[x]])}) %>%
     paste0(collapse = "") %>%
-    paste0(segmented_x[[num_Ex]])
+    paste0(segmented_x[[length(segmented_x)]])
 
 
 cds_wintrons <- splitseq(s2c(intronic_opt), frame = 0, word = 3) 
