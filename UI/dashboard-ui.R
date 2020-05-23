@@ -94,19 +94,29 @@ body <- dashboardBody(
               studied in ', 
               em('Strongyloides spp.'), 
               ', there is evidence that the prescence of introns does not 
-              prevent gene expression (e.g. intron-inclusive eGFP) [5].', 
-              tags$br(), 
+              prevent gene expression (e.g. intron-inclusive eGFP) [5].
+              Here, the desired number of introns are inserted 
+              within in DNA sequence, up to a maximum
+              of 3 unique introns. Intron sequences and order are taken from the 
+              Fire Lab Vector Kit (1995) [6].',
               tags$br(),
-              'Here, the desired number of introns are distributed 
-              approximately equidistantly within in DNA sequence. Introns are 
+              em('Intron Number and Spacing:'),
+              'The Fire lab established three unique introns, spaced
+              equidistantly within a gene as canon [6]; this configuration is 
+              thus set as default, and is recommended. In', em('C. elegans'), 
+              'the location of the intron site influences the degree of 
+              intron mediated enhancement, such that a single 5′-intron is more 
+              effective than a single 3′-intron. Therefore when only 1 or 2
+              introns are desired, 3 possible intron insertion sites are 
+              identified, and filled as needed, starting from the 5′ site.',
+              tags$br(),
+              em('Identifying Intron Insertion Sites:'), 'Introns are 
               placed between the 3rd and 4th nucleotide of one of the following 
               sequences: "aagg", "aaga", "cagg", "caga", as in Redemann', 
-              em('et al'),' (2011) [6]. If those sequences are not present, 
+              em('et al'),' (2011) [7]. If those sequences are not present, 
               introns are placed between the 2nd and 3rd nucleotide of one of 
               the following minimal ', em('C. elegans'), 
-              'splice site consensus sequences was used: "aga", "agg" [7]. 
-              A maximum of 3 unique introns can be included; intron sequences 
-              and order are taken from the Fire Lab Vector Kit (1995) [8].'),
+              'splice site consensus sequences was used: "aga", "agg" [8].'),
             
             tags$h4('References', class = 'text-success'),
             tags$ol(
@@ -144,6 +154,9 @@ body <- dashboardBody(
                     constructs incorporating a common multifunctional 3′ UTR', 
                     em('Experimental Parasitology'),'118: 253-265.')),
                 tags$li(tags$a(
+                  href = "https://media.addgene.org/cms/files/Vec95.pdf", 
+                  'Fire Lab Vector Kit (1995).')),
+                tags$li(tags$a(
                     href = "https://pubmed.ncbi.nlm.nih.gov/21278743/",
                     'Redemann', em('et al'),' (2011). Codon adaptation-based 
                     control of protein expression in',em('C. elegans'),'.', 
@@ -151,10 +164,7 @@ body <- dashboardBody(
                 tags$li(tags$a(
                     href = "https://www.ncbi.nlm.nih.gov/books/NBK20075/",
                     em('Cis-'),'Splicing in Worms in',
-                    em('C. elegans'), 'II (1997).')),
-                tags$li(tags$a(
-                    href = "https://media.addgene.org/cms/files/Vec95.pdf", 
-                    'Fire Lab Vector Kit (1995).'))
+                    em('C. elegans'), 'II (1997).'))
             )
             ),
             box( title =  tagList(shiny::icon("fas fa-poop"),

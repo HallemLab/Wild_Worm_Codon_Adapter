@@ -12,6 +12,9 @@ segmented_x <- substring(x,
                          last = c(loc_iS - 1 , length_x)) %>%
     toupper
 
+## If there aren't enough insertion sites for the desired number of introns,
+## use the maximum number of insertion sites
+if (num_Int > length(loc_iS)) {num_Int <- length(loc_iS)}
 
 intronic_opt<-sapply(1:num_Int, function(x) {
     paste0(segmented_x[[x]], syntrons[[x]])}) %>%
