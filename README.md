@@ -10,7 +10,7 @@ The fraction of G+C bases of the nucleic acid sequences. Calculated using the se
 ## Inserting Introns
 Including synthetic introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* (4). Although intron mediated enhancement has to be specifically studied in *Strongyloides spp.* there is evidence that the prescence of introns does not prevent gene expression (e.g. intron-inclusive eGFP)(5).  
 
-Here, the desired number of introns are distributed approximately equidistantly within in DNA sequence. Introns are placed between the 3rd and 4th nucleotide of one of the following sequences: "aagg", "aaga", "cagg", "caga", as in Redemann *et al* (2011) (6). If those sequences are not present, introns are placed between the 2nd and 3rd nucleotide of one of the following minimal *C. elegans* splice site consensus sequences was used: "aga", "agg" (7). A maximum of 3 unique introns can be included; intron sequences and order are taken from the Fire Lab Vector Kit (1995) [8].'),
+Here, the desired number of introns are distributed approximately equidistantly within in DNA sequence. Introns are placed between the 3rd and 4th nucleotide of one of the following sequences: "aagg", "aaga", "cagg", "caga", as in Redemann *et al* (2011) (6). If those sequences are not present, introns are placed between the 2nd and 3rd nucleotide of one of the following minimal *C. elegans* splice site consensus sequences was used: "aga", "agg" (7). A maximum of 3 unique introns can be included; intron sequences and order are taken from the Fire Lab Vector Kit (1995) (8).
             
 ## References
 1. [Mitreva *et al* (2006). Codon usage patterns in Nematoda: analysis based on over 25 million codons in thirty-two species. *Genome Biology* 7: R75](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/). 
@@ -21,3 +21,9 @@ Here, the desired number of introns are distributed approximately equidistantly 
 6. [Redemann *et al* (2011). Codon adaptation-based control of protein expression in *C. elegans*. *Nature Methods* 8: 250-252](https://pubmed.ncbi.nlm.nih.gov/21278743/). 
 7. [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
 8. [Fire Lab Vector Kit (1995)](https://media.addgene.org/cms/files/Vec95.pdf)
+
+## Example: Shiny App UI Load Screen
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/LoadScreenExample.png)
+
+## Example: Shiny App UI Results Screen
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/ResultExample.png)
