@@ -125,23 +125,31 @@ server <- function(input, output, session) {
     })
     
     output$tabs <- renderUI({
+
         req(input$goButton)
-        tabs <- list(
-            tabPanel(title = "Without Introns", 
-                     textOutput("optimizedSequence", 
-                                container = div)))
-        
         if (as.numeric(input$num_Int) > 0) {
-            tabs [[2]] <- tabPanel(title = "With Introns", 
-                                   textOutput("intronic_opt", 
-                                              container = div))
+            tabs <- list(
+                tabPanel(title = "With Introns", 
+                         textOutput("intronic_opt", 
+                                    container = div)),
+                tabPanel(title = "Without Introns", 
+                         textOutput("optimizedSequence", 
+                                    container = div))
+            )
+        } else {
+            tabs <- list(
+                tabPanel(title = "Without Introns", 
+                         textOutput("optimizedSequence", 
+                                    container = div)))
         }
-        
+
         args <- c(tabs, list(id = "box", 
                              title = tagList(shiny::icon("fas fa-dna"), 
                                              "Optimized Sequences"),
                              side = "right",
                              width = NULL))
+        
+
         do.call(tabBox, args)
     })
     
