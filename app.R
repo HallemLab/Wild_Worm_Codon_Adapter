@@ -13,6 +13,7 @@ source('Server/calc_sequence_stats.R')
 ## --- Background ---
 source('Static/generate_codon_lut.R', local = TRUE)
 
+
 ## --- end_of_chunk ---
 
 ## --- UI ---
@@ -64,6 +65,7 @@ server <- function(input, output, session) {
             trimSpace %>%
             s2c
         
+        # Code remndant from debugging
         # dat <- x %>%
         #     tolower %>%
         #     trimSpace %>%
@@ -91,16 +93,16 @@ server <- function(input, output, session) {
     
     
     add_introns <- reactive({
-        
         req(vals$cds_opt)
         cds_opt <- vals$cds_opt
         
         ## Detect insertion sites for artificial introns
         source('Server/locate_intron_sites.R', local = TRUE)
-        
+       
         ## Insert canonical artificial introns
+        if (!is.na(loc_iS[[1]])){
         source('Server/insert_introns.R', local = TRUE)
-        
+        } else cds_wintrons <- c("Sorry, no intron insertion sites are avaliable in this sequence")
         return(cds_wintrons)
     })
     
@@ -111,6 +113,7 @@ server <- function(input, output, session) {
     
     output$intronic_opt <- renderText({
         if(as.numeric(input$num_Int) > 0){
+            optimize_sequence()
             add_introns()
         }
     })

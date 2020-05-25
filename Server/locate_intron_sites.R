@@ -32,7 +32,6 @@ opt_iS <- seq(from = floor(length_x/num_Ex),
               by = floor(length_x/num_Ex))
 opt_iS <- opt_iS[1:num_Int]
 
-
 ## Find all the possible intron insertion sites
 index_iS <- str_locate_all(x, insertSites) %>%
     do.call(rbind, .)
@@ -53,9 +52,14 @@ if (is_empty(index_iS) || length(index_iS) < num_Int) {
 
 ## Generate nucleotide locations of splice sites 
 ## where an intron can be inserted
-loc_iS <- sapply(opt_iS, function(x) {which.min(abs(index_iS-x[1]))}) %>%
-    index_iS[.] %>%
-    {if (strict_iS) magrittr::add(.,3) else magrittr::add(.,2)}
+
+if (!is_empty(index_iS)) {
+    loc_iS <- sapply(opt_iS, function(x) {which.min(abs(index_iS-x[1]))}) %>%
+        index_iS[.] %>%
+        {if (strict_iS) magrittr::add(.,3) else magrittr::add(.,2)}
+} else {
+    loc_iS <- NA
+}
 
 ## QUALITY CONTROL NOTE
 ## We'd like these sites to be roughly equidistant from each other. 
@@ -80,7 +84,6 @@ if (length(unique(loc_iS)) < num_Int && strict_iS) {
         magrittr::add(2)
     
 } 
-
 
 
 
