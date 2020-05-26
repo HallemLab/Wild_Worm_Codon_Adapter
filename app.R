@@ -57,25 +57,36 @@ server <- function(input, output, session) {
     ## Load example for debugging
     #source('Server/import_fasta.R', local = TRUE)
     
+    
+    
     ## Parse nucleotide inputs
     optimize_sequence <- eventReactive (input$goButton, {
-        req(input$seqtext) # Don't run unless there is sequence to run on
+        req(input$seqtext)  # Don't run unless there is sequence to run on
+            
         dat <- input$seqtext %>%
             tolower %>%
             trimSpace %>%
             s2c
         
-        # Code remndant from debugging
-        # dat <- x %>%
-        #     tolower %>%
-        #     trimSpace %>%
-        #     s2c
+        ## Determine whether input sequence in nucleotide or amino acid
+        source('Server/detect_language.R', local = TRUE)
         
         ## Calculate info for original sequence
+        if (lang == "nuc"){
         info_dat <- calc_sequence_stats(dat, w)
         
         ## Translate nucleotides to AA
         source('Server/translate_nucleotides.R', local = TRUE)
+        } else if (lang == "AA") {
+            AA_dat <- dat
+            into_dat <- list("GC" = NA, "CAI" = NA)
+        } else if (lang == "error") {
+            info_dat <- list("GC" = NA, "CAI" = NA)
+            vals$cds_opt <- NULL
+            return("Error: Input sequence contains unrecognized characters. 
+                   Check to make sure it only includes characters representing
+                   nucleotides or amino acids.")
+        }
         
         ## Codon optimize back to nucleotides
         source('Server/codon_optimize.R', local = TRUE)
@@ -89,6 +100,7 @@ server <- function(input, output, session) {
         vals$opt_CAI <- info_opt$CAI
         
         vals$cds_opt <- cds_opt
+        
     })
     
     
@@ -102,7 +114,8 @@ server <- function(input, output, session) {
         ## Insert canonical artificial introns
         if (!is.na(loc_iS[[1]])){
         source('Server/insert_introns.R', local = TRUE)
-        } else cds_wintrons <- c("Sorry, no intron insertion sites are avaliable in this sequence")
+        } else cds_wintrons <- c("Error: no intron insertion sites are 
+                                 avaliable in this sequence")
         return(cds_wintrons)
     })
     
@@ -125,9 +138,10 @@ server <- function(input, output, session) {
     })
     
     output$tabs <- renderUI({
-
         req(input$goButton)
-        if (as.numeric(input$num_Int) > 0) {
+        #browser()
+        if (as.numeric(input$num_Int) > 0 && !is.null(vals$cds_opt)) {
+            print("test")
             tabs <- list(
                 tabPanel(title = "With Introns", 
                          textOutput("intronic_opt", 
@@ -135,6 +149,7 @@ server <- function(input, output, session) {
                 tabPanel(title = "Without Introns", 
                          textOutput("optimizedSequence", 
                                     container = div))
+                
             )
         } else {
             tabs <- list(

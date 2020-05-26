@@ -8,5 +8,6 @@ name <- getName(dat)
 
 ## Generate clean sequence, trimming any leading/trailing spaces
 dat <- c2s(fasta_dat[[1]]) %>%
+    tolower %>%
     trimSpace(.) %>%
     s2c(.) 

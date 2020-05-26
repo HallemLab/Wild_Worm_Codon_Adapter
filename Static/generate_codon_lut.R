@@ -29,3 +29,7 @@ w <- codonChart %>%
     select(c(relAdapt, Codon)) %>%
     column_to_rownames(var = "Codon") %>%
     pull()
+
+## Generate list of amino acids
+AAs <- str_c(lut$AA, collapse = "") %>%
+    paste0("[", . , "]")
