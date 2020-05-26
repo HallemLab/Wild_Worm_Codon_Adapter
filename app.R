@@ -78,8 +78,8 @@ server <- function(input, output, session) {
         ## Translate nucleotides to AA
         source('Server/translate_nucleotides.R', local = TRUE)
         } else if (lang == "AA") {
-            AA_dat <- dat
-            into_dat <- list("GC" = NA, "CAI" = NA)
+            AA_dat <- toupper(dat)
+            info_dat <- list("GC" = NA, "CAI" = NA)
         } else if (lang == "error") {
             info_dat <- list("GC" = NA, "CAI" = NA)
             vals$cds_opt <- NULL
@@ -100,7 +100,6 @@ server <- function(input, output, session) {
         vals$opt_CAI <- info_opt$CAI
         
         vals$cds_opt <- cds_opt
-        
     })
     
     
@@ -141,7 +140,6 @@ server <- function(input, output, session) {
         req(input$goButton)
         #browser()
         if (as.numeric(input$num_Int) > 0 && !is.null(vals$cds_opt)) {
-            print("test")
             tabs <- list(
                 tabPanel(title = "With Introns", 
                          textOutput("intronic_opt", 

@@ -32,4 +32,5 @@ w <- codonChart %>%
 
 ## Generate list of amino acids
 AAs <- str_c(lut$AA, collapse = "") %>%
+    tolower()%>%
     paste0("[", . , "]")
