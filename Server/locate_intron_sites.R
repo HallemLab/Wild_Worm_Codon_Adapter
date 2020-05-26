@@ -78,6 +78,7 @@ if (length(unique(loc_iS)) < num_Int && strict_iS) {
     index_iS <- str_locate_all(x, insertSites_alt) %>%
         do.call(rbind, .)
     index_iS <- index_iS[,1]
+    strict_iS <- FALSE
     
     loc_iS <- sapply(opt_iS, function(x) {which.min(abs(index_iS-x[1]))}) %>%
         index_iS[.] %>%
