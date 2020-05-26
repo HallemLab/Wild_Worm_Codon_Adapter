@@ -24,7 +24,7 @@ body <- dashboardBody(
             
             ### Sequence (text box)
             textAreaInput('seqtext',
-                          'Sequence',
+                          'Sequence (Nucleotide or Amino Acid)',
                           rows = 10, 
                           resize = "vertical"),
             
@@ -65,8 +65,11 @@ body <- dashboardBody(
             status = "primary",
             
             p('This Shiny app codon optimizes genetic sequences for 
-            expression in',em('Strongyloides'), 'species. 
-            Codon bias in nematode transcripts can vary as a function of gene 
+            expression in',em('Strongyloides'), 'species. It accepts either 
+            nucleotide or amino acid sequences, and will generate an optimized
+            nucleotide sequence with and without the desired number of 
+            synthetic introns.', br(),
+            'Codon bias in nematode transcripts can vary as a function of gene 
             expression  levels such that highly expressed genes appear to 
             have the greatest degree of codon bias. Therefore, optimization 
               rules are based on the codon usage weights of highly expressed', 
