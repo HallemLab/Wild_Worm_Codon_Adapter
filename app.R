@@ -115,6 +115,7 @@ server <- function(input, output, session) {
         source('Server/insert_introns.R', local = TRUE)
         } else cds_wintrons <- c("Error: no intron insertion sites are 
                                  avaliable in this sequence")
+        
         return(cds_wintrons)
     })
     
