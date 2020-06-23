@@ -88,7 +88,7 @@ body <- dashboardBody(
             p(tags$b('GC:'),' The fraction of G+C bases of the nucleic acid 
               sequences. Calculated using the seqinr library.'),
             p(tags$b('Inserting Introns:'),' Including synthetic introns into 
-              cDNA sequences can signficiant increase gene expression. Intron 
+              cDNA sequences can significantly increase gene expression. Intron 
               mediated enchancement of gene expression can be due to a variety 
               of mechanisms, including by increasing the rate of transcription. 
               Intron mediated enhancement occurs in', 
