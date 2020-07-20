@@ -54,7 +54,7 @@ body <- dashboardBody(
                        
                        actionButton('goButton',
                                     'Submit',
-                                    width = '25%',
+                                    width = '40%',
                                     icon = icon("paper-plane"))
                      ),
                      
@@ -89,7 +89,7 @@ body <- dashboardBody(
                          
                          actionButton('goAnalyze',
                                       'Submit',
-                                      width = '25%',
+                                      width = '40%',
                                       icon = icon("paper-plane"))
                          
                      )

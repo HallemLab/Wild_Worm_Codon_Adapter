@@ -33,5 +33,4 @@ info.gene.seq<- temp %>%
 
 info.gene.seq <- info.gene.seq %>%
     add_column(geneID = gene.seq$gene_name, .before = 'GC (%)')
-print(info.gene.seq)
 vals$geneIDs <- info.gene.seq

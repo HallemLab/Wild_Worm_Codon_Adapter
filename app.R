@@ -7,11 +7,12 @@ suppressPackageStartupMessages({
     library(htmltools)
     library(shinydashboard)
     library(magrittr)
-    library(ensembldb)
-    library(biomaRt)
     library(tidyverse)
     library(openxlsx)
     source('Server/calc_sequence_stats.R')
+    library(BiocManager)
+    library(biomaRt)
+    
 })
 
 ## --- end_of_chunk ---
