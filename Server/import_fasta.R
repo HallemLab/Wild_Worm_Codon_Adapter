@@ -4,7 +4,7 @@
 fasta_dat <- read.fasta('AFDrGC(35).fasta', 
                   seqtype = 'DNA') 
 x <- c2s(fasta_dat[[1]])
-name <- getName(dat)
+name <- getName(fasta_dat)
 
 ## Generate clean sequence, trimming any leading/trailing spaces
 dat <- c2s(fasta_dat[[1]]) %>%

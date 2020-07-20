@@ -1,12 +1,18 @@
 # Strongyloides Codon Adapter Shiny App
 
 ## --- Libraries ---
-library(shiny)
-library(seqinr)
-library(tidyverse)
-library(htmltools)
-library(shinydashboard)
-source('Server/calc_sequence_stats.R')
+suppressPackageStartupMessages({
+    library(shiny)
+    library(seqinr)
+    library(htmltools)
+    library(shinydashboard)
+    library(magrittr)
+    library(ensembldb)
+    library(biomaRt)
+    library(tidyverse)
+    library(openxlsx)
+    source('Server/calc_sequence_stats.R')
+})
 
 ## --- end_of_chunk ---
 
@@ -16,7 +22,7 @@ source('Static/generate_codon_lut.R', local = TRUE)
 
 ## --- end_of_chunk ---
 
-## --- UI ---
+## ---- UI ----
 ui <- fluidPage(
     tags$head(
         tags$style(HTML("
@@ -42,14 +48,16 @@ ui <- fluidPage(
 
 ## --- end_of_chunk ---
 
-## --- Server ---
+## ---- Server ----
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     
     vals <- reactiveValues(cds_opt = NULL,
                            og_GC = NULL,
                            og_CAI = NULL,
-                           opt_GC = NULL)
+                           opt_GC = NULL,
+                           geneIDs = NULL,
+                           analysisType = NULL)
     
     # The bits that have to be responsive start here.
     
@@ -57,12 +65,12 @@ server <- function(input, output, session) {
     ## Load example for debugging
     #source('Server/import_fasta.R', local = TRUE)
     
-    
+    ## Codon Optimization Mode ----
     
     ## Parse nucleotide inputs
     optimize_sequence <- eventReactive (input$goButton, {
         req(input$seqtext)  # Don't run unless there is sequence to run on
-            
+        
         dat <- input$seqtext %>%
             tolower %>%
             trimSpace %>%
@@ -73,10 +81,10 @@ server <- function(input, output, session) {
         
         ## Calculate info for original sequence
         if (lang == "nuc"){
-        info_dat <- calc_sequence_stats(dat, w)
-        
-        ## Translate nucleotides to AA
-        source('Server/translate_nucleotides.R', local = TRUE)
+            info_dat <- calc_sequence_stats(dat, w)
+            
+            ## Translate nucleotides to AA
+            source('Server/translate_nucleotides.R', local = TRUE)
         } else if (lang == "AA") {
             AA_dat <- toupper(dat)
             info_dat <- list("GC" = NA, "CAI" = NA)
@@ -109,17 +117,17 @@ server <- function(input, output, session) {
         
         ## Detect insertion sites for artificial introns
         source('Server/locate_intron_sites.R', local = TRUE)
-       
+        
         ## Insert canonical artificial introns
         if (!is.na(loc_iS[[1]])){
-        source('Server/insert_introns.R', local = TRUE)
+            source('Server/insert_introns.R', local = TRUE)
         } else cds_wintrons <- c("Error: no intron insertion sites are 
                                  avaliable in this sequence")
         
         return(cds_wintrons)
     })
     
-    ## Define Shiny outputs
+    ## Outputs: Optimization Mode ----
     output$optimizedSequence <- renderText({
         optimize_sequence()
     })
@@ -156,14 +164,14 @@ server <- function(input, output, session) {
                          textOutput("optimizedSequence", 
                                     container = div)))
         }
-
+        
         args <- c(tabs, list(id = "box", 
                              title = tagList(shiny::icon("fas fa-dna"), 
                                              "Optimized Sequences"),
                              side = "right",
                              width = NULL))
         
-
+        
         do.call(tabBox, args)
     })
     
@@ -177,6 +185,59 @@ server <- function(input, output, session) {
                      tableOutput("info"))
         do.call(box,args)
     })
+    
+    
+    ## Analysis Mode ----
+    
+    analyze_sequence <- eventReactive(input$goAnalyze, {
+        if (isTruthy(input$idtext)){
+            genelist <- input$idtext %>%
+                str_split(pattern = ",") %>%
+                unlist() %>%
+                as_tibble_col(column_name = "geneID")
+            source("Server/analyze_geneID_list.R", local = TRUE)
+        } else if (isTruthy(input$loadfile)){
+            file <- input$loadfile
+            ext <- tools::file_ext(file$datapath)
+            validate(need(ext == "csv", "Please upload a csv file"))
+            genelist <- read.csv(file$datapath, 
+                                 header = FALSE, 
+                                 colClasses = "character", 
+                                 strip.white = T) %>%
+                as_tibble() %>%
+                pivot_longer(cols = everything(), values_to = "geneID") %>%
+                dplyr::select(geneID)
+            source("Server/analyze_geneID_list.R", local = TRUE)
+        } 
+
+        
+    })
+
+    
+    ## Outputs: Analysis Mode ----
+    output$info_analysis <- renderTable({
+        tbl<-analyze_sequence()
+        tbl$value
+    })
+    
+    # Generate and Download report
+    source("Server/excel_srv.R", local = TRUE)
+    
+    output$analysisinfo <- renderUI({
+        req(input$goAnalyze)
+        args <- list(title = tagList(shiny::icon("fas fa-calculator"),
+                                     "Sequence Info"), 
+                     width = NULL,
+                     status = "success",
+                     tableOutput("info_analysis"),
+                     downloadButton(
+                         "generate_excel_report",
+                         "Create Excel Report"
+                     ))
+        do.call(box,args)
+    })
+    
+   
     
     session$onSessionEnded(stopApp)
     
