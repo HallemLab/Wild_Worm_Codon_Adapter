@@ -27,10 +27,10 @@ Including synthetic introns into cDNA sequences can signficiant increase gene ex
 9. [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
 
 ## Example: Shiny App UI Load Screen
-![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/LoadScreenExample.png)
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/LoadScreenExamples.png)
 
 ## Example: Shiny App UI Optimization Mode Results Screen
 ![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/ResultExample.png)
 
 ## Example: Shiny App UI Analysis Mode Results Screen
-
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/AnalysisModeResultExample.png)
