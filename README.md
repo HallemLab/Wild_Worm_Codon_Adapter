@@ -30,7 +30,7 @@ Including synthetic introns into cDNA sequences can signficiant increase gene ex
 ![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/LoadScreenExamples.png)
 
 ## Example: Shiny App UI Optimization Mode Results Screen
-![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/ResultExample.png)
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/OptimizationModeResultExample.png)
 
 ## Example: Shiny App UI Analysis Mode Results Screen
 ![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/AnalysisModeResultExample.png)
