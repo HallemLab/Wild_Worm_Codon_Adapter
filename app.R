@@ -58,6 +58,7 @@ server <- function(input, output, session) {
                            og_GC = NULL,
                            og_CAI = NULL,
                            opt_GC = NULL,
+                           og_CeCAI = NULL,
                            geneIDs = NULL,
                            analysisType = NULL)
     
@@ -84,6 +85,7 @@ server <- function(input, output, session) {
         ## Calculate info for original sequence
         if (lang == "nuc"){
             info_dat <- calc_sequence_stats(dat, w)
+            Ce_info_dat <- calc_sequence_stats(dat,Ce.w)
             
             ## Translate nucleotides to AA
             source('Server/translate_nucleotides.R', local = TRUE)
@@ -106,6 +108,7 @@ server <- function(input, output, session) {
         
         vals$og_GC <- info_dat$GC
         vals$og_CAI <- info_dat$CAI
+        vals$og_CeCAI <- Ce_info_dat$CAI
         vals$opt_GC <- info_opt$GC
         vals$opt_CAI <- info_opt$CAI
         
@@ -142,9 +145,9 @@ server <- function(input, output, session) {
     })
     
     output$info <- renderTable({
-        tibble(Sequence = c("Original", "Optimized"),
-               `GC (%)` = c(vals$og_GC, vals$opt_GC),
-               CAI =c(vals$og_CAI, vals$opt_CAI))
+        tibble(Sequence = c("Original", "Original_Ce","Optimized"),
+               `GC (%)` = c(vals$og_GC, NA, vals$opt_GC),
+               CAI =c(vals$og_CAI, vals$og_CeCAI, vals$opt_CAI))
     })
     
     output$tabs <- renderUI({

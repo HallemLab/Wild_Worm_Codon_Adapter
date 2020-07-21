@@ -1,5 +1,6 @@
 # Get cDNA sequences for given geneIDs from BioMaRT
-
+Sspp.seq <- NULL
+Sr.seq <- NULL
 if (any(grepl('SSTP', genelist$geneID))) {
     Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'cdna'),
                     # grab the cDNA sequences for the given genes from WormBase Parasite
@@ -10,7 +11,8 @@ if (any(grepl('SSTP', genelist$geneID))) {
                     filters = c('species_id_1010', 
                                 'wbps_gene_id'),
                     values = list(c('strattprjeb125','ststerprjeb528'),
-                                  genelist$geneID)) %>%
+                                  genelist$geneID),
+                    useCache = F) %>%
         as_tibble() %>%
         #we need to rename the columns retreived from biomart
         dplyr::rename(geneID = wbps_gene_id, cDNA = cdna)
@@ -26,7 +28,8 @@ if (any(grepl('SRAE', genelist$geneID))) {
                     filters = c('species_id_1010',
                                 'wbps_transcript_id'),
                     values = list('strattprjeb125',
-                                  genelist$geneID)) %>%
+                                  genelist$geneID),
+                    useCache = F) %>%
         as_tibble() %>%
         #we need to rename the columns retreived from biomart
         dplyr::rename(geneID = wbps_transcript_id, cDNA = cdna)
