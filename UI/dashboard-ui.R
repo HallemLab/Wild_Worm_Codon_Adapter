@@ -17,7 +17,7 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "optimization",
             fluidRow(
-              column(width = 3,
+              column(width = 4,
                      box(
                        title = tagList(shiny::icon("fas fa-sliders-h"),"Inputs & Options"),
                        width = NULL,
@@ -54,7 +54,7 @@ body <- dashboardBody(
                        
                        actionButton('goButton',
                                     'Submit',
-                                    width = '40%',
+                                    width = '50%',
                                     icon = icon("paper-plane"))
                      ),
                      
@@ -62,14 +62,14 @@ body <- dashboardBody(
                      
               ),
               
-              column(width = 9,
+              column(width = 8,
                      uiOutput("tabs"))
               
               # Body: Analysis Mode ----              
             )),
     tabItem(tabName = "analysis",
             fluidRow(
-              column(width = 3,
+              column(width = 4,
                      box(title = tagList(shiny::icon("fas fa-sliders-h"),"Inputs & Options"),
                          width = NULL,
                          status = "warning",
@@ -89,12 +89,12 @@ body <- dashboardBody(
                          
                          actionButton('goAnalyze',
                                       'Submit',
-                                      width = '40%',
+                                      width = '50%',
                                       icon = icon("paper-plane"))
                          
                      )
               ),
-              column(width = 9,
+              column(width = 8,
                      
                      uiOutput("analysisinfo")
                      

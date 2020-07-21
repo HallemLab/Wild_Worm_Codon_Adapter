@@ -36,7 +36,9 @@ ui <- fluidPage(
     font-family: monospace;
     }
                     "))
+       
     ),
+    
     # Application title
     titlePanel("Strongyloides Codon Adapter"),
     
@@ -197,6 +199,7 @@ server <- function(input, output, session) {
     analyze_sequence <- eventReactive(input$goAnalyze, {
         if (isTruthy(input$idtext)){
             genelist <- input$idtext %>%
+                gsub(" ", "", ., fixed = TRUE) %>%
                 str_split(pattern = ",") %>%
                 unlist() %>%
                 as_tibble_col(column_name = "geneID")
