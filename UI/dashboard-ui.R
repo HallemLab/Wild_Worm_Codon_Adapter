@@ -126,9 +126,11 @@ body <- dashboardBody(
           'transcripts [1].', br(),
         'This app can also be used in an analysis mode that reports the 
         endogenous codon optimization for a given gene. Stable Gene IDs with 
-        prefixes "SSTP", "SRAE", or WB can be provided either through direct input 
-        via the provided textbox, or in bulk as a comma separated text file.'),
-        
+        prefixes "SSTP", "SRAE", or "WB" can be provided either through direct input 
+        via the provided textbox, or in bulk as a comma separated text file.
+        The analysis mode additionally reports the codon adaptation index for given 
+        genes relative to the codon usage weights of highly expressed ', 
+        em('C. elegans'), 'genes [2].'),
         tags$h4('Methods', class = 'text-success'),
         p(tags$b('CAI (Codon Adaptation Index):'),
           ' Individual codons are scored by calculating their relative 
@@ -136,7 +138,7 @@ body <- dashboardBody(
               "AA") / (the frequency of the codon most often used for encoding 
               amino acid "AA"). Genes are scored by calculating their Codon 
               Adaptation Index: the geometric average of relative adaptiveness 
-              of all codons in the gene sequence [2,3]. The CAI is calculated 
+              of all codons in the gene sequence [3,4]. The CAI is calculated 
               via the seqinr library.'),
         p(tags$b('GC:'),' The fraction of G+C bases of the nucleic acid 
               sequences. Calculated using the seqinr library.'),
@@ -146,19 +148,19 @@ body <- dashboardBody(
               of mechanisms, including by increasing the rate of transcription. 
               Intron mediated enhancement occurs in', 
           em('C. elegans'), 
-          '[4]. Although intron mediated enhancement has to be specifically 
+          '[5]. Although intron mediated enhancement has to be specifically 
               studied in ', 
           em('Strongyloides spp.'), 
           ', there is evidence that the prescence of introns does not 
-              prevent gene expression (e.g. intron-inclusive eGFP) [5].
+              prevent gene expression (e.g. intron-inclusive eGFP) [6].
               Here, the desired number of introns are inserted 
               within in DNA sequence, up to a maximum
               of 3 unique introns. Intron sequences and order are taken from the 
-              Fire Lab Vector Kit (1995) [6].',
+              Fire Lab Vector Kit (1995) [7].',
           tags$br(),
           em('Intron Number and Spacing:'),
           'The Fire lab established three unique introns, spaced
-              equidistantly within a gene as canon [6]; this configuration is 
+              equidistantly within a gene as canon [7]; this configuration is 
               thus set as default, and is recommended. In', em('C. elegans'), 
           'the location of the intron site influences the degree of 
               intron mediated enhancement, such that a single 5′-intron is more 
@@ -169,10 +171,10 @@ body <- dashboardBody(
           em('Identifying Intron Insertion Sites:'), 'Introns are 
               placed between the 3rd and 4th nucleotide of one of the following 
               sequences: "aagg", "aaga", "cagg", "caga", as in Redemann', 
-          em('et al'),' (2011) [7]. If those sequences are not present, 
+          em('et al'),' (2011) [8]. If those sequences are not present, 
               introns are placed between the 2nd and 3rd nucleotide of one of 
               the following minimal ', em('C. elegans'), 
-          'splice site consensus sequences was used: "aga", "agg" [8].'),
+          'splice site consensus sequences was used: "aga", "agg" [9].'),
 ## References ----        
         tags$h4('References', class = 'text-success'),
         tags$ol(
@@ -182,6 +184,12 @@ body <- dashboardBody(
             ' (2006). Codon usage patterns in Nematoda: analysis based 
                     on over 25 million codons in thirty-two species.', 
             em('Genome Biology'),'7: R75.')),
+          tags$li(tags$a(
+            href = "https://www.ncbi.nlm.nih.gov/books/NBK20194/", 
+            'Sharp and Bradnam (1997). Appendix 3: Codon Usage in',
+            em('C. elegans,'),'In:',em('C. elegans'),'II. 2nd edition;
+            Eds: Riddle, Blumenthal, Meyer', em('et al.'), 'Cold Spring
+            Harbor Laboratory Press.')),
           tags$li(tags$a(
             href = "https://pubmed.ncbi.nlm.nih.gov/3547335/",
             'Sharp and Li (1987). The Codon Adaptation Index: a 
