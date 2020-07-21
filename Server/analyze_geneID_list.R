@@ -36,7 +36,7 @@ if (any(grepl('SRAE', genelist$geneID))) {
 gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq) %>%
     dplyr::left_join(genelist, . , by = "geneID")
 
-## Calculate info each sequence
+## Calculate info each sequence (S. ratti index) ----
 temp<- lapply(gene.seq$cDNA, function (x){
     if (!is.na(x)) {
     s2c(x) %>%
@@ -45,8 +45,8 @@ temp<- lapply(gene.seq$cDNA, function (x){
         list(GC = NA, CAI = NA)
     }
 }) 
-names(temp) <-gene.seq$geneID
 
+# Strongyloides CAI values ----
 info.gene.seq<- temp %>%
     map("GC") %>%
     unlist() %>%
@@ -55,11 +55,35 @@ info.gene.seq<- temp %>%
 info.gene.seq<- temp %>%
     map("CAI") %>%
     unlist() %>%
-    as_tibble_col(column_name = 'CAI') %>%
+    as_tibble_col(column_name = 'Sr_CAI') %>%
     add_column(info.gene.seq, .)
 
 info.gene.seq <- info.gene.seq %>%
     add_column(geneID = gene.seq$geneID, .before = 'GC (%)') 
+
+# C. elegans CAI values ----
+# Only run this under certain conditions
+# 
+
+## Calculate info each sequence (C. elegans index) ----
+Ce.temp<- lapply(gene.seq$cDNA, function (x){
+    if (!is.na(x)) {
+        s2c(x) %>%
+            calc_sequence_stats(.,Ce.w)}
+    else {
+        list(GC = NA, CAI = NA)
+    }
+}) 
+
+ce.info.gene.seq<- Ce.temp %>%
+    map("CAI") %>%
+    unlist() %>%
+    as_tibble_col(column_name = 'Ce_CAI')
+
+
+## Merge both tibbles
+info.gene.seq <- add_column(info.gene.seq, 
+                            Ce_CAI = ce.info.gene.seq$Ce_CAI, .after = "Sr_CAI")
 
 vals$geneIDs <- info.gene.seq %>%
     left_join(.,gene.seq, by = "geneID") %>%
