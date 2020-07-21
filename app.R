@@ -6,6 +6,7 @@ suppressPackageStartupMessages({
     library(seqinr)
     library(htmltools)
     library(shinydashboard)
+    library(shinycssloaders)
     library(magrittr)
     library(tidyverse)
     library(openxlsx)
@@ -210,16 +211,18 @@ server <- function(input, output, session) {
                 dplyr::select(geneID)
             source("Server/analyze_geneID_list.R", local = TRUE)
         } 
-
+        
         
     })
-
+    
     
     ## Outputs: Analysis Mode ----
     output$info_analysis <- renderTable({
         tbl<-analyze_sequence()
-        tbl$value
-    })
+        tbl$value},
+        striped = T,
+        bordered = T
+    )
     
     # Generate and Download report
     source("Server/excel_srv.R", local = TRUE)
@@ -230,7 +233,7 @@ server <- function(input, output, session) {
                                      "Sequence Info"), 
                      width = NULL,
                      status = "success",
-                     tableOutput("info_analysis"),
+                     withSpinner(tableOutput("info_analysis")),
                      downloadButton(
                          "generate_excel_report",
                          "Create Excel Report"
@@ -238,7 +241,7 @@ server <- function(input, output, session) {
         do.call(box,args)
     })
     
-   
+    
     
     session$onSessionEnded(stopApp)
     

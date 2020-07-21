@@ -125,9 +125,9 @@ body <- dashboardBody(
           em('Stronyloides ratti'), 
           'transcripts [1].', br(),
         'This app can also be used in an analysis mode that reports the 
-        endogenous codon optimization for a given gene. Stable Gene IDs can 
-        be provided either through direct input via the provided textbox, 
-        or in bulk as a comma separated text file.'),
+        endogenous codon optimization for a given gene. Stable Gene IDs with 
+        prefixes "SSTP", "SRAE", or WB can be provided either through direct input 
+        via the provided textbox, or in bulk as a comma separated text file.'),
         
         tags$h4('Methods', class = 'text-success'),
         p(tags$b('CAI (Codon Adaptation Index):'),
