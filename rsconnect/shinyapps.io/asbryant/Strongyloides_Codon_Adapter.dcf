@@ -5,9 +5,9 @@ account: asbryant
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2347444
-bundleId: 3418372
+bundleId: 3470087
 url: https://asbryant.shinyapps.io/Strongyloides_Codon_Adapter/
-when: 1595361380.1156
+when: 1596474986.56275
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: AFDrGC(35).fasta|AFDrGC(35).gb|geneList|geneList.csv|README.md|UI/.DS_Store|Unused/mainPanel-ui.R|Unused/sidebar-ui.R
+ignoredFiles: .RData|AFDrGC(35).fasta|AFDrGC(35).gb|geneList|geneList.csv|README.md|UI/.DS_Store|UI/dashboard-ui.R|UI/favicon.png|Unused/mainPanel-ui.R|Unused/sidebar-ui.R

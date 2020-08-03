@@ -5,7 +5,8 @@ suppressPackageStartupMessages({
     library(shiny)
     library(seqinr)
     library(htmltools)
-    library(shinydashboard)
+    library(shinyWidgets)
+    library(shinythemes)
     library(shinycssloaders)
     library(magrittr)
     library(tidyverse)
@@ -35,14 +36,19 @@ ui <- fluidPage(
     #intronic_opt{
     font-family: monospace;
     }
+    
+    #box li {
+    float: right;
+    }
                     "))
        
     ),
     
-    # Application title
-    titlePanel("Strongyloides Codon Adapter"),
     
-    source('UI/dashboard-ui.R', local = TRUE)$value
+    # Application title
+    #titlePanel("Strongyloides Codon Adapter"),
+    
+    source('UI/navbar-ui.R', local = TRUE)$value
     # sidebarLayout(
     #     source('UI/sidebar-ui.R', local = TRUE)$value,
     #     
@@ -154,43 +160,43 @@ server <- function(input, output, session) {
     
     output$tabs <- renderUI({
         req(input$goButton)
-        #browser()
         if (as.numeric(input$num_Int) > 0 && !is.null(vals$cds_opt)) {
             tabs <- list(
-                tabPanel(title = "With Introns", 
+                tabPanel(title = strong("With Introns"), 
                          textOutput("intronic_opt", 
                                     container = div)),
-                tabPanel(title = "Without Introns", 
+                tabPanel(title = strong("Without Introns"), 
                          textOutput("optimizedSequence", 
                                     container = div))
                 
             )
         } else {
             tabs <- list(
-                tabPanel(title = "Without Introns", 
+                tabPanel(title = strong("Without Introns"), 
                          textOutput("optimizedSequence", 
                                     container = div)))
         }
         
         args <- c(tabs, list(id = "box", 
-                             title = tagList(shiny::icon("fas fa-dna"), 
-                                             "Optimized Sequences"),
-                             side = "right",
-                             width = NULL))
+                             # title = tagList(shiny::icon("fas fa-dna"), 
+                             #                 "Optimized Sequences"),
+                             # side = "right",
+                             # width = NULL
+                             type = "tabs"
+                             ))
         
         
-        do.call(tabBox, args)
+        do.call(tabsetPanel, args)
     })
     
     output$seqinfo <- renderUI({
         req(input$goButton)
         
-        args <- list(title = tagList(shiny::icon("fas fa-calculator"),
-                                     "Sequence Info"), 
-                     width = NULL,
-                     status = "success",
+        args <- list(heading = tagList(strong(shiny::icon("fas fa-calculator"),
+                                     "Sequence Info")), 
+                     status = "primary",
                      tableOutput("info"))
-        do.call(box,args)
+        do.call(panel,args)
     })
     
     
@@ -235,16 +241,16 @@ server <- function(input, output, session) {
     
     output$analysisinfo <- renderUI({
         req(input$goAnalyze)
-        args <- list(title = tagList(shiny::icon("fas fa-calculator"),
-                                     "Sequence Info"), 
-                     width = NULL,
-                     status = "success",
-                     withSpinner(tableOutput("info_analysis")),
+        args <- list(heading = tagList(strong(shiny::icon("fas fa-calculator"),
+                                     "Sequence Info")), 
+                     status = "primary",
+                     withSpinner(tableOutput("info_analysis"),
+                                 color = "#2C3E50"),
                      downloadButton(
                          "generate_excel_report",
                          "Create Excel Report"
                      ))
-        do.call(box,args)
+        do.call(panel,args)
     })
     
     
