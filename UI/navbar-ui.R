@@ -13,8 +13,8 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                        # useShinyjs(),
                       column(width = 3,
                              panel(
-                               heading = tagList(h4(shiny::icon("fas fa-sliders-h"),"Inputs & Options")),
-                               width = NULL,
+                               heading = tagList(h5(shiny::icon("fas fa-sliders-h"),"Inputs & Options")),
+                              
                                status = "primary",
                                
                                ### Sequence (text box)
@@ -46,7 +46,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                       
                       column(width = 9,
                              conditionalPanel(condition = "input.goButton",
-                             panel(heading = tagList(h4(shiny::icon("fas fa-dna"),
+                             panel(heading = tagList(h5(shiny::icon("fas fa-dna"),
                                                     "Optimized Sequences")),
                                    status = "primary",
                              uiOutput("tabs"))
@@ -60,7 +60,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                     value = "analysis",
                     fluidRow(
                       column(width = 3,
-                             panel(heading = tagList(h4(shiny::icon("fas fa-sliders-h"),"Inputs & Options")),
+                             panel(heading = tagList(h5(shiny::icon("fas fa-sliders-h"),"Inputs & Options")),
                                    width = NULL,
                                    status = "primary",
                                    ## GeneID Upload
@@ -100,7 +100,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                     value = "about",
                     fluidRow(
                       column(12,
-                             panel(heading =  tagList(h4(shiny::icon("fas fa-question-circle"),
+                             panel(heading =  tagList(h5(shiny::icon("fas fa-question-circle"),
                                                       "About this App")),
                                    
                                    status = "primary",
@@ -225,7 +225,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                              ),
                              
                              ## App Credits ----
-                             panel( heading =  tagList(h4(shiny::icon("fas fa-poop"),
+                             panel( heading =  tagList(h5(shiny::icon("fas fa-poop"),
                                                        "Who is responsibe for this?")),
                                     
                                     status = "primary",

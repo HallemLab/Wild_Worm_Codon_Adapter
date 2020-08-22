@@ -37,6 +37,7 @@ tags$head(
     h5 {
     font-size: 13px;
     font-weight: bold;
+    margin: 5px 0px;
     }
     
     h6 {
@@ -83,22 +84,15 @@ tags$head(
     height: 40px;
     }
     
-    #CPMPlotlydiv {
-    text-align: center;
-    color: black;
-    }
-    
     .shiny-output-error-validation {
     font-size: 14px;
-    color: #E74C3C
+    color: #E74C3C;
     }
     
-    #geneSelection_conditionalPanel .shiny-output-error-validation {
-    color: white;
-    }
     
-    #lifeStageLegend_GW .shiny-html-output{
-    font-size: 12px}
+    .shiny-html-output{
+    font-size: 12px;
+    }
 
                     "))
     

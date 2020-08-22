@@ -139,17 +139,17 @@ server <- function(input, output, session) {
         req(input$goButton)
         if (as.numeric(input$num_Int) > 0 && !is.null(vals$cds_opt)) {
             tabs <- list(
-                tabPanel(title = strong("With Introns"), 
+                tabPanel(title = h6("With Introns"), 
                          textOutput("intronic_opt", 
                                     container = div)),
-                tabPanel(title = strong("Without Introns"), 
+                tabPanel(title = h6("Without Introns"), 
                          textOutput("optimizedSequence", 
                                     container = div))
                 
             )
         } else {
             tabs <- list(
-                tabPanel(title = strong("Without Introns"), 
+                tabPanel(title = h6("Without Introns"), 
                          textOutput("optimizedSequence", 
                                     container = div)))
         }
@@ -169,7 +169,7 @@ server <- function(input, output, session) {
     output$seqinfo <- renderUI({
         req(input$goButton)
         
-        args <- list(heading = tagList(strong(shiny::icon("fas fa-calculator"),
+        args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                      "Sequence Info")), 
                      status = "primary",
                      tableOutput("info"))
@@ -218,7 +218,7 @@ server <- function(input, output, session) {
     
     output$analysisinfo <- renderUI({
         req(input$goAnalyze)
-        args <- list(heading = tagList(strong(shiny::icon("fas fa-calculator"),
+        args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                      "Sequence Info")), 
                      status = "primary",
                      withSpinner(tableOutput("info_analysis"),
