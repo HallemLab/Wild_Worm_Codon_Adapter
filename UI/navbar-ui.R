@@ -1,6 +1,6 @@
 # Header ----
 navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
-           windowTitle = "Strongyloides Codon Adapter",
+           windowTitle = "Str Codon Adapter",
            theme = shinytheme("flatly"),
            collapsible = TRUE,
            id = "tab",
@@ -17,17 +17,22 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                               
                                status = "primary",
                                
+                               h5('Add Sequence', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                               p(tags$em('Please input a cDNA or amino acid sequence for optimization. Alternatively, upload a gene sequence file (.gb, .fasta, or .txt files accepted).', style = "color: #7b8a8b")),
+                               p(tags$em(tags$b('Note: Please hit the Clear button between successive searches.', style = "color: #F39C12"))),
+                               
                                ### Sequence (text box)
                                textAreaInput('seqtext',
-                                             h6('Sequence (Nucleotide or Amino Acid)'),
+                                             h6('Sequence (DNA or AA)'),
                                              rows = 10,
                                              resize = "vertical"),
                                
-                           
+                               ### Upload list of sequences
+                               uiOutput('optimization_file_upload'),
                                
                                ### Option to add introns (pulldown)
                                selectInput('num_Int',
-                                           'Introns',
+                                           h6('Introns'),
                                            choices = 0:3,
                                            selected = 3,
                                            width = '40%'),
@@ -36,7 +41,10 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                             'Submit',
                                             #width = '40%',
                                             class = "btn-primary",
-                                            icon = icon("fas fa-share"))
+                                            icon = icon("fas fa-share")),
+                               
+                               actionButton('resetOptimization', 'Clear',
+                                            icon = icon("far fa-trash-alt"))
                              ),
                              
                              uiOutput("seqinfo")
@@ -55,7 +63,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    
                     )
            ),
-           # Body: Analysis Mode ---- 
+           # Analysis Mode ---- 
            tabPanel(h4("Analyze Sequences"),
                     value = "analysis",
                     fluidRow(
@@ -64,24 +72,26 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    width = NULL,
                                    status = "primary",
                                    ## GeneID Upload
+                                   h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   p(tags$em('Users may type gene stable IDs starting with SSTP or SRAE. Please separate search terms by a comma. Users may also upload a .csv file containing comma-separated gene stable IDs.', style = "color: #7b8a8b")),
+                                   p(tags$em(tags$b('Note: Please hit the Clear button between successive searches.', style = "color: #F39C12"))),
                                    
                                    ### GeneID (text box)
                                    textAreaInput('idtext',
-                                                 h6('Gene Stable IDs (comma separated)'),
-                                                 rows = 10, 
+                                                 h6('Gene Stable IDs'),
+                                                 rows = 5, 
                                                  resize = "vertical"),
-                                   
-                                   
-                                   ### Upload list of GeneIDs
-                                   fileInput('loadfile',
-                                             h6('Gene Stable ID List (.csv)'),
-                                             multiple = FALSE),
+                                  
+                                   uiOutput('analysis_file_upload'),
                                    
                                    actionButton('goAnalyze',
                                                 'Submit',
                                                # width = '40%',
                                                 class = "btn-primary",
-                                                icon = icon("paper-plane"))
+                                                icon = icon("fas fa-share")),
+                                   
+                                   actionButton('resetAnalysis', 'Clear',
+                                                icon = icon("far fa-trash-alt"))
                                    
                              )
                       ),

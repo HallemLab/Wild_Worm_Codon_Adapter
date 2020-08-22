@@ -14,6 +14,8 @@ suppressPackageStartupMessages({
     source('Server/calc_sequence_stats.R')
     library(BiocManager)
     library(biomaRt)
+    library(read.gb)
+    library(tools)
     
 })
 
@@ -57,13 +59,44 @@ server <- function(input, output, session) {
     
     ## Parse nucleotide inputs
     optimize_sequence <- eventReactive (input$goButton, {
-        req(input$seqtext)  # Don't run unless there is sequence to run on
+        validate(
+            need({isTruthy(input$seqtext) | isTruthy(input$loadseq)}, "Please input sequence for optimization")
+        )
         
-        dat <- input$seqtext %>%
-            tolower %>%
-            trimSpace %>%
-            s2c
-        
+        #req(input$seqtext)  # Don't run unless there is sequence to run on
+        if (isTruthy(input$seqtext)) {
+            dat <- input$seqtext %>%
+                tolower %>%
+                trimSpace %>%
+                s2c
+        } else if (isTruthy(input$loadseq)){
+            if (file_ext(input$loadseq$name) == "gb") {
+                dat <- suppressMessages(read.gb(input$loadseq$name, Type = "nfnr")) 
+                dat <- dat[[1]]$ORIGIN %>%
+                    tolower %>%
+                    trimSpace %>%
+                    s2c
+            } else if (file_ext(input$loadseq$name) == "fasta") {
+                dat <- suppressMessages(read.fasta(input$loadseq$name,
+                                                   seqonly = T)) 
+                dat <- dat[[1]] %>%
+                    tolower %>%
+                    trimSpace %>%
+                    s2c
+            } else if (file_ext(input$loadseq$name) == "txt") {
+                dat <- suppressWarnings(read.table(input$loadseq$name,
+                                                   colClasses = "character",
+                                                   sep = "")) 
+                dat <- dat[[1]] %>%
+                    tolower %>%
+                    trimSpace %>%
+                    s2c
+            } else {
+                validate(need({file_ext(input$loadseq$name) == "txt" | 
+                                    file_ext(input$loadseq$name) == "fasta" |
+                                    file_ext(input$loadseq$name) == "gb"}, "File type not recognized. Please try again."))
+                }
+        }
         ## Determine whether input sequence in nucleotide or amino acid
         source('Server/detect_language.R', local = TRUE)
         
@@ -160,7 +193,7 @@ server <- function(input, output, session) {
                              # side = "right",
                              # width = NULL
                              type = "tabs"
-                             ))
+        ))
         
         
         do.call(tabsetPanel, args)
@@ -170,7 +203,7 @@ server <- function(input, output, session) {
         req(input$goButton)
         
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
-                                     "Sequence Info")), 
+                                          "Sequence Info")), 
                      status = "primary",
                      tableOutput("info"))
         do.call(panel,args)
@@ -178,30 +211,36 @@ server <- function(input, output, session) {
     
     
     ## Analysis Mode ----
+    source("Server/reset_state.R", local = TRUE)
     
     analyze_sequence <- eventReactive(input$goAnalyze, {
-        if (isTruthy(input$idtext)){
-            genelist <- input$idtext %>%
-                gsub(" ", "", ., fixed = TRUE) %>%
-                str_split(pattern = ",") %>%
-                unlist() %>%
-                as_tibble_col(column_name = "geneID")
-            source("Server/analyze_geneID_list.R", local = TRUE)
-        } else if (isTruthy(input$loadfile)){
-            file <- input$loadfile
-            ext <- tools::file_ext(file$datapath)
-            validate(need(ext == "csv", "Please upload a csv file"))
-            genelist <- read.csv(file$datapath, 
-                                 header = FALSE, 
-                                 colClasses = "character", 
-                                 strip.white = T) %>%
-                as_tibble() %>%
-                pivot_longer(cols = everything(), values_to = "geneID") %>%
-                dplyr::select(geneID)
-            source("Server/analyze_geneID_list.R", local = TRUE)
-        } 
+        validate(
+            need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input genes for analysis")
+        )
         
-        
+        isolate({
+            if (isTruthy(input$idtext)){
+                genelist <- input$idtext %>%
+                    gsub(" ", "", ., fixed = TRUE) %>%
+                    str_split(pattern = ",") %>%
+                    unlist() %>%
+                    as_tibble_col(column_name = "geneID")
+                source("Server/analyze_geneID_list.R", local = TRUE)
+            } else if (isTruthy(input$loadfile)){
+                file <- input$loadfile
+                ext <- tools::file_ext(file$datapath)
+                validate(need(ext == "csv", "Please upload a csv file"))
+                genelist <- read.csv(file$datapath, 
+                                     header = FALSE, 
+                                     colClasses = "character", 
+                                     strip.white = T) %>%
+                    as_tibble() %>%
+                    pivot_longer(cols = everything(), values_to = "geneID") %>%
+                    dplyr::select(geneID)
+                source("Server/analyze_geneID_list.R", local = TRUE)
+            } 
+            
+        })
     })
     
     
@@ -219,7 +258,7 @@ server <- function(input, output, session) {
     output$analysisinfo <- renderUI({
         req(input$goAnalyze)
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
-                                     "Sequence Info")), 
+                                          "Sequence Info")), 
                      status = "primary",
                      withSpinner(tableOutput("info_analysis"),
                                  color = "#2C3E50"),
