@@ -27,33 +27,10 @@ source('Static/generate_codon_lut.R', local = TRUE)
 
 ## ---- UI ----
 ui <- fluidPage(
-    tags$head(
-        tags$style(HTML("
-    #optimizedSequence{
-    font-family: monospace;
-    }
     
-    #intronic_opt{
-    font-family: monospace;
-    }
+    source('UI/navbar-ui.R', local = TRUE)$value,
     
-    #box li {
-    float: right;
-    }
-                    "))
-       
-    ),
-    
-    
-    # Application title
-    #titlePanel("Strongyloides Codon Adapter"),
-    
-    source('UI/navbar-ui.R', local = TRUE)$value
-    # sidebarLayout(
-    #     source('UI/sidebar-ui.R', local = TRUE)$value,
-    #     
-    #     source('UI/mainPanel-ui.R', local = TRUE)$value
-    # )
+    source('UI/custom_css.R', local = T)$value
 )
 
 ## --- end_of_chunk ---
