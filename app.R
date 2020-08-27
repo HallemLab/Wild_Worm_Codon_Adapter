@@ -63,7 +63,6 @@ server <- function(input, output, session) {
             need({isTruthy(input$seqtext) | isTruthy(input$loadseq)}, "Please input sequence for optimization")
         )
         
-        #req(input$seqtext)  # Don't run unless there is sequence to run on
         if (isTruthy(input$seqtext)) {
             dat <- input$seqtext %>%
                 tolower %>%
@@ -162,6 +161,8 @@ server <- function(input, output, session) {
         }
     })
     
+    
+    
     output$info <- renderTable({
         tibble(Sequence = c("Original", "Original_Ce","Optimized"),
                `GC (%)` = c(vals$og_GC, NA, vals$opt_GC),
@@ -170,21 +171,69 @@ server <- function(input, output, session) {
     
     output$tabs <- renderUI({
         req(input$goButton)
+        
+        if (isTruthy(input$loadseq$name)) { 
+            name <- file_path_sans_ext(input$loadseq$name)
+        } else { name <- "SubmittedGene"}
+        
         if (as.numeric(input$num_Int) > 0 && !is.null(vals$cds_opt)) {
+            output$download_opt <- downloadHandler(
+                filename = paste0(name,"_Optimized_NoIntrons.txt"),
+                content = function(file){
+                    write.table(paste0(vals$cds_opt,
+                                       collapse = "")[[1]], 
+                                file = file,
+                                quote = FALSE,
+                                row.names = FALSE,
+                                col.names = FALSE)
+                })
+            
+            output$download_intronic_opt <- downloadHandler(
+                filename = paste0(name,"_Optimized_WithIntrons.txt"),
+                content = function(file){
+                    optimize_sequence()
+                    tbl <- add_introns()
+                    write.table(paste0(tbl, 
+                                       collapse = ""), 
+                                file = file,
+                                quote = FALSE,
+                                row.names = FALSE,
+                                col.names = FALSE)
+                })
+            
             tabs <- list(
                 tabPanel(title = h6("With Introns"), 
                          textOutput("intronic_opt", 
-                                    container = div)),
+                                    container = div),
+                         downloadButton("download_intronic_opt",
+                                        "Download Sequence",
+                                        class = "btn-primary")),
                 tabPanel(title = h6("Without Introns"), 
                          textOutput("optimizedSequence", 
-                                    container = div))
+                                    container = div),
+                         downloadButton("download_opt",
+                                        "Download Sequence",
+                                        class = "btn-primary"))
                 
             )
         } else {
+            output$download_opt <- downloadHandler(
+                filename = paste0(name,"_Optimized_NoIntrons.txt"),
+                content = function(file){
+                    write.table(paste0(vals$cds_opt,
+                                       collapse = ""), 
+                                file = file,
+                                quote = FALSE,
+                                row.names = FALSE,
+                                col.names = FALSE)
+                })
             tabs <- list(
                 tabPanel(title = h6("Without Introns"), 
                          textOutput("optimizedSequence", 
-                                    container = div)))
+                                    container = div),
+                         downloadButton("download_opt",
+                                        "Download Sequence",
+                                        class = "btn-primary")))
         }
         
         args <- c(tabs, list(id = "box", 
