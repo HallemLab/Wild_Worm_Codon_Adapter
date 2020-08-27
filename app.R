@@ -69,21 +69,21 @@ server <- function(input, output, session) {
                 trimSpace %>%
                 s2c
         } else if (isTruthy(input$loadseq)){
-            if (file_ext(input$loadseq$name) == "gb") {
-                dat <- suppressMessages(read.gb(input$loadseq$name, Type = "nfnr")) 
+            if (tools::file_ext(input$loadseq$name) == "gb") {
+                dat <- suppressMessages(read.gb(input$loadseq$datapath, Type = "nfnr")) 
                 dat <- dat[[1]]$ORIGIN %>%
                     tolower %>%
                     trimSpace %>%
                     s2c
-            } else if (file_ext(input$loadseq$name) == "fasta") {
-                dat <- suppressMessages(read.fasta(input$loadseq$name,
+            } else if (tools::file_ext(input$loadseq$name) == "fasta") {
+                dat <- suppressMessages(read.fasta(input$loadseq$datapath,
                                                    seqonly = T)) 
                 dat <- dat[[1]] %>%
                     tolower %>%
                     trimSpace %>%
                     s2c
             } else if (file_ext(input$loadseq$name) == "txt") {
-                dat <- suppressWarnings(read.table(input$loadseq$name,
+                dat <- suppressWarnings(read.table(input$loadseq$datapath,
                                                    colClasses = "character",
                                                    sep = "")) 
                 dat <- dat[[1]] %>%
