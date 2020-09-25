@@ -73,7 +73,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    status = "primary",
                                    ## GeneID Upload
                                    h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Users may type gene stable IDs starting with SSTP or SRAE. Please separate search terms by a comma. Users may also upload a .csv file containing comma-separated gene stable IDs.', style = "color: #7b8a8b")),
+                                   p(tags$em('Users may type gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; or C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1). Please separate search terms by a comma. Users may also upload a .csv file containing comma-separated gene IDs.', style = "color: #7b8a8b")),
                                    p(tags$em(tags$b('Note: Please hit the Clear button between successive searches.', style = "color: #F39C12"))),
                                    
                                    ### GeneID (text box)

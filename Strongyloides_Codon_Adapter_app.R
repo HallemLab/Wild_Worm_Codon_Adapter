@@ -7,7 +7,6 @@ suppressPackageStartupMessages({
     library(htmltools)
     library(shinyWidgets)
     library(shinythemes)
-    library(shinycssloaders)
     library(magrittr)
     library(tidyverse)
     library(openxlsx)
@@ -279,10 +278,10 @@ server <- function(input, output, session) {
                 file <- input$loadfile
                 ext <- tools::file_ext(file$datapath)
                 validate(need(ext == "csv", "Please upload a csv file"))
-                genelist <- read.csv(file$datapath, 
+                genelist <- suppressWarnings(read.csv(file$datapath, 
                                      header = FALSE, 
                                      colClasses = "character", 
-                                     strip.white = T) %>%
+                                     strip.white = T)) %>%
                     as_tibble() %>%
                     pivot_longer(cols = everything(), values_to = "geneID") %>%
                     dplyr::select(geneID)
@@ -309,8 +308,7 @@ server <- function(input, output, session) {
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                           "Sequence Info")), 
                      status = "primary",
-                     withSpinner(tableOutput("info_analysis"),
-                                 color = "#2C3E50"),
+                     tableOutput("info_analysis"),
                      downloadButton(
                          "generate_excel_report",
                          "Create Excel Report"
