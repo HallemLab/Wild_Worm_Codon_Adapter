@@ -122,11 +122,13 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
             expression in',tags$em('Strongyloides'), 'species. It accepts either 
             nucleotide or amino acid sequences, and will generate an optimized
             nucleotide sequence with and without the desired number of 
-            synthetic introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.', 
+            artificial introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.', 
                                      br(),br(),
                                      tags$b('Analysis Mode:'),
                                      'This tab reports the 
-        endogenous codon optimization for a given gene. Stable Gene IDs with 
+        endogenous codon optimization for a given gene relative to the codon usage weights of highly expressed',
+                                     tags$em('Stronyloides ratti'), 
+                                     'transcripts [1]. Stable Gene IDs with 
         prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input 
         via the provided textbox, or in bulk as a comma separated text file. 
         Users may also provide a', tags$em('C. elegans'), 'gene name.',
