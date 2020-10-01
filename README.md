@@ -1,9 +1,12 @@
 # Strongyloides_Codon_Adapter
-Shiny app for automatic codon optimzation based on *Strongyloides* codon usage. Codon bias in nematode transcripts can vary as a function of gene expression  levels such that highly expressed genes appear to have the greatest degree of codon bias. Therefore, optimization rules are based on the codon usage weights of highly expressed *Stronyloides ratti* transcripts (1). 
-This app can also be used in an analysis mode that reports the endogenous codon optimization for a given gene. Stable Gene IDs with prefixes "SSTP", "SRAE", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. The analysis mode additionally reports the codon adaptation index for given genes relative to the codon usage weights of highly expressed *C. elegans* genes (2).
+Shiny app for automatic codon optimzation/analysis based on *Strongyloides* codon usage.  
+
+## App Modes  
+**Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species. It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of artificial introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
+**Analysis Mode:** This tab reports the endogenous codon optimization for a given gene relative to the codon usage weights of hihgly expressed *Strongyloides ratti* transcripts (1). Stable Gene IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name. This mode additionally reports the codon adaptation index for given genes relative to the codon usage weights of highly expressed *C. elegans* genes (2).
 
 ## CAI (Codon Adaptation Index) 
-Individual codons are scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Genes are scored by calculating their Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence (3,4). The CAI is calculated via the seqinr library.  
+Individual codons are scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Genes are scored by calculating their Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence (3,4). The CAI is calculated via the seqinr library. Codon bias in nematode transcripts can vary as a function of gene expression  levels such that highly expressed genes appear to have the greatest degree of codon bias. Therefore, optimization rules are based on the codon usage weights of highly expressed *Stronyloides ratti* transcripts (1).    
 
 ## GC Content
 The fraction of G+C bases of the nucleic acid sequences. Calculated using the seqinr library.  
@@ -26,8 +29,14 @@ Including synthetic introns into cDNA sequences can signficiant increase gene ex
 8. [Redemann *et al* (2011). Codon adaptation-based control of protein expression in *C. elegans*. *Nature Methods* 8: 250-252](https://pubmed.ncbi.nlm.nih.gov/21278743/). 
 9. [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
 
-## Example: Shiny App UI Load Screen
-![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/LoadScreenExamples.png)
+## Example: Shiny App UI: Optimize Sequences Mode
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/Str_Codon_Adapter_OptimizeMode.png)
+
+## Example: Shiny App UI: Analyze Sequences Mode
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/Str_Codon_Adapter_AnalysisMode.png)
+
+## Example: Shiny App UI: About Tab
+![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/Str_Codon_Adapter_AboutTab.png)
 
 ## Example: Shiny App UI Optimization Mode Results Screen
 ![](https://github.com/astrasb/Strongyloides_Codon_Adapter/blob/master/Static/OptimizationModeResultExample.png)
