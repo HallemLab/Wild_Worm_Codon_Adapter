@@ -2,7 +2,7 @@
 output$optimization_file_upload <- renderUI({
     input$resetOptimization
     fileInput('loadseq',
-              h6('Sequence file (.gb, .fasta)'),
+              h6('Sequence file (.gb, .fasta, .txt)'),
               multiple = FALSE)
 })
 

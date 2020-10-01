@@ -19,7 +19,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                
                                h5('Add Sequence', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                p(tags$em('Please input a cDNA or amino acid sequence for optimization. Alternatively, upload a gene sequence file (.gb, .fasta, or .txt files accepted).', style = "color: #7b8a8b")),
-                               p(tags$em(tags$b('Note: Please hit the Clear button between successive searches.', style = "color: #F39C12"))),
+                               p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                
                                ### Sequence (text box)
                                textAreaInput('seqtext',
@@ -45,11 +45,13 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                
                                actionButton('resetOptimization', 'Clear',
                                             icon = icon("far fa-trash-alt"))
-                             ),
+                             )
                              
+                             
+                      ),
+                      
+                      column(width = 9,
                              uiOutput("seqinfo")
-                             
-                             
                       ),
                       
                       column(width = 9,
@@ -74,7 +76,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    ## GeneID Upload
                                    h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                    p(tags$em('Users may type gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; or C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1). Please separate search terms by a comma. Users may also upload a .csv file containing comma-separated gene IDs.', style = "color: #7b8a8b")),
-                                   p(tags$em(tags$b('Note: Please hit the Clear button between successive searches.', style = "color: #F39C12"))),
+                                   p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                    
                                    ### GeneID (text box)
                                    textAreaInput('idtext',
@@ -95,11 +97,11 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    
                              )
                       ),
-                      column(width = 9,
-                             
+                      column(width = 4, 
                              uiOutput("analysisinfo")
-                             
-                             #conditionalPanel(condition = "output.analysisinfo")
+                      ),
+                      column(width = 5,
+                             uiOutput("analysisplot")
                       )
                       
                       
@@ -115,24 +117,23 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    
                                    status = "primary",
                                    
-                                   p('This Shiny app codon optimizes genetic sequences for 
+                                   tags$h5('App Modes', class = 'text-danger'),
+                                   p(tags$b('Optimization Mode:'),'This tab optimizes genetic sequences for 
             expression in',tags$em('Strongyloides'), 'species. It accepts either 
             nucleotide or amino acid sequences, and will generate an optimized
             nucleotide sequence with and without the desired number of 
-            synthetic introns.', br(),
-                                     'Codon bias in nematode transcripts can vary as a function of gene 
-            expression  levels such that highly expressed genes appear to 
-            have the greatest degree of codon bias. Therefore, optimization 
-              rules are based on the codon usage weights of highly expressed', 
-                                     tags$em('Stronyloides ratti'), 
-                                     'transcripts [1].', br(),
-                                     'This app can also be used in an analysis mode that reports the 
+            synthetic introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.', 
+                                     br(),br(),
+                                     tags$b('Analysis Mode:'),
+                                     'This tab reports the 
         endogenous codon optimization for a given gene. Stable Gene IDs with 
-        prefixes "SSTP", "SRAE", or "WB" can be provided either through direct input 
-        via the provided textbox, or in bulk as a comma separated text file.
-        The analysis mode additionally reports the codon adaptation index for given 
+        prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input 
+        via the provided textbox, or in bulk as a comma separated text file. 
+        Users may also provide a', tags$em('C. elegans'), 'gene name.',
+                                     'The analysis mode additionally reports the codon adaptation index for given 
         genes relative to the codon usage weights of highly expressed ', 
                                      tags$em('C. elegans'), 'genes [2].'),
+                                     
                                    tags$h5('Methods', class = 'text-danger'),
                                    p(tags$b('CAI (Codon Adaptation Index):'),
                                      ' Individual codons are scored by calculating their relative 
@@ -141,7 +142,12 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
               amino acid "AA"). Genes are scored by calculating their Codon 
               Adaptation Index: the geometric average of relative adaptiveness 
               of all codons in the gene sequence [3,4]. The CAI is calculated 
-              via the seqinr library.'),
+              via the seqinr library. Codon bias in nematode transcripts can vary as a function of gene 
+            expression  levels such that highly expressed genes appear to 
+            have the greatest degree of codon bias. Therefore, optimization 
+              rules are based on the codon usage weights of highly expressed', 
+                                   tags$em('Stronyloides ratti'), 
+                                   'transcripts [1].'),
                                    p(tags$b('GC:'),' The fraction of G+C bases of the nucleic acid 
               sequences. Calculated using the seqinr library.'),
                                    p(tags$b('Inserting Introns:'),' Including synthetic introns into 

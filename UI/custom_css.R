@@ -4,10 +4,16 @@ tags$head(
     
     #optimizedSequence{
     font-family: monospace;
+    margin: 0px 0px 10px;
     }
     
     #intronic_opt{
     font-family: monospace;
+    margin: 0px 0px 10px;
+    }
+    
+    #generate_excel_report{
+    margin: 10px 0px 0px;
     }
     
     #box li {
@@ -88,7 +94,6 @@ tags$head(
     font-size: 14px;
     color: #E74C3C;
     }
-    
     
     .shiny-html-output{
     font-size: 12px;
