@@ -357,13 +357,14 @@ server <- function(input, output, session) {
     ## Plot comparing, for each gene, Ce_CAI vs Sr_CAI
     output$cai_plot <- renderPlot({
         tbl<-analyze_sequence()
-        vals$cai_plot <- ggplot(tbl, aes(Ce_CAI, Sr_CAI)) +
+        vals$cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI)) +
             geom_smooth(method=lm, color = "steelblue4", fill = "steelblue1",linetype = 2, size = 0.5, formula = "y ~ x") +
             geom_point(shape = 1, size = 3) +
             labs(title = "Species-specific codon adaptiveness",
-                 subtitle = "For user-provided genes",
-                 x = "CAI relative to highly \n expressed C. elegans transcripts",
-                 y = "CAI relative to highly \n expressed S. ratti genes",
+                 subtitle = "For user-provided genes
+                 ",
+                 x = "Codon bias relative to \n S. ratti usage rules (CAI)",
+                 y = "Codon Bias relative to \n C. elegans usage rules (CAI)",
                  caption = "Blue line/shading = linear regression \n w/ 95% confidence regions; \n formula = y ~ x") +
             coord_equal() +
             theme_bw() +
