@@ -1,7 +1,7 @@
 # Automatic detection of language used to encode input string.
 # Options include: nucleotide sequence, amino acid sequence, 
 # something else (which will trigger an error)
-
+detect_language <- function(dat){
 ## Are there any characters that aren't code for a nucleotide?
 ## Will return TRUE if all values of dat are [atgc]
 if (!str_detect(dat,"[atgc]", negate = TRUE)%>%
@@ -15,4 +15,5 @@ if (!str_detect(dat,"[atgc]", negate = TRUE)%>%
     lang <- "AA"
 } else {
     lang <- "error"
+}
 }

@@ -10,19 +10,26 @@ suppressPackageStartupMessages({
     library(magrittr)
     library(tidyverse)
     library(openxlsx)
-    source('Server/calc_sequence_stats.R')
     library(BiocManager)
     library(biomaRt)
     library(read.gb)
     library(tools)
     library(DT)
     library(ggplot2)
+    source('Server/calc_sequence_stats.R')
+    source('Server/detect_language.R',local = TRUE)
+    source("Server/analyze_geneID_list.R", local = TRUE)
+    source("Server/analyze_cDNA_list.R", local = TRUE)
     
 })
+
+## Increase the maximum file upload size to 30 MB
+options(shiny.maxRequestSize = 45*1024^2)
 
 ## --- end_of_chunk ---
 
 ## --- Background ---
+
 source('Static/generate_codon_lut.R', local = TRUE)
 
 ## --- end_of_chunk ---
@@ -50,10 +57,6 @@ server <- function(input, output, session) {
                            analysisType = NULL)
     
     # The bits that have to be responsive start here.
-    
-    
-    ## Load example for debugging
-    #source('Server/import_fasta.R', local = TRUE)
     
     ## Codon Optimization Mode ----
     
@@ -92,12 +95,12 @@ server <- function(input, output, session) {
                     s2c
             } else {
                 validate(need({file_ext(input$loadseq$name) == "txt" | 
-                                    file_ext(input$loadseq$name) == "fasta" |
-                                    file_ext(input$loadseq$name) == "gb"}, "File type not recognized. Please try again."))
-                }
+                        file_ext(input$loadseq$name) == "fasta" |
+                        file_ext(input$loadseq$name) == "gb"}, "File type not recognized. Please try again."))
+            }
         }
         ## Determine whether input sequence in nucleotide or amino acid
-        source('Server/detect_language.R', local = TRUE)
+        lang <- detect_language(dat)
         
         ## Calculate info for original sequence
         if (lang == "nuc"){
@@ -263,49 +266,79 @@ server <- function(input, output, session) {
     ## Analysis Mode ----
     source("Server/reset_state.R", local = TRUE)
     
+    # Primary reactive element in the Analysis Mode
     analyze_sequence <- eventReactive(input$goAnalyze, {
         validate(
-            need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input genes for analysis")
+            need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input geneIDs or sequences for analysis")
         )
         
         isolate({
             if (isTruthy(input$idtext)){
+                # If user provides input using the textbox, 
+                # assume they are provided a list of geneIDs
                 genelist <- input$idtext %>%
                     gsub(" ", "", ., fixed = TRUE) %>%
                     str_split(pattern = ",") %>%
                     unlist() %>%
                     as_tibble_col(column_name = "geneID")
-                source("Server/analyze_geneID_list.R", local = TRUE)
+                info.gene.seq<-analyze_geneID_list(genelist, vals)
+
             } else if (isTruthy(input$loadfile)){
                 file <- input$loadfile
                 ext <- tools::file_ext(file$datapath)
-                validate(need(ext == "csv", "Please upload a csv file"))
+                validate(need(ext == "csv" | ext == "fa", 
+                              "Please upload a csv  or a .fa file"))
+                
+                if (tools::file_ext(input$loadfile$name) == "fa") {
+                    # If user provides input using the file upload, &
+                    # if it's a .fa file assume they are providing
+                    # named cDNA sequences
+                    dat <- suppressMessages(read.fasta(input$loadfile$datapath,
+                                                       as.string = T,
+                                                       set.attributes = F))
+                    genelist <- dat %>%
+                        as_tibble() %>%
+                        pivot_longer(cols = everything(),
+                                     names_to = "geneID", 
+                                     values_to = "cDNA")
+                    
+                    info.gene.seq <- analyze_cDNA_list(genelist, vals)
+                    
+                } else if (tools::file_ext(input$loadfile$name) == "csv") {
+                    # If user provides input using the file upload, &
+                    # if it's a .csv file assume they either provided 
+                    # a list of geneIDs, or 
+                    # a 2 column matrix with geneID and cDNA sequence
+
                 genelist <- suppressWarnings(read.csv(file$datapath, 
-                                     header = FALSE, 
-                                     colClasses = "character", 
-                                     strip.white = T)) %>%
-                    as_tibble() %>%
-                    pivot_longer(cols = everything(), values_to = "geneID") %>%
-                    dplyr::select(geneID)
-                source("Server/analyze_geneID_list.R", local = TRUE)
-            } 
+                                                      header = FALSE, 
+                                                      colClasses = "character", 
+                                                      strip.white = T)) %>%
+                    as_tibble() 
+                # Assume that an input with two columns and more than one 
+                # row is a list of geneID/cDNA pairs
+                if (ncol(genelist) == 2 & nrow(genelist) > 1) {
+                    genelist <- genelist %>%
+                        dplyr::rename(geneID = V1, cDNA = V2)
+                    info.gene.seq <- analyze_cDNA_list(genelist,vals)
+                
+                #Assume every other input structure is a list of geneIDs 
+                } else {
+                    genelist <- genelist %>%
+                        pivot_longer(cols = everything(), values_to = "geneID") %>%
+                        dplyr::select(geneID)
+                    info.gene.seq<-analyze_geneID_list(genelist, vals)
+                    }
+                } 
+            }
             
         })
     })
     
-    
-    ## Outputs: Analysis Mode ----
-    # output$info_analysis <- renderTable({
-    #     tbl<-analyze_sequence()
-    #     tbl$value},
-    #     striped = T,
-    #     bordered = T
-    # )
-    
+    # Datatable of analysis values
     output$info_analysis <- renderDT({
         tbl<-analyze_sequence()
-        
-        info_analysis.DT <- tbl$value %>%
+        info_analysis.DT <- tbl %>%
             DT::datatable(rownames = FALSE,
                           options = list(scrollY = '400px',
                                          scrollCollapse = TRUE,
@@ -318,18 +351,20 @@ server <- function(input, output, session) {
         
         info_analysis.DT
         
-        }
+    }
     )
     
+    ## Plot comparing, for each gene, Ce_CAI vs Sr_CAI
     output$cai_plot <- renderPlot({
         tbl<-analyze_sequence()
-        vals$cai_plot <- ggplot(tbl$value, aes(Ce_CAI, Sr_CAI)) +
+        vals$cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI)) +
             geom_smooth(method=lm, color = "steelblue4", fill = "steelblue1",linetype = 2, size = 0.5, formula = "y ~ x") +
             geom_point(shape = 1, size = 3) +
             labs(title = "Species-specific codon adaptiveness",
-                 subtitle = "For user-provided genes",
-                 x = "CAI relative to highly \n expressed C. elegans transcripts",
-                 y = "CAI relative to highly \n expressed S. ratti genes",
+                 subtitle = "For user-provided genes
+                 ",
+                 x = "Codon bias relative to \n S. ratti usage rules (CAI)",
+                 y = "Codon Bias relative to \n C. elegans usage rules (CAI)",
                  caption = "Blue line/shading = linear regression \n w/ 95% confidence regions; \n formula = y ~ x") +
             coord_equal() +
             theme_bw() +
@@ -340,7 +375,7 @@ server <- function(input, output, session) {
                   axis.title = element_text(size = 12),
                   axis.text = element_text(size = 10))
         vals$cai_plot
-            
+        
         
     }) 
     
@@ -360,6 +395,7 @@ server <- function(input, output, session) {
     # Generate and Download report
     source("Server/excel_srv.R", local = TRUE)
     
+    # Shiny output for analysis datatable
     output$analysisinfo <- renderUI({
         req(input$goAnalyze)
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
@@ -374,6 +410,7 @@ server <- function(input, output, session) {
         do.call(panel,args)
     })
     
+    # Shiny output for CAI plot
     output$analysisplot<- renderUI({
         req(input$goAnalyze)
         args <- list(heading = tagList(h5(shiny::icon("fas fa-mountain"),
@@ -385,7 +422,6 @@ server <- function(input, output, session) {
                                     class = "btn-primary"))
         do.call(panel,args)
     })
-    
     
     
     session$onSessionEnded(stopApp)

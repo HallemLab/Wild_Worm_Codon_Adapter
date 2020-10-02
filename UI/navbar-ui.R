@@ -75,7 +75,9 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    status = "primary",
                                    ## GeneID Upload
                                    h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Users may type gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; or C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1). Please separate search terms by a comma. Users may also upload a .csv file containing comma-separated gene IDs.', style = "color: #7b8a8b")),
+                                   p(tags$em('Gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; or C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1) can be provided either through direct input via the textbox below, or in bulk as a .csv file of gene IDs. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                   
+                                   p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
                                    p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                    
                                    ### GeneID (text box)
@@ -130,8 +132,9 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      tags$em('Stronyloides ratti'), 
                                      'transcripts [1]. Stable Gene IDs with 
         prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input 
-        via the provided textbox, or in bulk as a comma separated text file. 
-        Users may also provide a', tags$em('C. elegans'), 'gene name.',
+        via the provided textbox, or in bulk as a .csv file of gene IDs. 
+        Users may also provide a', tags$em('C. elegans'), 'gene name. Finally, 
+        users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.',
                                      'The analysis mode additionally reports the codon adaptation index for given 
         genes relative to the codon usage weights of highly expressed ', 
                                      tags$em('C. elegans'), 'genes [2].'),
