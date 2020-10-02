@@ -1,3 +1,10 @@
+# This script includes the the primary computation for analyzing a list of geneIDs
+# for the Strongyloides Codon Adapter App in Analyze Sequences Mode
+# If user has provided a list of geneIDs, pull cDNA sequence from BioMart and analyse 
+# GC content and CAI values for each gene using calls to `calc_sequence_stats.R`.
+# 
+
+analyze_geneID_list <- function(genelist, vals){
 # Get cDNA sequences for given geneIDs from BioMaRT
 Sspp.seq <- NULL
 Sr.seq <- NULL
@@ -63,8 +70,9 @@ if (any(grepl('Ce', genelist$geneID))) {
         dplyr::rename(geneID = external_gene_id, cDNA = cdna)
     Ce.seq$cDNA <- tolower(Ce.seq$cDNA)
 }
+
 setProgress(0.7)
-gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,Ce.seq) %>%
+gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,Ce.seq,Ce.tr.seq) %>%
     dplyr::left_join(genelist, . , by = "geneID")
 
 ## Calculate info each sequence (S. ratti index) ----
@@ -82,7 +90,7 @@ setProgress(0.8)
 info.gene.seq<- temp %>%
     map("GC") %>%
     unlist() %>%
-    as_tibble_col(column_name = 'GC (%)')
+    as_tibble_col(column_name = 'GC')
 
 info.gene.seq<- temp %>%
     map("CAI") %>%
@@ -91,7 +99,7 @@ info.gene.seq<- temp %>%
     add_column(info.gene.seq, .)
 
 info.gene.seq <- info.gene.seq %>%
-    add_column(geneID = gene.seq$geneID, .before = 'GC (%)') 
+    add_column(geneID = gene.seq$geneID, .before = 'GC') 
 
 
 # C. elegans CAI values ----
@@ -126,3 +134,4 @@ setProgress(1)
 info.gene.seq
 
 })
+}
