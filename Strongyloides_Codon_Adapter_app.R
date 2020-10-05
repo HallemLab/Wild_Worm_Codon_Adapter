@@ -357,15 +357,25 @@ server <- function(input, output, session) {
     ## Plot comparing, for each gene, Ce_CAI vs Sr_CAI
     output$cai_plot <- renderPlot({
         tbl<-analyze_sequence()
+        
+        # Generate summary statistics for the linear regression below
+        linearMod <- lm(Sr_CAI ~ Ce_CAI, data = tbl) %>%
+            summary() 
+            
         vals$cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI)) +
             geom_smooth(method=lm, color = "steelblue4", fill = "steelblue1",linetype = 2, size = 0.5, formula = "y ~ x") +
             geom_point(shape = 1, size = 3) +
             labs(title = "Species-specific codon adaptiveness",
-                 subtitle = "For user-provided genes
-                 ",
+                 subtitle = paste("Blue line/shading = linear regression \n",
+                 "w/ 95% confidence regions (formula = y ~ x). \n",
+                 "Adj R-squared =", 
+                 round(linearMod$adj.r.squared,3) ,
+                 "
+                 "),
+                     
                  x = "Codon bias relative to \n S. ratti usage rules (CAI)",
                  y = "Codon Bias relative to \n C. elegans usage rules (CAI)",
-                 caption = "Blue line/shading = linear regression \n w/ 95% confidence regions; \n formula = y ~ x") +
+                 caption = "") +
             coord_equal() +
             theme_bw() +
             theme(plot.title.position = "plot",
