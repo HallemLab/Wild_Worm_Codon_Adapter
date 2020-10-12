@@ -1,6 +1,4 @@
-# Static script to generate lookup table for optimal *Strongyloides* codons
-#b2fasta('AFDrGC(35).gb','AFDrGC(35).fasta')
-
+# This script generates lookup tables for optimal *Strongyloides* and *C. elegans* codons
 
 ## Load *Strongyloides* codon usage charts
 codonChart <- read_csv('Static/codon_usage_chart.csv', 
@@ -39,6 +37,7 @@ AAs <- str_c(lut$AA, collapse = "") %>%
 
 # For C. elegans ----
 ## Calculate the relative adaptiveness of each codon
+## Generate lookup table with "optimal" *C. elegans* codons
 ## Arrange relative adaptiveness values into 
 ## format readable by seqinr::cai function
 Ce.w <- codonChart %>%

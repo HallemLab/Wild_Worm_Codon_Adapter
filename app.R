@@ -29,7 +29,10 @@ options(shiny.maxRequestSize = 45*1024^2)
 ## --- end_of_chunk ---
 
 ## --- Background ---
-
+## Load *Strongyloides* and *C. elegans* codon usage chart
+## For both species usage charts: 
+## Calculate the relative adaptiveness of each codon
+## Generate lookup tables that are readible by the seqinr::cai function
 source('Static/generate_codon_lut.R', local = TRUE)
 
 ## --- end_of_chunk ---
@@ -37,7 +40,7 @@ source('Static/generate_codon_lut.R', local = TRUE)
 ## ---- UI ----
 ui <- fluidPage(
     
-    source('UI/navbar-ui.R', local = TRUE)$value,
+    source('UI/ui.R', local = TRUE)$value,
     
     source('UI/custom_css.R', local = T)$value
 )
@@ -45,7 +48,7 @@ ui <- fluidPage(
 ## --- end_of_chunk ---
 
 ## ---- Server ----
-# Define server logic required to draw a histogram
+# Define server logic
 server <- function(input, output, session) {
     
     vals <- reactiveValues(cds_opt = NULL,
@@ -59,7 +62,6 @@ server <- function(input, output, session) {
     # The bits that have to be responsive start here.
     
     ## Codon Optimization Mode ----
-    
     ## Parse nucleotide inputs
     optimize_sequence <- eventReactive (input$goButton, {
         validate(
@@ -155,10 +157,14 @@ server <- function(input, output, session) {
     })
     
     ## Outputs: Optimization Mode ----
+    ## Reactive run of function that generates optimized sequence without added artificial introns
+    ## Can be assigned to an output slow
     output$optimizedSequence <- renderText({
         optimize_sequence()
     })
     
+    ## Reactive run of function that generates optimized sequence with added artificial introns
+    ## Can be assigned to an output slow
     output$intronic_opt <- renderText({
         if(as.numeric(input$num_Int) > 0){
             optimize_sequence()
@@ -166,17 +172,7 @@ server <- function(input, output, session) {
         }
     })
     
-    
-    
-    output$info <- renderTable({
-        tibble(Sequence = c("Original", "Optimized"),
-               GC = c(vals$og_GC, vals$opt_GC),
-               Sr_CAI =c(vals$og_CAI, vals$opt_CAI),
-               Ce_CAI = c(vals$og_CeCAI, vals$opt_CeCAI))
-    },
-    striped = T,
-    bordered = T)
-    
+    ## Display optimized sequence with and wihout added artificial introns in a tabbed panel
     output$tabs <- renderUI({
         req(input$goButton)
         
@@ -252,6 +248,17 @@ server <- function(input, output, session) {
         do.call(tabsetPanel, args)
     })
     
+    ## Make a reactive table containing calculated GC content and CAI values that can be assigned to an output slot
+    output$info <- renderTable({
+        tibble(Sequence = c("Original", "Optimized"),
+               GC = c(vals$og_GC, vals$opt_GC),
+               Sr_CAI =c(vals$og_CAI, vals$opt_CAI),
+               Ce_CAI = c(vals$og_CeCAI, vals$opt_CeCAI))
+    },
+    striped = T,
+    bordered = T)
+    
+    # Display Calculated Sequence Values (e.g. GC content, CAI indeces)
     output$seqinfo <- renderUI({
         req(input$goButton)
         
