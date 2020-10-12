@@ -71,15 +71,19 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 8. [Redemann *et al* (2011). Codon adaptation-based control of protein expression in *C. elegans*. *Nature Methods* 8: 250-252](https://pubmed.ncbi.nlm.nih.gov/21278743/). 
 9. [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
 
-## Examples of Shiny App UI
+## Examples of Shiny App UI  
+### User Interface for *Strongyloides* Codon Adapter App in Optimize Sequences Mode
 ![An example of the User Interface for the Strongyloides Codon Adapter Shiny App in Optimize Mode](/Static/Str_Codon_Adapter_OptimizeMode.png)
 
+### User Interface for *Strongyloides* Codon Adapter App in Analyze Sequences Mode
 ![An example of the User Interface for the Strongyloides Codon Adapter Shiny App in Analyze Sequences Mode](/Static/Str_Codon_Adapter_AnalysisMode.png)
+
+
 
 ## Sources  
 * [Shiny](https://shiny.rstudio.com/) - UI framework
 * [WormbaseParasite](https://parasite.wormbase.org/index.html) - GeneIDs and cDNA sequences
-* [Sequinr](https://www.rdocumentation.org/packages/seqinr/versions/3.6-1) - Utilities for calculating Codon Adaptation Index
+* [Seqinr](https://www.rdocumentation.org/packages/seqinr/versions/3.6-1) - Utilities for calculating Codon Adaptation Index
 * Codon Usage Patterns:  
   - *Strongyloides spp*: [Mitreva *et al* 2006](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/)
   - *C. elegans*: [Sharp and Bradnam, 1997](https://www.ncbi.nlm.nih.gov/books/NBK20194/)
