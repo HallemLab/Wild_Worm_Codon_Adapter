@@ -1,3 +1,5 @@
+### Method
 The fraction of G+C bases of the user-provided nucleic acid sequences. Calculated using the `seqinr` library.  
 
+### Relation between GC content and CAI
 In general, sequences optimized for expression in *Strongyloides* species will have lower GC content than sequences optimized for expression in *C. elegans*; *Strongyloides* genomes are notably more AT rich than *C. elegans* genomes. Furthermore, a previous study reported that *C. elegans* shows overall lower codon bias compared to *Strongyloides* species, and that this difference is greatly affected by GC content, which more AT rich species like *Strongyloides spp.* displaying greater codon usage biases [(Mitreva *et al* 2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/). Here, we report GC ratios of submitted and optimized sequences; users should observe an overall decrease in GC ratio after optimization. 

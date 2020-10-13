@@ -37,12 +37,10 @@ tags$head(
     
     h4 {
     font-size: 15px;
-    font-weight: bold;
     }
     
     h5 {
     font-size: 15px;
-    font-weight: bold;
     margin: 5px 0px;
     }
     
@@ -91,7 +89,7 @@ tags$head(
     }
     
     .shiny-output-error-validation {
-    font-size: 14px;
+    font-size: 15px;
     color: #E74C3C;
     }
     
@@ -113,7 +111,6 @@ tags$head(
     
     .nav-pills li {
     font-size: 14px;
-    font-weight: bold;
     }
     
     .nav-pills {

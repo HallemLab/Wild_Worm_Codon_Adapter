@@ -16,6 +16,7 @@ suppressPackageStartupMessages({
     library(tools)
     library(DT)
     library(ggplot2)
+    library(markdown)
     source('Server/calc_sequence_stats.R')
     source('Server/detect_language.R',local = TRUE)
     source("Server/analyze_geneID_list.R", local = TRUE)
@@ -440,6 +441,33 @@ server <- function(input, output, session) {
         do.call(panel,args)
     })
     
+    
+    # About Tab: Download codon usage charts ----
+    StudyInfo.filename.About <- reactive({
+        Info.file <- switch(input$which.Info.About,
+                            `Ce codon usage counts` = './www/Ce_usage_counts.csv',
+                            `Sr codon usage counts` = './www/Sr_top50_usage_counts.csv',
+                            `Multi-species codon frequency chart` = "./www/codon_usage_chart.csv")
+        
+        Info.file
+        
+    })
+    
+    output$StudyInfo.panel.About <- renderUI({
+        output$StudyInfo.file.About <- downloadHandler(
+            filename = function() {
+                Info.file <- StudyInfo.filename.About()
+                str_remove(Info.file, './www/')
+            },
+            content = function(file){
+                Info.file <- StudyInfo.filename.About()
+                file.copy(Info.file, file)
+            }
+        )
+        
+        downloadButton("StudyInfo.file.About","Download",
+                       class = "btn-primary")
+    })
     
     session$onSessionEnded(stopApp)
     
