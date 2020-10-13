@@ -76,7 +76,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 ![An example of the User Interface for the Strongyloides Codon Adapter Shiny App in Optimize Mode](/Static/Str_Codon_Adapter_OptimizeMode.png)
 
 ### User Interface for *Strongyloides* Codon Adapter App in Analyze Sequences Mode
-![An example of the User Interface for the Strongyloides Codon Adapter Shiny App in Analyze Sequences Mode](/Static/Str_Codon_Adapter_AnalysisMode.png)
+![An example of the User Interface for the Strongyloides Codon Adapter Shiny App in Analyze Sequences Mode](/Static/Str_Codon_Adapter_AnalyzeMode.png)
 
 ## Sources  
 * [Shiny](https://shiny.rstudio.com/) - UI framework
