@@ -34,7 +34,7 @@ To run a specific release locally use the following commands in R/RStudio:
 Please note: the download step for runURL/runGitHub may take a substantial amount of time. We recommend downloading this archive and running the application locally.
 
 ## App Features  
-The *Strongyloides* Codon Adapter Shiny App adapts and automates that process of codon adaptation for *Strongyloides* species, and enables users to query codon adaptiveness of select genes of interest. The app has two two modes:  
+The *Strongyloides* Codon Adapter Shiny App adapts and automates that process of codon adaptation for *Strongyloides* species, and enables users to query codon adaptiveness of select genes of interest. The app has two modes:  
 
   1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species. It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of artificial introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files. Optimized sequences with or without artificial introns may be downloaded as .txt files.    
 
@@ -77,8 +77,6 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 
 ### User Interface for *Strongyloides* Codon Adapter App in Analyze Sequences Mode
 ![An example of the User Interface for the Strongyloides Codon Adapter Shiny App in Analyze Sequences Mode](/Static/Str_Codon_Adapter_AnalysisMode.png)
-
-
 
 ## Sources  
 * [Shiny](https://shiny.rstudio.com/) - UI framework

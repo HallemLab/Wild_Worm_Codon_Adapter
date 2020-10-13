@@ -40,7 +40,7 @@ source('Static/generate_codon_lut.R', local = TRUE)
 ## ---- UI ----
 ui <- fluidPage(
     
-    source('UI/ui.R', local = TRUE)$value,
+    source('UI/Str_Codon_Adapter_ui.R', local = TRUE)$value,
     
     source('UI/custom_css.R', local = T)$value
 )
