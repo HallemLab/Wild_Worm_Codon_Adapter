@@ -72,7 +72,7 @@ if (any(grepl('Ce', genelist$geneID))) {
 }
 
 setProgress(0.7)
-gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,Ce.seq,Ce.tr.seq) %>%
+gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,Ce.seq) %>%
     dplyr::left_join(genelist, . , by = "geneID")
 
 ## Calculate info each sequence (S. ratti index) ----

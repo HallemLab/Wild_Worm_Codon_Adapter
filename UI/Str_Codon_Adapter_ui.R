@@ -75,8 +75,8 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      ## GeneID Upload
                                      h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                      p(tags$em('Gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; or C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1) can be provided either through direct input via the textbox below, or in bulk as a .csv file of gene IDs. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
-                                     
                                      p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
+                                     p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                      
                                      ### GeneID (text box)
@@ -153,14 +153,18 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                        tags$ol(
                                            tags$li(tags$em('C. elegans'), 'codon usage counts (.csv)'),
                                            tags$li(tags$em('S. ratti'), 'codon usage counts (.csv)'),
-                                           tags$li('Multi-species codon frequency chart (.csv)')
+                                           tags$li('Multi-species codon frequency chart (.csv)'),
+                                           tags$li('Example geneID List (.csv)'),
+                                           tags$li('Example 2-column geneID/cDNA List (.csv)')
                                        )),
                                      
                                      pickerInput("which.Info.About",
                                                  NULL, 
                                                  choices =  c('Ce codon usage counts',
                                                               'Sr codon usage counts',
-                                                              "Multi-species codon frequency chart"),
+                                                              "Multi-species codon frequency chart",
+                                                              "Example geneID List",
+                                                              "Example 2-column geneID/cDNA List"),
                                                  options = list(style = 'btn btn-primary',
                                                                 title = "Select a file to download")),
                                      uiOutput("StudyInfo.panel.About")

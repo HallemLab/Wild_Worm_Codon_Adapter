@@ -289,8 +289,9 @@ server <- function(input, output, session) {
                     str_split(pattern = ",") %>%
                     unlist() %>%
                     as_tibble_col(column_name = "geneID")
+                
                 info.gene.seq<-analyze_geneID_list(genelist, vals)
-
+                
             } else if (isTruthy(input$loadfile)){
                 file <- input$loadfile
                 ext <- tools::file_ext(file$datapath)
@@ -317,25 +318,30 @@ server <- function(input, output, session) {
                     # if it's a .csv file assume they either provided 
                     # a list of geneIDs, or 
                     # a 2 column matrix with geneID and cDNA sequence
-
-                genelist <- suppressWarnings(read.csv(file$datapath, 
-                                                      header = FALSE, 
-                                                      colClasses = "character", 
-                                                      strip.white = T)) %>%
-                    as_tibble() 
-                # Assume that an input with two columns and more than one 
-                # row is a list of geneID/cDNA pairs
-                if (ncol(genelist) == 2 & nrow(genelist) > 1) {
-                    genelist <- genelist %>%
-                        dplyr::rename(geneID = V1, cDNA = V2)
-                    info.gene.seq <- analyze_cDNA_list(genelist,vals)
-                
-                #Assume every other input structure is a list of geneIDs 
-                } else {
-                    genelist <- genelist %>%
-                        pivot_longer(cols = everything(), values_to = "geneID") %>%
-                        dplyr::select(geneID)
-                    info.gene.seq<-analyze_geneID_list(genelist, vals)
+                    
+                    genelist <- suppressWarnings(read.csv(file$datapath, 
+                                                          header = FALSE, 
+                                                          colClasses = "character", 
+                                                          strip.white = T)) %>%
+                        as_tibble() 
+                    
+                    # Remove input rows where the geneID includes the word "gene" - we are assuming
+                    # that such rows will be header rows.
+                    genelist <- dplyr::filter(genelist, !grepl('gene', V1))
+                   
+                    # Assume that an input with two columns and more than one 
+                    # row is a list of geneID/cDNA pairs
+                    if (ncol(genelist) == 2 & nrow(genelist) > 1) {
+                        genelist <- genelist %>%
+                            dplyr::rename(geneID = V1, cDNA = V2)
+                        info.gene.seq <- analyze_cDNA_list(genelist,vals)
+                        
+                        #Assume every other input structure is a list of geneIDs 
+                    } else {
+                        genelist <- genelist %>%
+                            pivot_longer(cols = everything(), values_to = "geneID") %>%
+                            dplyr::select(geneID)
+                        info.gene.seq<-analyze_geneID_list(genelist, vals)
                     }
                 } 
             }
@@ -369,18 +375,18 @@ server <- function(input, output, session) {
         # Generate summary statistics for the linear regression below
         linearMod <- lm(Sr_CAI ~ Ce_CAI, data = tbl) %>%
             summary() 
-            
+        
         vals$cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI)) +
             geom_smooth(method=lm, color = "steelblue4", fill = "steelblue1",linetype = 2, size = 0.5, formula = "y ~ x") +
             geom_point(shape = 1, size = 3) +
             labs(title = "Species-specific codon adaptiveness",
                  subtitle = paste("Blue line/shading = linear regression \n",
-                 "w/ 95% confidence regions (formula = y ~ x). \n",
-                 "Adj R-squared =", 
-                 round(linearMod$adj.r.squared,3) ,
-                 "
+                                  "w/ 95% confidence regions (formula = y ~ x). \n",
+                                  "Adj R-squared =", 
+                                  round(linearMod$adj.r.squared,3) ,
+                                  "
                  "),
-                     
+                 
                  x = "Codon bias relative to \n S. ratti usage rules (CAI)",
                  y = "Codon Bias relative to \n C. elegans usage rules (CAI)",
                  caption = "") +
@@ -447,7 +453,9 @@ server <- function(input, output, session) {
         Info.file <- switch(input$which.Info.About,
                             `Ce codon usage counts` = './www/Ce_usage_counts.csv',
                             `Sr codon usage counts` = './www/Sr_top50_usage_counts.csv',
-                            `Multi-species codon frequency chart` = "./www/codon_usage_chart.csv")
+                            `Multi-species codon frequency chart` = "./www/codon_usage_chart.csv",
+                            `Example geneID List` = "./www/example_geneList.csv",
+                            `Example 2-column geneID/cDNA List` = "./www/example_2col_cDNAList.csv")
         
         Info.file
         
