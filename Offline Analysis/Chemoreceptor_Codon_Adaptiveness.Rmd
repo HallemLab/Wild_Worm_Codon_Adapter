@@ -49,7 +49,7 @@ genelist.Ce <- suppressWarnings(read.csv(temp,
 
 ## For C. elegans, match wormbase gene sequence name to the wbsp transcript id, 
 ## and pull the cDNA sequence
-Ce.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
+Ce.tr.seq <- getBM(attributes=c('wormbase_gseqname', 'wbps_transcript_id', 'cdna'),
                    # grab the cDNA sequences for the given genes from WormBase Parasite
                    mart = useMart(biomart="parasite_mart",
                                   dataset = "wbps_gene",
@@ -62,7 +62,7 @@ Ce.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
                    useCache = F) %>%
   as_tibble() %>%
   #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wbps_transcript_id, cDNA = cdna)
+  dplyr::rename(geneID = wormbase_gseqname, transcriptID = wbps_transcript_id, cDNA = cdna)
 Ce.tr.seq$cDNA <- tolower(Ce.tr.seq$cDNA)
 
 write.table(Ce.tr.seq, 
@@ -70,6 +70,40 @@ write.table(Ce.tr.seq,
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
+
+# S. stercoralis ----
+temp <- c(Ss = './Data/Ss_chemoreceptors.csv')
+
+genelist.Ss <- suppressWarnings(read.csv(temp, 
+                                         header = TRUE, 
+                                         colClasses = "character", 
+                                         strip.white = T)) %>%
+  as_tibble() 
+
+## For stercoralis, match wormbase gene sequence name to the wbsp transcript id, 
+## and pull the cDNA sequence
+Ss.tr.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
+                   # grab the cDNA sequences for the given genes from WormBase Parasite
+                   mart = useMart(biomart="parasite_mart",
+                                  dataset = "wbps_gene",
+                                  host="https://parasite.wormbase.org",
+                                  port = 443),
+                   filters = c('species_id_1010',
+                               'wbps_transcript_id'),
+                   values = list('ststerprjeb528',
+                                 genelist.Ss$Transcript_ID),
+                   useCache = T) %>%
+  as_tibble() %>%
+  #we need to rename the columns retreived from biomart
+  dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)
+Ss.tr.seq$cDNA <- tolower(Ss.tr.seq$cDNA)
+
+write.table(Ss.tr.seq, 
+            file = "./Data/Ss_chemosensory_cDNA_list.csv", 
+            sep = ",", 
+            col.names = FALSE, 
+            row.names = FALSE)
+
 
 # S. ratti ----
 temp <- c(Sr = './Data/Sr_chemoreceptors.csv')
@@ -82,7 +116,7 @@ genelist.Sr <- suppressWarnings(read.csv(temp,
 
 ## For ratti, match wormbase gene sequence name to the wbsp transcript id, 
 ## and pull the cDNA sequence
-Sr.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
+Sr.tr.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
                    # grab the cDNA sequences for the given genes from WormBase Parasite
                    mart = useMart(biomart="parasite_mart",
                                   dataset = "wbps_gene",
@@ -95,7 +129,7 @@ Sr.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
                    useCache = T) %>%
   as_tibble() %>%
   #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wbps_transcript_id, cDNA = cdna)
+  dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)
 Sr.tr.seq$cDNA <- tolower(Sr.tr.seq$cDNA)
 
 write.table(Sr.tr.seq, 
@@ -115,7 +149,7 @@ genelist.Sv <- suppressWarnings(read.csv(temp,
 
 ## For venezuelnsis, match wormbase gene sequence name to the wbsp transcript id,
 ##  and pull the cDNA sequence
-Sv.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
+Sv.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'wbps_gene_id','cdna'),
                    # grab the cDNA sequences for the given genes from WormBase Parasite
                    mart = useMart(biomart="parasite_mart",
                                   dataset = "wbps_gene",
@@ -128,7 +162,7 @@ Sv.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
                    useCache = T) %>%
   as_tibble() %>%
   #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wbps_transcript_id, cDNA = cdna)
+  dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)
 Sv.tr.seq$cDNA <- tolower(Sv.tr.seq$cDNA)
 
 write.table(Sv.tr.seq, 

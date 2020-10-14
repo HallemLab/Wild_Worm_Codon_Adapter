@@ -27,7 +27,6 @@ analyze_geneID_list <- function(genelist, vals){
                                               'ststerprjeb528',
                                               'stpapiprjeb525',
                                               'stveneprjeb530',
-                                              'strattprjeb125',
                                               'caelegprjna13758'),
                                             genelist$geneID),
                               useCache = F) %>%
