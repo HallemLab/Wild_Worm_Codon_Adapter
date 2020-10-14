@@ -277,13 +277,13 @@ server <- function(input, output, session) {
     # Primary reactive element in the Analysis Mode
     analyze_sequence <- eventReactive(input$goAnalyze, {
         validate(
-            need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input geneIDs or sequences for analysis")
+            need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input stable gene/transcript IDs or sequences for analysis")
         )
         
         isolate({
             if (isTruthy(input$idtext)){
                 # If user provides input using the textbox, 
-                # assume they are provided a list of geneIDs
+                # assume they are provided a list of gene/transcript IDs
                 genelist <- input$idtext %>%
                     gsub(" ", "", ., fixed = TRUE) %>%
                     str_split(pattern = ",") %>%
@@ -325,9 +325,9 @@ server <- function(input, output, session) {
                                                           strip.white = T)) %>%
                         as_tibble() 
                     
-                    # Remove input rows where the geneID includes the word "gene" - we are assuming
+                    # Remove input rows where the geneID includes the word "gene" or "transcript" - we are assuming
                     # that such rows will be header rows.
-                    genelist <- dplyr::filter(genelist, !grepl('gene', V1))
+                    genelist <- dplyr::filter(genelist, !grepl('gene|trascript', V1))
                    
                     # Assume that an input with two columns and more than one 
                     # row is a list of geneID/cDNA pairs
