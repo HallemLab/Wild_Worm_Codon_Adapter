@@ -5,3 +5,4 @@
 rsconnect/
 .DS_Store
 *.dcf
+*.gitignore
