@@ -40,7 +40,7 @@ Cleaning and data wrangling for chemoreceptor gene lists; necessary prepreocessi
 
 ```{r cleanGeneLists, eval = F}
 # C. elegans ----
-temp <- c(Ce = 'Ce_chemoreceptors.csv')
+temp <- c(Ce = './Data/Ce_chemoreceptors.csv')
 genelist.Ce <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
                                          colClasses = "character", 
@@ -66,13 +66,13 @@ Ce.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
 Ce.tr.seq$cDNA <- tolower(Ce.tr.seq$cDNA)
 
 write.table(Ce.tr.seq, 
-            file = "./Ce_chemosensory_cDNA_list.csv", 
+            file = "./Data/Ce_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
 
 # S. ratti ----
-temp <- c(Sr = 'Sr_chemoreceptors.csv')
+temp <- c(Sr = './Data/Sr_chemoreceptors.csv')
 
 genelist.Sr <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
@@ -99,13 +99,13 @@ Sr.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
 Sr.tr.seq$cDNA <- tolower(Sr.tr.seq$cDNA)
 
 write.table(Sr.tr.seq, 
-            file = "./Sr_chemosensory_cDNA_list.csv", 
+            file = "./Data/Sr_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
 
 # S. venezuelensis ----
-temp <- c(Sv = 'Sv_chemoreceptors.csv')
+temp <- c(Sv = './Data/Sv_chemoreceptors.csv')
 
 genelist.Sv <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
@@ -132,7 +132,7 @@ Sv.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
 Sv.tr.seq$cDNA <- tolower(Sv.tr.seq$cDNA)
 
 write.table(Sv.tr.seq, 
-            file = "./Sv_chemosensory_cDNA_list.csv", 
+            file = "./Data/Sv_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
@@ -144,11 +144,11 @@ write.table(Sv.tr.seq,
 ## Load Genome Data  
 For each species, load data listing GC content and CAI indeces for the full list of CDS elements in genome.  
 ```{r loadGenomeData}
-temp <- c(Ss = './Ss_Codon_Usage_Report.xlsx',
-          Sr = './Sr_Codon_Usage_Report.xlsx',
-          Sp = './Sp_Codon_Usage_Report.xlsx',
-          Sv = './Sv_Codon_Usage_Report.xlsx',
-          Ce = './Ce_Codon_Usage_Report.xlsx')
+temp <- c(Ss = './Data/Ss_Codon_Usage_Report.xlsx',
+          Sr = './Data/Sr_Codon_Usage_Report.xlsx',
+          Sp = './Data/Sp_Codon_Usage_Report.xlsx',
+          Sv = './Data/Sv_Codon_Usage_Report.xlsx',
+          Ce = './Data/Ce_Codon_Usage_Report.xlsx')
 dat.genomic <- sapply(temp, read_excel, 
                       sheet = 1, 
                       skip = 3, 
@@ -236,7 +236,7 @@ species_adaptiveness_plot <- species.specific.dat.df %>%
         axis.text = element_text(size = 10),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave('CodonAdaptivenessDistributions.pdf', plot = species_adaptiveness_plot, 
+ggsave('./Plots/Codon_Adaptiveness_Distributions_by_Species.pdf', plot = species_adaptiveness_plot, 
        width = 5.5, height = 4, 
        units = "in", device = "pdf", 
        useDingbats = FALSE)
@@ -249,10 +249,10 @@ Notes re: the above plot - *C. elegans* shows overall lower codon bias compared 
 ## Load Genes-of-Interest Data  
 For gene set of interest, load data listing GC content and CAI indeces.  
 ```{r loadGoIData, message=FALSE}
-temp <- c(Ss_GoI = './Ss_Chemoreceptor_Codon_Usage_Report.xlsx',
-          Sr_GoI = './Sr_Chemoreceptor_Codon_Usage_Report.xlsx',
-          Sv_GoI = './Sv_Chemoreceptor_Codon_Usage_Report.xlsx',
-          Ce_GoI = './Ce_Chemoreceptor_Codon_Usage_Report.xlsx')
+temp <- c(Ss_GoI = './Data/Ss_Chemoreceptor_Codon_Usage_Report.xlsx',
+          Sr_GoI = './Data/Sr_Chemoreceptor_Codon_Usage_Report.xlsx',
+          Sv_GoI = './Data/Sv_Chemoreceptor_Codon_Usage_Report.xlsx',
+          Ce_GoI = './Data/Ce_Chemoreceptor_Codon_Usage_Report.xlsx')
 
 dat.Ss.GoI <- read_excel(temp[["Ss_GoI"]], 
                          sheet = 1, 
@@ -331,7 +331,7 @@ cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI, species)) +
         axis.text = element_text(size = 10),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave('ChemosensoryCodonUsagePlot.pdf', plot = cai_plot, 
+ggsave('./Plots/Chemoreceptor_Codon_Usage_Scatter_Plot.pdf', plot = cai_plot, 
        width = 11, height = 8, 
        units = "in", device = "pdf", 
        useDingbats = FALSE)
@@ -390,7 +390,7 @@ goi_species_adaptiveness_plot <- species.specific.dat.df %>%
         axis.text = element_text(size = 10),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave('ChemoreceptorVSallgene_CAIDistributions.pdf', plot = goi_species_adaptiveness_plot, 
+ggsave('./Plots/Chemoreceptor_vs_Genomic_CAI_Distributions.pdf', plot = goi_species_adaptiveness_plot, 
         width = 11, height = 8, 
        units = "in", device = "pdf", 
        useDingbats = FALSE)
