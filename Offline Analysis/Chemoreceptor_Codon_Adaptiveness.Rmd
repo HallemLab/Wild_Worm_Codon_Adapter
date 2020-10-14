@@ -30,7 +30,7 @@ suppressPackageStartupMessages({
   library(ggthemes)
   library(biomaRt)
   library(ggplot2)
-  library(ggExtra)
+  library(openxlsx)
 })
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
@@ -40,39 +40,28 @@ Cleaning and data wrangling for chemoreceptor gene lists; necessary prepreocessi
 
 ```{r cleanGeneLists, eval = F}
 # C. elegans ----
-temp <- c(Ce = './Data/Ce_chemoreceptors.csv')
+temp <- c(Ce = './Data/Chemoreceptors/Ce_chemoreceptors.csv')
 genelist.Ce <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
                                          colClasses = "character", 
                                          strip.white = T)) %>%
   as_tibble() 
 
-## For C. elegans, match wormbase gene sequence name to the wbsp transcript id, 
+## For C. elegans, match wormbase gene sequence name to the wbps geneID, 
+## wbps transcriptID, 
 ## and pull the cDNA sequence
-Ce.tr.seq <- getBM(attributes=c('wormbase_gseqname', 'wbps_transcript_id', 'cdna'),
-                   # grab the cDNA sequences for the given genes from WormBase Parasite
-                   mart = useMart(biomart="parasite_mart",
-                                  dataset = "wbps_gene",
-                                  host="https://parasite.wormbase.org",
-                                  port = 443),
-                   filters = c('species_id_1010',
-                               'wormbase_gseqname'),
-                   values = list('caelegprjna13758',
-                                 genelist.Ce$Transcript_ID),
-                   useCache = F) %>%
-  as_tibble() %>%
-  #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wormbase_gseqname, transcriptID = wbps_transcript_id, cDNA = cdna)
-Ce.tr.seq$cDNA <- tolower(Ce.tr.seq$cDNA)
-
+Ce.tr.seq <- fetch_cDNAseq(species = 'caelegprjna13758',
+                           inputIDs = genelist.Ce$Transcript_ID,
+                           inputFilter = 'wormbase_gseqname')
+  
 write.table(Ce.tr.seq, 
-            file = "./Data/Ce_chemosensory_cDNA_list.csv", 
+            file = "./Data/Chemoreceptors/Ce_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
 
 # S. stercoralis ----
-temp <- c(Ss = './Data/Ss_chemoreceptors.csv')
+temp <- c(Ss = './Data/Chemoreceptors/Ss_chemoreceptors.csv')
 
 genelist.Ss <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
@@ -80,33 +69,22 @@ genelist.Ss <- suppressWarnings(read.csv(temp,
                                          strip.white = T)) %>%
   as_tibble() 
 
-## For stercoralis, match wormbase gene sequence name to the wbsp transcript id, 
+## For stercoralis, match wormbase gene sequence name to the wbps geneID, 
+## wbps transcriptID 
 ## and pull the cDNA sequence
-Ss.tr.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
-                   # grab the cDNA sequences for the given genes from WormBase Parasite
-                   mart = useMart(biomart="parasite_mart",
-                                  dataset = "wbps_gene",
-                                  host="https://parasite.wormbase.org",
-                                  port = 443),
-                   filters = c('species_id_1010',
-                               'wbps_transcript_id'),
-                   values = list('ststerprjeb528',
-                                 genelist.Ss$Transcript_ID),
-                   useCache = T) %>%
-  as_tibble() %>%
-  #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)
-Ss.tr.seq$cDNA <- tolower(Ss.tr.seq$cDNA)
+Ss.tr.seq <- fetch_cDNAseq(species = 'ststerprjeb528',
+                           inputIDs = genelist.Ss$Transcript_ID,
+                           inputFilter = 'wbps_transcript_id')
 
 write.table(Ss.tr.seq, 
-            file = "./Data/Ss_chemosensory_cDNA_list.csv", 
+            file = "./Data/Chemoreceptors/Ss_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
 
 
 # S. ratti ----
-temp <- c(Sr = './Data/Sr_chemoreceptors.csv')
+temp <- c(Sr = './Data/Chemoreceptors/Sr_chemoreceptors.csv')
 
 genelist.Sr <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
@@ -114,32 +92,21 @@ genelist.Sr <- suppressWarnings(read.csv(temp,
                                          strip.white = T)) %>%
   as_tibble() 
 
-## For ratti, match wormbase gene sequence name to the wbsp transcript id, 
+## For ratti, match wormbase gene sequence name to the wbps geneID, 
+## wbps transcriptID 
 ## and pull the cDNA sequence
-Sr.tr.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
-                   # grab the cDNA sequences for the given genes from WormBase Parasite
-                   mart = useMart(biomart="parasite_mart",
-                                  dataset = "wbps_gene",
-                                  host="https://parasite.wormbase.org",
-                                  port = 443),
-                   filters = c('species_id_1010',
-                               'wbps_transcript_id'),
-                   values = list('strattprjeb125',
-                                 genelist.Sr$Transcript_ID),
-                   useCache = T) %>%
-  as_tibble() %>%
-  #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)
-Sr.tr.seq$cDNA <- tolower(Sr.tr.seq$cDNA)
-
+Sr.tr.seq <- fetch_cDNAseq(species = 'strattprjeb125',
+                           inputIDs = genelist.Sr$Transcript_ID,
+                           inputFilter = 'wbps_transcript_id')
+  
 write.table(Sr.tr.seq, 
-            file = "./Data/Sr_chemosensory_cDNA_list.csv", 
+            file = "./Data/Chemoreceptors/Sr_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
 
 # S. venezuelensis ----
-temp <- c(Sv = './Data/Sv_chemoreceptors.csv')
+temp <- c(Sv = './Data/Chemoreceptors/Sv_chemoreceptors.csv')
 
 genelist.Sv <- suppressWarnings(read.csv(temp, 
                                          header = TRUE, 
@@ -147,26 +114,15 @@ genelist.Sv <- suppressWarnings(read.csv(temp,
                                          strip.white = T)) %>%
   as_tibble() 
 
-## For venezuelnsis, match wormbase gene sequence name to the wbsp transcript id,
+## For venezuelnsis, match wormbase gene sequence name to the 
+## wbps geneID, wbps transcriptID,
 ##  and pull the cDNA sequence
-Sv.tr.seq <- getBM(attributes=c('wbps_transcript_id', 'wbps_gene_id','cdna'),
-                   # grab the cDNA sequences for the given genes from WormBase Parasite
-                   mart = useMart(biomart="parasite_mart",
-                                  dataset = "wbps_gene",
-                                  host="https://parasite.wormbase.org",
-                                  port = 443),
-                   filters = c('species_id_1010',
-                               'wbps_transcript_id'),
-                   values = list('stveneprjeb530',
-                                 genelist.Sv$Transcript_ID),
-                   useCache = T) %>%
-  as_tibble() %>%
-  #we need to rename the columns retreived from biomart
-  dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)
-Sv.tr.seq$cDNA <- tolower(Sv.tr.seq$cDNA)
+Sv.tr.seq <- fetch_cDNAseq(species = 'stveneprjeb530',
+                           inputIDs = genelist.Sv$Transcript_ID,
+                           inputFilter = 'wbps_transcript_id')
 
 write.table(Sv.tr.seq, 
-            file = "./Data/Sv_chemosensory_cDNA_list.csv", 
+            file = "./Data/Chemoreceptors/Sv_chemosensory_cDNA_list.csv", 
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
@@ -176,39 +132,68 @@ write.table(Sv.tr.seq,
 # Analysis/Results   
 
 ## Load Genome Data  
-For each species, load data listing GC content and CAI indeces for the full list of CDS elements in genome.  
-```{r loadGenomeData}
-temp <- c(Ss = './Data/Ss_Codon_Usage_Report.xlsx',
-          Sr = './Data/Sr_Codon_Usage_Report.xlsx',
-          Sp = './Data/Sp_Codon_Usage_Report.xlsx',
-          Sv = './Data/Sv_Codon_Usage_Report.xlsx',
-          Ce = './Data/Ce_Codon_Usage_Report.xlsx')
+For each species, load data listing GC content and CAI indeces for the full list of CDS elements in genome. The full list contains transcript level information. In cases where there are multiple transcripts per gene, only use CAI values from the longest transcript. Save a new copy of the data. 
+```{r loadGenomeData, message=FALSE, include=FALSE}
+temp <- c(Ss = './Data/Genomic/Ss_Codon_Usage_Report.xlsx',
+          Sr = './Data/Genomic/Sr_Codon_Usage_Report.xlsx',
+          Sp = './Data/Genomic/Sp_Codon_Usage_Report.xlsx',
+          Sv = './Data/Genomic/Sv_Codon_Usage_Report.xlsx',
+          Ce = './Data/Genomic/Ce_Codon_Usage_Report.xlsx')
 dat.genomic <- sapply(temp, read_excel, 
                       sheet = 1, 
                       skip = 3, 
                       col_names = T, 
                       simplify = F, 
                       USE.NAMES = T)
+# This data contains transcript level information. In cases where there are 
+# multiple transcripts per gene, need to only include 
+# values from the longest transcript.
+dat.genomic.cleaned <- lapply(dat.genomic, function(x){
+  x %>%
+    dplyr::rename(transcriptID = geneID) %>%
+    dplyr::mutate(geneID = str_remove_all(transcriptID, "\\.[0-9]$")) %>%
+    dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$")) %>%
+    dplyr::group_by(geneID) %>%
+    dplyr::slice_max(n = 1, order_by = str_length(`cDNA sequence`), 
+            with_ties = FALSE) %>%
+    dplyr::relocate(geneID, .before = everything())
+  
+})
 
-dat.genomic.df <- dat.genomic %>%
+# Save cleaned versions of the genomic datasets
+suppressMessages(lapply(names(dat.genomic.cleaned), function(x){
+  y <- dat.genomic.cleaned[[x]]
+  write.xlsx(y, 
+            file = paste0("./Data/Genomic/", x,"_Genomic_CAI_Table.xlsx")
+            )
+  
+}))
+
+dat.genomic.df <- dat.genomic.cleaned %>%
   map("geneID") %>%
   unlist() %>%
   as_tibble_col(column_name = "geneID") %>%
-  group_by
+  group_by(geneID)
 
-dat.genomic.df <- dat.genomic %>%
+dat.genomic.df <- dat.genomic.cleaned %>%
+  map("transcriptID") %>%
+  unlist() %>%
+  as_tibble_col(column_name = "transcriptID") %>%
+  add_column(dat.genomic.df, .)
+
+dat.genomic.df <- dat.genomic.cleaned %>%
   map("Sr_CAI") %>%
   unlist() %>%
   as_tibble_col(column_name = "Sr_CAI") %>%
   add_column(dat.genomic.df, .)
 
-dat.genomic.df <- dat.genomic %>%
+dat.genomic.df <- dat.genomic.cleaned %>%
   map("Ce_CAI") %>%
   unlist() %>%
   as_tibble_col(column_name = "Ce_CAI") %>%
   add_column(dat.genomic.df, .)
 
-dat.genomic.df <- dat.genomic %>%
+dat.genomic.df <- dat.genomic.cleaned %>%
   map("GC") %>%
   unlist() %>%
   as_tibble_col(column_name = "GC") %>%
@@ -219,11 +204,11 @@ dat.genomic.df <- dat.genomic %>%
 # the group
 dat.genomic.df <- dat.genomic.df %>%
   dplyr::mutate(species = case_when(
-    geneID %in% dat.genomic$Ss$geneID ~ 'Ss',
-    geneID %in% dat.genomic$Sr$geneID ~ 'Sr',
-    geneID %in% dat.genomic$Sp$geneID ~ 'Sp',
-    geneID %in% dat.genomic$Sv$geneID ~ 'Sv',
-    geneID %in% dat.genomic$Ce$geneID ~ 'Ce',
+    transcriptID %in% dat.genomic$Ss$geneID ~ 'Ss',
+    transcriptID %in% dat.genomic$Sr$geneID ~ 'Sr',
+    transcriptID %in% dat.genomic$Sp$geneID ~ 'Sp',
+    transcriptID %in% dat.genomic$Sv$geneID ~ 'Sv',
+    transcriptID %in% dat.genomic$Ce$geneID ~ 'Ce',
   ))
 dat.genomic.df <- group_by(dat.genomic.df, species)
 
@@ -239,7 +224,8 @@ species.specific.dat.df <- dat.genomic.df %>%
     species == 'Ce' ~ Ce_CAI,
     species != 'Ce' ~ Sr_CAI
   )) %>%
-  dplyr:: select(geneID, species_CAI, species)
+  dplyr:: select(geneID, species_CAI, species) %>%
+  group_by(species)
   
 
 species_adaptiveness_plot <- species.specific.dat.df %>%
@@ -283,10 +269,10 @@ Notes re: the above plot - *C. elegans* shows overall lower codon bias compared 
 ## Load Genes-of-Interest Data  
 For gene set of interest, load data listing GC content and CAI indeces.  
 ```{r loadGoIData, message=FALSE}
-temp <- c(Ss_GoI = './Data/Ss_Chemoreceptor_Codon_Usage_Report.xlsx',
-          Sr_GoI = './Data/Sr_Chemoreceptor_Codon_Usage_Report.xlsx',
-          Sv_GoI = './Data/Sv_Chemoreceptor_Codon_Usage_Report.xlsx',
-          Ce_GoI = './Data/Ce_Chemoreceptor_Codon_Usage_Report.xlsx')
+temp <- c(Ss_GoI = './Data/Chemoreceptors/Ss_Chemoreceptor_Codon_Usage_Report.xlsx',
+          Sr_GoI = './Data/Chemoreceptors/Sr_Chemoreceptor_Codon_Usage_Report.xlsx',
+          Sv_GoI = './Data/Chemoreceptors/Sv_Chemoreceptor_Codon_Usage_Report.xlsx',
+          Ce_GoI = './Data/Chemoreceptors/Ce_Chemoreceptor_Codon_Usage_Report.xlsx')
 
 dat.Ss.GoI <- read_excel(temp[["Ss_GoI"]], 
                          sheet = 1, 
@@ -385,7 +371,8 @@ species.specific.GoI.dat.df <- dat.GoI.df %>%
     species == 'Ce' ~ Ce_CAI,
     species != 'Ce' ~ Sr_CAI
   )) %>%
-  dplyr:: select(geneID, species_CAI, species)
+  dplyr:: select(geneID, species_CAI, species) %>%
+  group_by(species)
 
 goi_species_adaptiveness_plot <- species.specific.dat.df %>%
   ggplot(aes(x = species_CAI, y = after_stat(ndensity), color = species)) +

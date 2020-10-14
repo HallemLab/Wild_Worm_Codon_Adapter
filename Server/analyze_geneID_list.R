@@ -1,6 +1,6 @@
 # This script includes the the primary computation for analyzing a list of geneIDs
 # for the Strongyloides Codon Adapter App in Analyze Sequences Mode
-# If user has provided a list of geneIDs/transcripIDs, pull cDNA sequence from BioMart and analyse 
+# If user has provided a list of geneIDs/transcriptIDs, pull cDNA sequence from BioMart and analyse 
 # GC content and CAI values for each gene using calls to `calc_sequence_stats.R`.
 # 
 
