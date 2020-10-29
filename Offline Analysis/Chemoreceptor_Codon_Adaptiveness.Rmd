@@ -36,6 +36,7 @@ suppressPackageStartupMessages({
   library(cowplot)
   source('KSUtils.R')
   source('PTUtils.R')
+  source('fetch_cDNAseq.R')
 })
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
@@ -131,6 +132,29 @@ write.table(Sv.tr.seq,
             sep = ",", 
             col.names = FALSE, 
             row.names = FALSE)
+
+# S. papillosus ----
+temp <- c(Sp = './Data/Chemoreceptors/Sp_chemoreceptors.csv')
+
+genelist.Sp <- suppressWarnings(read.csv(temp, 
+                                         header = TRUE, 
+                                         colClasses = "character", 
+                                         strip.white = T)) %>%
+  as_tibble() 
+
+## For papillosus, match wormbase gene sequence name to the 
+## wbps geneID
+##  and pull the cDNA sequence
+Sp.tr.seq <- fetch_cDNAseq(species = 'stpapiprjeb525',
+                           inputIDs = genelist.Sp$Gene.names,
+                           inputFilter = 'wbps_gene_id')
+
+write.table(Sp.tr.seq, 
+            file = "./Data/Chemoreceptors/Sp_chemosensory_cDNA_list.csv", 
+            sep = ",", 
+            col.names = FALSE, 
+            row.names = FALSE)
+
 ```
 
 
@@ -266,6 +290,7 @@ species.specific.dat.df <- dat.genomic.df %>%
   dplyr:: select(geneID, species_CAI, species) %>%
   group_by(species)
 
+
 plot_distributions <- function(dat,
                                title,
                                xlabel,
@@ -332,6 +357,7 @@ temp <- c(
   Ss_GoI = './Data/Chemoreceptors/Ss_Chemoreceptor_Codon_Usage_Report.xlsx',
   Sr_GoI = './Data/Chemoreceptors/Sr_Chemoreceptor_Codon_Usage_Report.xlsx',
   Sv_GoI = './Data/Chemoreceptors/Sv_Chemoreceptor_Codon_Usage_Report.xlsx',
+  Sp_GoI = './Data/Chemoreceptors/Sp_Chemoreceptor_Codon_Usage_Report.xlsx',
   Ce_GoI = './Data/Chemoreceptors/Ce_Chemoreceptor_Codon_Usage_Report.xlsx')
 
 dat.Ss.GoI <- read_excel(temp[["Ss_GoI"]], 
@@ -355,6 +381,13 @@ dat.Sv.GoI <- read_excel(temp[["Sv_GoI"]],
   dplyr::select(!c(GC,`cDNA sequence`)) %>%
   dplyr::mutate(species = "Sv")
 
+dat.Sp.GoI <- read_excel(temp[["Sp_GoI"]], 
+                         sheet = 1, 
+                         skip = 3, 
+                         col_names = T) %>%
+  dplyr::select(!c(GC,`cDNA sequence`)) %>%
+  dplyr::mutate(species = "Sp")
+
 dat.Ce.GoI <- read_excel(temp[["Ce_GoI"]], 
                          sheet = 1, 
                          skip = 3, 
@@ -364,6 +397,7 @@ dat.Ce.GoI <- read_excel(temp[["Ce_GoI"]],
 
 dat.GoI.df <- full_join(dat.Ss.GoI, dat.Sr.GoI, by = NULL) %>%
   full_join(dat.Sv.GoI, by = NULL) %>%
+  full_join(dat.Sp.GoI, by = NULL) %>%
   full_join(dat.Ce.GoI, by = NULL) %>%
   group_by(species)
 
@@ -377,6 +411,8 @@ species.specific.GoI.dat.df <- dat.GoI.df %>%
   dplyr:: select(geneID, species_CAI, species) %>%
   group_by(species)
 
+species.specific.GoI.dat.df$geneID <- str_remove_all(species.specific.GoI.dat.df$geneID, "\\.[0-9]$")
+species.specific.GoI.dat.df$geneID <- str_remove_all(species.specific.GoI.dat.df$geneID, "[a-z]$")
 ```
 
 ## Plot Genes-of-Interest CAI values relative to Genomic data  
@@ -393,9 +429,8 @@ cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI, species)) +
   geom_point(dat.GoI.df, mapping = aes(Sr_CAI, Ce_CAI, color = species),
              show.legend = F,
              shape = 1, size = 2, alpha = 1) +
-  scale_color_manual(values = c("seagreen4", 
-                                "coral4", 
-                                "darkgoldenrod4", 
+  scale_color_manual(values = c("seagreen4", "steelblue4", 
+                                "coral4", "darkgoldenrod4", 
                                 "darkorchid4"))+
   
   geom_hline(yintercept = 0.5, color = "grey", linetype = 3) +
@@ -619,12 +654,12 @@ ks.pt.result.list <- lapply(GoI.dat.split.keys$species, function(x){
   display_dist_compare(dcomp.ks, 
                        pthresh, 
                        paste(x, 
-                             "- permutation test, GoI - genomic distribution"))
+                             "- GoI vs genomic distribution"))
 })
 names(ks.pt.result.list) <-GoI.dat.split.keys$species
 
 plot_grid(plotlist = ks.pt.result.list, 
-          labels = c("A", "B", "C", "D"), 
+          labels = c("A", "B", "C", "D", "E"), 
           label_size = 12)
 
 ```
@@ -640,12 +675,12 @@ mean.pt.result.list <- lapply(GoI.dat.split.keys$species, function(x){
   display_dist_compare_mean(dcomp.mean, 
                             pthresh, 
                             paste(x, 
-                                  "- permutation test, GoI - genomic mean CAI"))
+                                  "- GoI vs genomic mean CAI"))
 })
 names(mean.pt.result.list) <-GoI.dat.split.keys$species
 
 plot_grid(plotlist = mean.pt.result.list, 
-          labels = c("A", "B", "C", "D"), 
+          labels = c("A", "B", "C", "D", "E"), 
           label_size = 12)
 
 ```
@@ -689,12 +724,12 @@ ks.mean.pt.result.list <- lapply(GoI.dat.split.keys$species, function(x){
   display_dist_compare(dcomp.ks, 
                        pthresh, 
                        paste(x, 
-              "- KS permut. test, GoI - genomic (mean-centered)"))
+              "- KS - GoI vs genomic (mean-centered)"))
 })
 names(ks.mean.pt.result.list) <-GoI.dat.split.keys$species
 
 plot_grid(plotlist = ks.mean.pt.result.list, 
-          labels = c("A", "B", "C", "D"), 
+          labels = c("A", "B", "C", "D", "E"), 
           label_size = 12)
 ```
 Taken together, the three permutation tests suggest that in the case of *C. elegans*, chemoreceptor genes show signifcantly lower mean CAI than the entire genome, and that in addition to a shift in the mean, the distribution of values is narrower (the later perhaps what one might expect in a situation where we are looking at closely related genes). For the *Strongyloides spp.*, we find that although the overall distributions are statistically different (see: permutation tests of the KS-statistics), once we test individual components, we find that there are not significant differences in mean values and that the mean-centered distributions are not significantly different. This suggests to me that the overall change noted by the full KS test is due to the combination of smaller shifts in mean and distribution.  
