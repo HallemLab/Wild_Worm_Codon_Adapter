@@ -328,10 +328,10 @@ server <- function(input, output, session) {
                     # Remove input rows where the geneID includes the word "gene" or "transcript" - we are assuming
                     # that such rows will be header rows.
                     genelist <- dplyr::filter(genelist, !grepl('gene|transcript', V1))
-                   
+                   browser()
                     # Assume that an input with two columns and more than one 
                     # row is a list of geneID/cDNA pairs
-                    if (ncol(genelist) == 2 & nrow(genelist) > 1) {
+                    if (ncol(genelist) > 1 & nrow(genelist) > 1) {
                         genelist <- genelist %>%
                             dplyr::rename(geneID = V1, cDNA = V2)
                         info.gene.seq <- analyze_cDNA_list(genelist,vals)
