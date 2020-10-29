@@ -1,6 +1,6 @@
 # This script includes the the primary computation for analyzing a list of geneIDs
 # for the Strongyloides Codon Adapter App in Analyze Sequences Mode
-# If user has provided a list of geneIDs/transcripIDs, pull cDNA sequence from BioMart and analyse 
+# If user has provided a list of geneIDs/transcriptIDs, pull cDNA sequence from BioMart and analyse 
 # GC content and CAI values for each gene using calls to `calc_sequence_stats.R`.
 # 
 
@@ -17,7 +17,7 @@ analyze_geneID_list <- function(genelist, vals){
         if (any(grepl('SSTP|SVE|SPAL|WB', genelist$geneID))) {
             Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'cdna'),
                               # grab the cDNA sequences for the given genes from WormBase Parasite
-                              mart = useMart(biomart="parasite_mart", 
+                              mart = useMart(biomart="parasite_mart_15_merged", 
                                              dataset = "wbps_gene", 
                                              host="https://parasite.wormbase.org", 
                                              port = 443),
@@ -27,7 +27,6 @@ analyze_geneID_list <- function(genelist, vals){
                                               'ststerprjeb528',
                                               'stpapiprjeb525',
                                               'stveneprjeb530',
-                                              'strattprjeb125',
                                               'caelegprjna13758'),
                                             genelist$geneID),
                               useCache = F) %>%
@@ -41,7 +40,7 @@ analyze_geneID_list <- function(genelist, vals){
         if (any(grepl('SRAE', genelist$geneID))) {
             Sr.seq <- getBM(attributes=c('external_gene_id', 'cdna'),
                             # grab the cDNA sequences for the given genes from WormBase Parasite
-                            mart = useMart(biomart="parasite_mart", 
+                            mart = useMart(biomart="parasite_mart_15_merged", 
                                            dataset = "wbps_gene", 
                                            host="https://parasite.wormbase.org", 
                                            port = 443),
@@ -59,7 +58,7 @@ analyze_geneID_list <- function(genelist, vals){
         # Check all items in geneList to see if they are transcript ids
         transcript.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
                                 # grab the cDNA sequences for the given genes from WormBase Parasite
-                                mart = useMart(biomart="parasite_mart", 
+                                mart = useMart(biomart="parasite_mart_15_merged", 
                                                dataset = "wbps_gene", 
                                                host="https://parasite.wormbase.org", 
                                                port = 443),
@@ -76,6 +75,8 @@ analyze_geneID_list <- function(genelist, vals){
             #we need to rename the columns retreived from biomart
             dplyr::rename(geneID = wbps_transcript_id, cDNA = cdna)
         transcript.seq$cDNA <- tolower(transcript.seq$cDNA)
+        if (nrow(transcript.seq) == 0) {
+            transcript.seq <- NULL}
         
         setProgress(0.6)
         # If any of the items in genelist contain the string `Ce-`, remove that string and search as gene names
@@ -84,7 +85,7 @@ analyze_geneID_list <- function(genelist, vals){
                 gsub("^Ce-", "",.)
             Ce.seq <- getBM(attributes=c('external_gene_id', 'cdna'),
                             # grab the cDNA sequences for the given genes from WormBase Parasite
-                            mart = useMart(biomart="parasite_mart", 
+                            mart = useMart(biomart="parasite_mart_15_merged", 
                                            dataset = "wbps_gene", 
                                            host="https://parasite.wormbase.org", 
                                            port = 443),
