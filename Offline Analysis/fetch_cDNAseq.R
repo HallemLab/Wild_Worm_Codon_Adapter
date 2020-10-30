@@ -5,7 +5,7 @@ fetch_cDNAseq <- function(species = NULL, inputIDs = NULL, inputFilter = NULL){
     
     dat <- getBM(attributes=c('wbps_gene_id', 'wbps_transcript_id', 'cdna'),
           # grab the cDNA sequences for the given genes from WormBase Parasite
-          mart = useMart(biomart="parasite_mart_15_merged",
+          mart = useMart(biomart="parasite_mart",
                          dataset = "wbps_gene",
                          host="https://parasite.wormbase.org",
                          port = 443),

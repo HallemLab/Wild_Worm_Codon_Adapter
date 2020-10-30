@@ -17,7 +17,7 @@ analyze_geneID_list <- function(genelist, vals){
         if (any(grepl('SSTP|SVE|SPAL|WB', genelist$geneID))) {
             Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'cdna'),
                               # grab the cDNA sequences for the given genes from WormBase Parasite
-                              mart = useMart(biomart="parasite_mart_15_merged", 
+                              mart = useMart(biomart="parasite_mart", 
                                              dataset = "wbps_gene", 
                                              host="https://parasite.wormbase.org", 
                                              port = 443),
@@ -40,7 +40,7 @@ analyze_geneID_list <- function(genelist, vals){
         if (any(grepl('SRAE', genelist$geneID))) {
             Sr.seq <- getBM(attributes=c('external_gene_id', 'cdna'),
                             # grab the cDNA sequences for the given genes from WormBase Parasite
-                            mart = useMart(biomart="parasite_mart_15_merged", 
+                            mart = useMart(biomart="parasite_mart", 
                                            dataset = "wbps_gene", 
                                            host="https://parasite.wormbase.org", 
                                            port = 443),
@@ -58,7 +58,7 @@ analyze_geneID_list <- function(genelist, vals){
         # Check all items in geneList to see if they are transcript ids
         transcript.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
                                 # grab the cDNA sequences for the given genes from WormBase Parasite
-                                mart = useMart(biomart="parasite_mart_15_merged", 
+                                mart = useMart(biomart="parasite_mart", 
                                                dataset = "wbps_gene", 
                                                host="https://parasite.wormbase.org", 
                                                port = 443),
@@ -85,7 +85,7 @@ analyze_geneID_list <- function(genelist, vals){
                 gsub("^Ce-", "",.)
             Ce.seq <- getBM(attributes=c('external_gene_id', 'cdna'),
                             # grab the cDNA sequences for the given genes from WormBase Parasite
-                            mart = useMart(biomart="parasite_mart_15_merged", 
+                            mart = useMart(biomart="parasite_mart", 
                                            dataset = "wbps_gene", 
                                            host="https://parasite.wormbase.org", 
                                            port = 443),
