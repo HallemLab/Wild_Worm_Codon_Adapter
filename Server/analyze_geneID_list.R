@@ -99,11 +99,14 @@ analyze_geneID_list <- function(genelist, vals){
                 dplyr::rename(geneID = external_gene_id, cDNA = cdna)
             Ce.seq$cDNA <- tolower(Ce.seq$cDNA)
         }
+        validate(
+            need({isTruthy(Sspp.seq)|isTruthy(Sr.seq)|isTruthy(transcript.seq)|isTruthy(Ce.seq)}, "The call to BioMaRT did not return any records matching the submitted gene(s). \n Please check the gene lists and try again. \n Note: letters must be capitalized correctly, i.e. 'srae_' and 'CE' will produce errors.")
+        )
         
         setProgress(0.7)
         gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,transcript.seq,Ce.seq) %>%
             dplyr::left_join(genelist, . , by = "geneID")
-        
+       
         ## Calculate info each sequence (S. ratti index) ----
         temp<- lapply(gene.seq$cDNA, function (x){
             if (!is.na(x)) {
