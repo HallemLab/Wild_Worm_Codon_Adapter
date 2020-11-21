@@ -98,10 +98,10 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      
                                )
                         ),
-                        column(width = 4, 
+                        column(width = 5, 
                                uiOutput("analysisinfo")
                         ),
-                        column(width = 5,
+                        column(width = 4,
                                uiOutput("analysisplot")
                         )
                         

@@ -353,11 +353,15 @@ server <- function(input, output, session) {
         tbl<-analyze_sequence()
         info_analysis.DT <- tbl %>%
             DT::datatable(rownames = FALSE,
-                          options = list(scrollY = '400px',
+                          options = list(scrollX = TRUE,
+                                         scrollY = '400px',
                                          scrollCollapse = TRUE,
-                                         ordering = FALSE,
-                                         paging = FALSE,
-                                         dom = 'tS'))
+                                         
+                                         pageLength = 10,
+                                         lengthMenu = c("5",
+                                                        "10",
+                                                        "25",
+                                                        "50")))
         
         info_analysis.DT <- info_analysis.DT %>%
             DT::formatRound(columns = 2:4, digits = 2)
@@ -416,11 +420,11 @@ server <- function(input, output, session) {
     )
     
     # Generate and Download report
-    source("Server/excel_srv.R", local = TRUE)
+    source("Server/generate_excel_report.R", local = TRUE)
     
     # Shiny output for analysis datatable
     output$analysisinfo <- renderUI({
-        req(input$goAnalyze)
+        req(input$goAnalyze, vals$geneIDs)
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                           "Sequence Info")), 
                      status = "primary",
