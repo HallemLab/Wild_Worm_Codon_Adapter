@@ -45,7 +45,7 @@ analyze_geneID_list <- function(genelist, vals){
                                            host="https://parasite.wormbase.org", 
                                            port = 443),
                             filters = c('species_id_1010',
-                                        'external_gene_id'),
+                                        'gene_name'),
                             values = list(c('strattprjeb125'),
                                           genelist$geneID),
                             useCache = F) %>%
