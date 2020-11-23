@@ -7,4 +7,4 @@ rsconnect/
 *.dcf
 *.gitignore
 *.fa
-Offline_Analysis/
+Offline_Analysis/Exclude/
