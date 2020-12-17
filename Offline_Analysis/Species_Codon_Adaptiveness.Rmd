@@ -17,7 +17,7 @@ date: "11/19/2020"
 The purpose of this document is to examine codon usage patterns at the genome-wide level and for user-defined gene-sets-of-interest, across four *Strongyloides spp.* and *C. elegans*. 
 
 For the genes-of-interest, four groups are analyzed:  
-1) Top 10% of codon adapted genes in each genome  
+1) Top 1% of codon adapted genes in each genome  
 2) Members of the astacin gene family  
 3) Members of the SCP/TAP gene family  
 4) Chemoreceptor genes, including *C. elegans* and *Strongyloides spp.*  
@@ -52,7 +52,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 # Analysis/Results   
 
 ## Filter Genome Data  
-For each species, load data listing GC content and CAI indeces for the full list of CDS elements in genome. The full list contains transcript level information. In cases where there are multiple transcripts per gene, only use CAI values from the longest transcript. If this code is run, a new copy of the data will be saved at the end of the Markdown file. If downstream tidy version of this data is avliable or the filtered versions are avaliable as files, don't regenerate them. 
+For each species, load data listing GC content and CAI indeces for the full list of CDS elements in genome. The full list contains transcript level information. If downstream tidy version of this data is avliable or the filtered versions are avaliable as files, don't regenerate them. 
 ```{r filterGenomeData, message=FALSE}
 if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
   if (!all(file.exists(c("./Data/Genomic/Ss_Genomic_CAI_Table.xlsx",
@@ -72,22 +72,38 @@ if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
                           col_names = T, 
                           simplify = F, 
                           USE.NAMES = T)
-    # This data contains transcript level information. In cases where there are 
-    # multiple transcripts per gene, need to only include 
-    # values from the longest transcript.
+    # This data contains transcript level information. 
+    # Commented code would trim rows such that in cases where there are 
+    # multiple transcripts per gene, only  
+    # values from the longest transcript would be included.
+    # This was originally included to permit comparison to gene expression databases
+    # but is no longer required.
     dat.genomic.cleaned <- lapply(dat.genomic, function(x){
       x %>%
-        dplyr::rename(transcriptID = geneID) %>%
-        dplyr::mutate(geneID = str_remove_all(transcriptID, "\\.[0-9]$")) %>%
-        dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$")) %>%
-        dplyr::group_by(geneID) %>%
-        dplyr::slice_max(n = 1, order_by = str_length(`cDNA sequence`), 
-                         with_ties = FALSE) %>%
-        dplyr::relocate(geneID, .before = everything())
+        dplyr::mutate(transcriptID = geneID)
+        # dplyr::rename(transcriptID = geneID) %>%
+        # dplyr::mutate(geneID = str_remove_all(transcriptID, "\\.[0-9]$")) %>%
+        # dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$")) %>%
+        # dplyr::group_by(geneID) %>%
+        # dplyr::slice_max(n = 1, order_by = str_length(`cDNA sequence`), 
+        #                   with_ties = FALSE) %>%
+        #dplyr::relocate(geneID, .before = everything())
       
     })
     
+    
   }
+}
+
+# Save cleaned versions of the genomic CAI value datasets
+if (exists("dat.genomic.cleaned")) {
+  suppressMessages(lapply(names(dat.genomic.cleaned), function(x){
+    y <- dat.genomic.cleaned[[x]]
+    write.xlsx(y, 
+               file = paste0("./Data/Genomic/", x,"_Genomic_CAI_Table.xlsx")
+    )
+    
+  }))
 }
 ```
 
@@ -150,11 +166,28 @@ if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
     ))
   dat.genomic.df <- group_by(dat.genomic.df, species)
   
+  dat.genomic.df <- dat.genomic.df %>%
+    dplyr::filter(species == "Sr") %>%
+    dplyr::mutate(geneID = str_replace_all(geneID, "$","\\.1"))
+    dplyr::mutate(geneID = case_when(species == "Sr" ~ str_replace_all(geneID, "$","\\.1$"),
+                                   TRUE ~ geneID
+                                   )) 
+  
+}
+
+# Save a tidy version of the complied genomic CAI value dataset if it doesn't exist
+if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
+  write.table(dat.genomic.df, 
+              file = "./Data/Genomic/tidy_genomic_CAI.csv", 
+              sep = ",", 
+              col.names = T, 
+              row.names = FALSE)
+  
 }
 ```
 
-## Plotting Distribution of CAI Values  
-This section takes the calculated codon adaptation index values for all predicted codoning sequences, and generates a density curve for each species. Ideally, this plot could be used to benchmark the calculated CAI values against other metrics of codon bias in these species. For example, Mitreva *et al* 2006 reported effective number of codons (ENC) as a measure of gene-wise codon bias, across species. They report that "mean ENC across all sampled nemtaode species is 46.7 +/- 5.1" but that *S. stercoralis* and *S. ratti* are outliers with low ENC values (~35). Note: ENC values range from 20 for highly biased to 61 for no bias. Thus, benchmarking from Mitreva *et al* 2006, we might expect that *Strongyloides* species will have greater codon bias than *C. elegans*. Unfortunately, although they do report measuring distribution of ENC values across all transcripts for each species, they only have plots for *S. ratti*, *P. trichosuri* and *P. pacificus*.   
+## CAI: Genome-wide Distribution Plot
+This section takes the calculated codon adaptation index values for all predicted coding sequences, and generates a density curve for each species. Ideally, this plot could be used to benchmark the calculated CAI values against other metrics of codon bias in these species. For example, Mitreva *et al* 2006 reported effective number of codons (ENC) as a measure of gene-wise codon bias, across species. They report that "mean ENC across all sampled nemtaode species is 46.7 +/- 5.1" but that *S. stercoralis* and *S. ratti* are outliers with low ENC values (~35). Note: ENC values range from 20 for highly biased to 61 for no bias. Thus, benchmarking from Mitreva *et al* 2006, we might expect that *Strongyloides* species will have greater codon bias than *C. elegans*. Unfortunately, although they do report measuring distribution of ENC values across all transcripts for each species, they only have plots for *S. ratti*, *P. trichosuri* and *P. pacificus*.   
 ```{r caiDist}
 dat.genomic.df <- suppressWarnings(
   read.csv("./Data/Genomic/tidy_genomic_CAI.csv", 
@@ -171,13 +204,15 @@ species.specific.dat.df <- dat.genomic.df %>%
 
 
 plot_distributions <- function(dat,
+                               x,
                                title,
                                xlabel,
+                               caption = "",
                                ylabel = "Density (scaled to maximum of 1)",
                                xlim = c(0,1),
                                ylim = c(0,1)) {
   dat %>%
-    ggplot(aes(x = species_CAI, y = after_stat(ndensity), color = species)) +
+    ggplot(aes(x = x, y = after_stat(ndensity), color = species)) +
     geom_freqpoly(bins = 50) +
     scale_color_manual(values = c("seagreen4", "steelblue4", 
                                   "coral4", "darkgoldenrod4", 
@@ -190,8 +225,7 @@ plot_distributions <- function(dat,
          subtitle = "Data includes all predicted coding sequences",
          x = xlabel,
          y = ylabel,
-         caption = "Strongyloides species values relative to S. ratti usage rules
-       C. elegans values relative to C. elegans usage rules.") +
+         caption = caption) +
     coord_equal(xlim = xlim, ylim = ylim) +
     theme_bw() +
     theme(plot.title.position = "plot",
@@ -205,8 +239,11 @@ plot_distributions <- function(dat,
           axis.text.x = element_text(angle = 45, hjust = 1))
 }
 species_adaptiveness_plot <- plot_distributions(species.specific.dat.df,
+                                                species.specific.dat.df$species_CAI,
                                                 "Species-wide codon adaptiveness",
-                                                "Codon bias relative to \n genus coding usage rules (CAI)")
+                                                "Codon bias relative to \n genus coding usage rules (CAI)",
+                                                "Strongyloides species values relative to S. ratti usage rules
+       C. elegans values relative to C. elegans usage rules.")
 
 species_adaptiveness_plot
 ```
@@ -222,6 +259,34 @@ one.way <- kruskal.test(species_CAI ~ species, data = species.specific.dat.df)
 post.hoc <- dunn.test::dunn.test(species.specific.dat.df$species_CAI, species.specific.dat.df$species, method = "bonferroni")
 ```
 
+## GC: Genome-wide Distribution Plot
+This section takes the calculated GC content values for all predicted coding sequences, and generates a density curve for each species.
+```{r gcDist}
+
+species.specific.GC.df <- dat.genomic.df %>%
+  dplyr:: select(geneID, GC, species) %>%
+  group_by(species)
+
+
+
+species_GC_plot <- plot_distributions(species.specific.GC.df,
+                                      species.specific.GC.df$GC,
+                                      "Species-wide GC content",
+                                      "GC content")
+
+species_GC_plot
+```
+
+### Kruskal-Wallis Test with Dunn's Post tests for differences in genomic GC values across species  
+```{r genomic.GC.kwtest}
+# Kruskal-Wallis testing of genomic GC
+one.way <- kruskal.test(GC ~ species, data = species.specific.GC.df)
+
+# Posthoc Dunn tests with Bonferroni adjustment
+post.hoc <- dunn.test::dunn.test(species.specific.GC.df$GC, species.specific.GC.df$species, method = "bonferroni")
+```
+
+
 ## Analyze Codon Adaptation Index (CAI) values displayed by gene sets of interest  
 Loading Hunt *et al* 2016 Ensembl Compara database, so I can use those gene sets to select genes of interest.      
 ```{r loadEnsemblData, message=FALSE}
@@ -233,9 +298,9 @@ dat.Ensembl.IDs <- read_excel('./Data/Genomic/Hunt_Parasite_Ensembl_Compara.xlsx
   pivot_longer(-`Compara family id`,
                values_to = "geneIDs") %>%
   dplyr::select(c(`Compara family id`, geneIDs)) %>%
-  dplyr::rename(familyID = c(`Compara family id`), geneID = geneIDs) %>%
-  dplyr::mutate(geneID = str_remove_all(geneID, "\\.[0-9]$")) %>%
-  dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$"))
+  dplyr::rename(familyID = c(`Compara family id`), geneID = geneIDs)# %>%
+  #dplyr::mutate(geneID = str_remove_all(geneID, "\\.[0-9]$")) %>%
+  #dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$"))
 
 dat.Ensembl.families <- read_excel('./Data/Genomic/Hunt_Parasite_Ensembl_Compara.xlsx', 
                                    sheet = 2, 
@@ -254,6 +319,12 @@ dat.SCPTAPS <- dat.Ensembl.families %>%
   dplyr::filter(str_detect(Description, "SCP/TAP")) %>%
   left_join(dat.Ensembl.IDs, by = "familyID") %>%
   dplyr::filter(str_detect(geneID, "SVE|SPAL|SSTP|SRAE")) %>%
+  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[0-9]$"),
+                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
+                                   )) %>%
+  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[a-c]$"),
+                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
+                                   )) %>%
   left_join(dat.genomic.df, by = "geneID")%>%
   dplyr::mutate(Description = factor(Description)) %>%
   dplyr::group_by(Description, species) %>%
@@ -272,6 +343,12 @@ dat.astacin <- dat.Ensembl.families %>%
   dplyr::filter(str_detect(Description, "Astacin")) %>%
   left_join(dat.Ensembl.IDs, by = "familyID") %>%
   dplyr::filter(str_detect(geneID, "SVE|SPAL|SSTP|SRAE")) %>%
+  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[0-9]$"),
+                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
+                                   )) %>%
+  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[a-c]$"),
+                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
+                                   )) %>%
   left_join(dat.genomic.df, by = "geneID")%>%
   dplyr::mutate(Description = factor(Description)) %>%
   dplyr::group_by(Description, species) %>%
@@ -333,21 +410,35 @@ dat.chemoR$geneID <- str_remove_all(dat.chemoR$geneID, "\\.[0-9]$")
 dat.chemoR$geneID <- str_remove_all(dat.chemoR$geneID, "[a-z]$")
 ```
 
-### Pull Top 10% of Codon Adapted Genes  
-Take genome-wide CAI values, and for each species determine what the top 10% of codon adapted genes are. Will plot these relative to identified gene sets/families of interest.  
+### Pull Top 1% of Codon Adapted Genes  
+Take genome-wide CAI values, and for each species determine what the top 1% of codon adapted genes are. Will plot these relative to identified gene sets/families of interest.  
 
-```{r pullTopTen}
-dat.topTen <- dat.genomic.df %>%
+```{r pullTopOne}
+dat.TopOne <- dat.genomic.df %>%
   dplyr::filter(species != "Ce") %>%
   dplyr::select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(Description = factor("Top10")) %>%
+  dplyr::mutate(Description = factor("Top1")) %>%
   dplyr::group_by(Description, species) %>%
-  dplyr::slice_max(order_by = Sr_CAI, prop = .1) %>%
+  dplyr::slice_max(order_by = Sr_CAI, prop = .01) %>%
   dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
 
 ```
 
-### Plot Chemoreceptors, Top10, Astacins, and SCP/TAP CAI values  
+### Randomly Sample of from full list of genomic CAI values  
+Take genome-wide CAI values, and take a random sample that's the approximate size of the other datasets. Will plot these relative to identified gene sets/families of interest.  
+
+```{r pullCAIsample}
+dat.randomSample <- dat.genomic.df %>%
+  dplyr::filter(species != "Ce") %>%
+  dplyr::select(geneID, Sr_CAI, species) %>%
+  dplyr::mutate(Description = factor("RandomSample")) %>%
+  dplyr::group_by(Description, species) %>%
+  dplyr::sample_frac(.01) %>%
+  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
+
+```
+
+### Plot Chemoreceptors, Top1, Astacins, and SCP/TAP CAI values  
 Generate a series of plots (separated by species ID) where for each gene grouping the codon adaptation index relative to highly expressed *S. ratti* transcripts is plotted.    
 ```{r plotGoIData}
 
@@ -362,8 +453,10 @@ dat.genome <- dat.genomic.df %>%
 
 tbl <- dat.SCPTAPS %>%
   dplyr::select(Description, geneID, Sr_CAI, species) %>%
-  rbind(.,dat.chemoR, dat.topTen, dat.astacin, dat.genome) %>%
-  dplyr::mutate(Description = factor(Description, levels = c("Genome-wide", "Astacin", "SCP/TAP", "Chemoreceptor", "Top10")))
+  rbind(.,dat.chemoR, dat.TopOne, dat.astacin, dat.randomSample, dat.genome) %>%
+  dplyr::mutate(Description = factor(Description, levels = c("Genome-wide","RandomSample", "Astacin", "SCP/TAP", "Chemoreceptor", "Top1")))
+
+tbl <- tbl[complete.cases(tbl),]
 
 cai_plot <- ggplot(tbl, aes(Description,Sr_CAI, species)) +
   #geom_violin(mapping = aes(color = Description), trim = FALSE, alpha = 0.7) +
@@ -377,7 +470,7 @@ cai_plot <- ggplot(tbl, aes(Description,Sr_CAI, species)) +
   scale_color_hue (l=40)+
   facet_wrap(~species) +
   labs(title = "Species-specific codon adaptiveness",
-       subtitle = "Genome-wide, SCP/TAP genes & Astacins (i.e. parasitism-associated genes), Chemoreceptors genes, Top 10% of codon adapted genes",
+       subtitle = "Random sample of 1% of genomic values, SCP/TAP genes & Astacins (i.e. parasitism-associated genes), Chemoreceptors genes, Top 1% of codon adapted genes",
        x = "Gene Set Identity",
        y = "Codon Bias relative to \n S. ratti usage rules (CAI)") +
   theme_bw() +
@@ -394,20 +487,32 @@ cai_plot <- ggplot(tbl, aes(Description,Sr_CAI, species)) +
 ```
 
 #### CAI values across gene families
-Gene groups plotted here include chemoreceptors, top 10% of codon adapted genes in genome, and members of the *Strongyloides* genome project families.  
+Gene groups plotted here include chemoreceptors, top 1% of codon adapted genes in genome, and members of the *Strongyloides* genome project families.  
 ``` {r}
 cai_plot
 
 ```
 
-## Functional Enrichment Analysis of Top10 Genes
-Take lists of the top 10% of codon adapted genes in each species, and run either GO analysis or GSEA to see if these genes are enriched for anything interesting.
+<!-- #### Kruskal-Wallis Test with Dunn's Post tests for differences in CAI values across species   -->
+<!-- ```{r genomic.cai.kwtest} -->
+<!-- # Kruskal-Wallis testing of CAI values in functional groups  -->
+<!-- KW_species <-  lapply(levels(tbl$species), function(y){ -->
+<!--    cai_sub <- dplyr::filter(tbl, species == y) -->
+<!--    one.way <- kruskal.test(Sr_CAI ~ Description, data = cai_sub) -->
+<!--    post.hoc <- FSA::dunnTest(Sr_CAI ~ Description,  -->
+<!--                              data = cai_sub,  -->
+<!--                              method = "bonferroni") -->
 
-```{r functionalEnrichmentTop10, include=FALSE}
+<!-- }) -->
 
+<!-- ``` -->
 
+## Functional Enrichment Analysis of Top1 Genes
+Take lists of the top 1% of codon adapted genes in each species, and run either GO analysis or GSEA to see if these genes are enriched for anything interesting.
+
+```{r functionalEnrichmentTop1}
 # Carry out GO enrichment of discarded gene set using gProfiler2 ----
-top10.geneID <- dat.topTen %>%
+Top1.geneID <- dat.TopOne %>%
   ungroup() %>%
   group_by(species) %>%
   dplyr::group_map(~ {
@@ -416,31 +521,31 @@ top10.geneID <- dat.topTen %>%
       unique() 
   }, .keep = TRUE)
 
-names(top10.geneID) <- levels(dat.topTen$species)
+names(Top1.geneID) <- levels(dat.TopOne$species)
 
-gost.results <- lapply(names(top10.geneID), function(y){
+gost.results <- lapply(names(Top1.geneID), function(y){
   organism = case_when (y == "Ss" ~ "ststerprjeb528",
                         y == "Sr" ~ "strattprjeb125",
                         y == "Sp" ~ "stpapiprjeb525",
                         y == "Sv" ~ "stveneprjeb530")
-  gost.res <- gost(top10.geneID[[y]]$geneID,
+  gost.res <- gost(Top1.geneID[[y]]$geneID,
                    organism = organism, 
                    correction_method = "fdr")
 })
-names(gost.results) <- names(top10.geneID)
+names(gost.results) <- names(Top1.geneID)
 
 # Find GO terms that are enriched with p-values equal or small than a threshold.
-enriched.terms <- lapply(names(top10.geneID), function(y){
+enriched.terms <- lapply(names(Top1.geneID), function(y){
   gost.results[[y]]$result %>%
     as_tibble() %>%
     dplyr::select(term_id, p_value)
 }) 
-names(enriched.terms) <- names(top10.geneID)
+names(enriched.terms) <- names(Top1.geneID)
 
-# Select highly enriched GO terms that are common to all species
+# Select enriched GO terms that are common to all species
 highTerms.overlap <- enriched.terms %>%
   bind_rows(.id = "species") %>%
-  dplyr::filter(p_value <= 1.0e-8) %>%
+  dplyr::filter(p_value <= 0.01) %>%
   group_by(term_id) %>%
   summarize(n= n()) %>%
   dplyr::filter(n >= 4)
@@ -468,7 +573,7 @@ gostplot(gost.results$Sp, interactive = T, capped = T)
 gostplot(gost.results$Sv, interactive = T, capped = T) 
 ```
 
-I found GO terms that are commonly enriched in all *Strongyloides* species tested, with a p-value of at least 1e-8. This is a subset of 10 GO terms.  
+I found GO terms that are commonly enriched in all *Strongyloides* species tested.  
 ```{r}
 dplyr::filter(gost.results$Ss$result, term_id %in% highTerms.overlap$term_id) %>%
   dplyr::select(term_id, term_name)
@@ -476,28 +581,7 @@ dplyr::filter(gost.results$Ss$result, term_id %in% highTerms.overlap$term_id) %>
 
 ## Save Files and Plots  
 Saving data and plots generated by the above code.  
-```{r saveFiles, include=FALSE, echo = TRUE}
-
-# Save cleaned versions of the genomic CAI value datasets
-if (exists("dat.genomic.cleaned")) {
-  suppressMessages(lapply(names(dat.genomic.cleaned), function(x){
-    y <- dat.genomic.cleaned[[x]]
-    write.xlsx(y, 
-               file = paste0("./Data/Genomic/", x,"_Genomic_CAI_Table.xlsx")
-    )
-    
-  }))
-}
-
-# Save a tidy version of the complied genomic CAI value dataset if it doesn't exist
-if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
-  write.table(dat.genomic.df, 
-              file = "./Data/Genomic/tidy_genomic_CAI.csv", 
-              sep = ",", 
-              col.names = T, 
-              row.names = FALSE)
-  
-}
+```{r saveFiles, include=TRUE, echo = TRUE}
 
 # Save distribution plot of codon adaptivness by species
 ggsave('./Plots/Codon_Adaptiveness_Distributions_by_Species.pdf', 
@@ -506,56 +590,72 @@ ggsave('./Plots/Codon_Adaptiveness_Distributions_by_Species.pdf',
        units = "in", device = "pdf", 
        useDingbats = FALSE)
 
-# Save .csv lists of 10% of codon adapted genes per species
-top10.geneID <- dat.topTen %>%
+# Save distribution plot of GC content by species
+ggsave('./Plots/GC_Distributions_by_Species.pdf', 
+       plot = species_GC_plot, 
+       width = 5.5, height = 4, 
+       units = "in", device = "pdf", 
+       useDingbats = FALSE)
+
+# Save .csv lists of CAI values for functional datasets
+lapply(levels(tbl$species), function(y){
+   dplyr::filter(tbl, species == y) %>%
+     pivot_wider(names_from = Description,
+                 values_from = Sr_CAI) %>%
+     
+   write.csv(paste0("./Data/",y,"_FunctionGroupCAI.csv"))
+  
+})
+# Save .csv lists of 1% of codon adapted genes per species
+Top1.geneID <- dat.TopOne %>%
   ungroup() %>%
   group_by(species) %>%
   dplyr::group_map(~ {
     geneIDs <- .x %>%
       dplyr::select(geneID) %>%
-      write.csv(paste0("./Data/Genomic/",.y$species,"_Top10_CAI.csv"))
+      write.csv(paste0("./Data/Genomic/",.y$species,"_Top1_CAI.csv"))
   }, .keep = TRUE)
 
 
 # Save plot of codon adaptivness in gene sets of interest
-ggsave('./Plots/Top10_ChemoR_SGPF_CAI_Plot.pdf', plot = cai_plot, 
+ggsave('./Plots/Top1_ChemoR_SGPF_CAI_Plot.pdf', plot = cai_plot, 
        width = 6, height = 4, 
        units = "in", device = "pdf", 
        useDingbats = FALSE)
 
 # Save list of all significantly enriched GO terms for each species, 
-# for the top 10% of codon adapted genes
-lapply(names(top10.geneID), function(y){
+# for the top 1% of codon adapted genes
+lapply(names(Top1.geneID), function(y){
   gost.results[[y]]$result %>%
     as_tibble() %>%
     dplyr::filter(significant == TRUE) %>%
     dplyr::select(-c(query, significant,parents)) %>%
     dplyr::arrange(p_value) %>%
     dplyr::relocate(term_id, source, term_name, .before = everything()) %>%
-    write.csv(paste0("./Data/Genomic/",y,"_Top10_EnrichedTerms.csv"))
+    write.csv(paste0("./Data/Genomic/",y,"_Top1_EnrichedTerms.csv"))
   
 }) 
 
 # Save Functional Enrichment Plots and Tables
-lapply(names(top10.geneID), function(y){
+lapply(names(Top1.geneID), function(y){
   gost.res <- gost.results[[y]]
   
   gost.ggplot <- gostplot(gost.res, interactive = F, capped = T) +
-    labs(title = paste0(y, "Top 10% Codon Adapted Genes")) +
+    labs(title = paste0(y, "Top 1% Codon Adapted Genes")) +
     theme(plot.title.position = "plot",
           plot.caption.position = "plot",
           plot.title = element_text(face = "bold",
                                     size = 8, hjust = 0))
   gost.ggplot.pub<- publish_gostplot(gost.ggplot,
                                      highlight_terms = highTerms.overlap$term_id)
-  ggsave(paste0('./Plots/',y,'_Top10_CAI_Plot.pdf'), plot = gost.ggplot.pub,
+  ggsave(paste0('./Plots/',y,'_Top1_CAI_Plot.pdf'), plot = gost.ggplot.pub,
          width = 4, height = 5,
          units = "in", device = "pdf",
          useDingbats = FALSE)
   
   publish_gosttable(gost.res,
-                    highlight_terms = highTerms$overlap,
-                    filename = paste0('./Plots/',y,'_Top10_CAI_Table.pdf'))
+                    highlight_terms = highTerms.overlap$term_id,
+                    filename = paste0('./Plots/',y,'_Top1_CAI_Table.pdf'))
   
 })
 ```
