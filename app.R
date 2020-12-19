@@ -256,6 +256,16 @@ server <- function(input, output, session) {
                Sr_CAI =c(vals$og_CAI, vals$opt_CAI),
                Ce_CAI = c(vals$og_CeCAI, vals$opt_CeCAI))
     },
+    caption = paste(
+        "GC = G+C ratio", tags$br(),
+            "Sr_CAI = CAI score relative to",
+            "codon usage in highly expressed",
+            htmltools::tags$em("S. ratti"),
+            "sequences", tags$br(),
+            "Ce_CAI = CAI score relative to",
+            "codon usage in highly expressed",
+            tags$em("C. elegans"),"sequences"
+    ),
     striped = T,
     bordered = T)
     
@@ -266,7 +276,9 @@ server <- function(input, output, session) {
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                           "Sequence Info")), 
                      status = "primary",
-                     tableOutput("info"))
+                     tableOutput("info")
+
+                     )
         do.call(panel,args)
     })
     
@@ -353,6 +365,16 @@ server <- function(input, output, session) {
         tbl<-analyze_sequence()
         info_analysis.DT <- tbl %>%
             DT::datatable(rownames = FALSE,
+                          caption = tags$caption(
+                              style = 'caption-side: bottom; text-align: left;',
+                              "GC = G+C ratio", tags$br(),
+                              "Sr_CAI = CAI score relative to",
+                              "codon usage in highly expressed",
+                             htmltools::tags$em("S. ratti"),
+                               "sequences", tags$br(),
+                          "Ce_CAI = CAI score relative to",
+                          "codon usage in highly expressed",
+                          tags$em("C. elegans"),"sequences"),
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',
                                          scrollCollapse = TRUE,

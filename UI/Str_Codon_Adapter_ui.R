@@ -49,7 +49,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                
                         ),
                         
-                        column(width = 9,
+                        column(width = 4,
                                uiOutput("seqinfo")
                         ),
                         
@@ -98,7 +98,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      
                                )
                         ),
-                        column(width = 6, 
+                        column(width = 7, 
                                uiOutput("analysisinfo")
                         )
                         

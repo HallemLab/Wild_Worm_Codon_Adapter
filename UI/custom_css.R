@@ -116,6 +116,10 @@ tags$head(
     .nav-pills {
     border-bottom: 1px solid #2C3E50;
     }
+    
+    caption {
+    color: #7b8a8b;
+    }
 
                     "))
     
