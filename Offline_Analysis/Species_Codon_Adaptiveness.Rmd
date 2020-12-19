@@ -16,16 +16,12 @@ date: "11/19/2020"
 # Introduction  
 The purpose of this document is to examine codon usage patterns at the genome-wide level and for user-defined gene-sets-of-interest, across four *Strongyloides spp.* and *C. elegans*. 
 
-For the genes-of-interest, four groups are analyzed:  
+For the genes-of-interest, two groups are analyzed:  
 1) Top 1% of codon adapted genes in each genome  
-2) Members of the astacin gene family  
-3) Members of the SCP/TAP gene family  
-4) Chemoreceptor genes, including *C. elegans* and *Strongyloides spp.*  
-
-The astacin and SCP/TAP gene families are analyzed because members of these families dominate lists of genes that are upregulated in parasitic female life stages (see: Hunt *et al* 2016).  
+2) Bottom 1% of codon adapted genes in each genome
 
 # Data Preprocessing  
-Full lists of CDS sequences for *S. stercoralis*, *S. ratti*, *S. papillosus*, *S. venezuelensis* and *C. elegans* were download from Wormbase ParaSite on October 1, 2020. The .fa files were used as input to the *Strongyloides* Codon Adapter App. For each species an excel report containing the computed codon adaptation index values relative to *S. ratti* and *C. elegans* was downloaded; these file are uploaded the code chunks below.  
+Full lists of CDS sequences for *S. stercoralis*, *S. ratti*, *S. papillosus*, *S. venezuelensis* and *C. elegans* were download from Wormbase ParaSite (v15) on November 17, 2020. The .fa files were used as input to the *Strongyloides* Codon Adapter App. For each species an excel report containing the computed codon adaptation index values relative to *S. ratti* and *C. elegans* was downloaded; these file are uploaded the code chunks below.  
 
 ```{r setup, echo=FALSE}
 suppressPackageStartupMessages({
@@ -55,55 +51,39 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 For each species, load data listing GC content and CAI indeces for the full list of CDS elements in genome. The full list contains transcript level information. If downstream tidy version of this data is avliable or the filtered versions are avaliable as files, don't regenerate them. 
 ```{r filterGenomeData, message=FALSE}
 if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
-  if (!all(file.exists(c("./Data/Genomic/Ss_Genomic_CAI_Table.xlsx",
-                         "./Data/Genomic/Sr_Genomic_CAI_Table.xlsx",
-                         "./Data/Genomic/Sp_Genomic_CAI_Table.xlsx",
-                         "./Data/Genomic/Sv_Genomic_CAI_Table.xlsx",
-                         "./Data/Genomic/Ce_Genomic_CAI_Table.xlsx")))) {
+  
+  
+  temp <- c(Ss = './Data/Genomic/Ss_Codon_Usage_Report.xlsx',
+            Sr = './Data/Genomic/Sr_Codon_Usage_Report.xlsx',
+            Sp = './Data/Genomic/Sp_Codon_Usage_Report.xlsx',
+            Sv = './Data/Genomic/Sv_Codon_Usage_Report.xlsx',
+            Ce = './Data/Genomic/Ce_Codon_Usage_Report.xlsx')
+  dat.genomic <- sapply(temp, read_excel, 
+                        sheet = 1, 
+                        skip = 3, 
+                        col_names = T, 
+                        simplify = F, 
+                        USE.NAMES = T)
+  # This data contains transcript level information. 
+  # Commented code would trim rows such that in cases where there are 
+  # multiple transcripts per gene, only  
+  # values from the longest transcript would be included.
+  # This was originally included to permit comparison to gene expression databases
+  # but is no longer required.
+  dat.genomic.cleaned <- lapply(dat.genomic, function(x){
+    x %>%
+      dplyr::mutate(transcriptID = geneID)
+    # dplyr::rename(transcriptID = geneID) %>%
+    # dplyr::mutate(geneID = str_remove_all(transcriptID, "\\.[0-9]$")) %>%
+    # dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$")) %>%
+    # dplyr::group_by(geneID) %>%
+    # dplyr::slice_max(n = 1, order_by = str_length(`cDNA sequence`), 
+    #                   with_ties = FALSE) %>%
+    #dplyr::relocate(geneID, .before = everything())
     
-    temp <- c(Ss = './Data/Genomic/Ss_Codon_Usage_Report.xlsx',
-              Sr = './Data/Genomic/Sr_Codon_Usage_Report.xlsx',
-              Sp = './Data/Genomic/Sp_Codon_Usage_Report.xlsx',
-              Sv = './Data/Genomic/Sv_Codon_Usage_Report.xlsx',
-              Ce = './Data/Genomic/Ce_Codon_Usage_Report.xlsx')
-    dat.genomic <- sapply(temp, read_excel, 
-                          sheet = 1, 
-                          skip = 3, 
-                          col_names = T, 
-                          simplify = F, 
-                          USE.NAMES = T)
-    # This data contains transcript level information. 
-    # Commented code would trim rows such that in cases where there are 
-    # multiple transcripts per gene, only  
-    # values from the longest transcript would be included.
-    # This was originally included to permit comparison to gene expression databases
-    # but is no longer required.
-    dat.genomic.cleaned <- lapply(dat.genomic, function(x){
-      x %>%
-        dplyr::mutate(transcriptID = geneID)
-        # dplyr::rename(transcriptID = geneID) %>%
-        # dplyr::mutate(geneID = str_remove_all(transcriptID, "\\.[0-9]$")) %>%
-        # dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$")) %>%
-        # dplyr::group_by(geneID) %>%
-        # dplyr::slice_max(n = 1, order_by = str_length(`cDNA sequence`), 
-        #                   with_ties = FALSE) %>%
-        #dplyr::relocate(geneID, .before = everything())
-      
-    })
-    
-    
-  }
-}
-
-# Save cleaned versions of the genomic CAI value datasets
-if (exists("dat.genomic.cleaned")) {
-  suppressMessages(lapply(names(dat.genomic.cleaned), function(x){
-    y <- dat.genomic.cleaned[[x]]
-    write.xlsx(y, 
-               file = paste0("./Data/Genomic/", x,"_Genomic_CAI_Table.xlsx")
-    )
-    
-  }))
+  })
+  names(dat.genomic.cleaned) <- c("Ss", "Sr", "Sp", "Sv", "Ce")
+  
 }
 ```
 
@@ -111,18 +91,6 @@ if (exists("dat.genomic.cleaned")) {
 Tidy the genomic CAI values for downstream plotting and analysis. This can be computationally intensive, so if the code is run, a tidy version will get saved at the end of the Markdown file as a .csv file. If that file exists, don't re-run this code.  
 ```{r loadGenomeData, message=FALSE}
 if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
-  temp <- c("./Data/Genomic/Ss_Genomic_CAI_Table.xlsx",
-            "./Data/Genomic/Sr_Genomic_CAI_Table.xlsx",
-            "./Data/Genomic/Sp_Genomic_CAI_Table.xlsx",
-            "./Data/Genomic/Sv_Genomic_CAI_Table.xlsx",
-            "./Data/Genomic/Ce_Genomic_CAI_Table.xlsx")
-  dat.genomic.cleaned <- sapply(temp, read_excel, 
-                                sheet = 1, 
-                                col_names = T, 
-                                simplify = F, 
-                                USE.NAMES = T)
-  names(dat.genomic.cleaned) <- c("Ss", "Sr", "Sp", "Sv", "Ce")
-  
   dat.genomic.df <- dat.genomic.cleaned %>%
     map("geneID") %>%
     unlist() %>%
@@ -166,13 +134,6 @@ if (!file.exists(c("./Data/Genomic/tidy_genomic_CAI.csv"))) {
     ))
   dat.genomic.df <- group_by(dat.genomic.df, species)
   
-  dat.genomic.df <- dat.genomic.df %>%
-    dplyr::filter(species == "Sr") %>%
-    dplyr::mutate(geneID = str_replace_all(geneID, "$","\\.1"))
-    dplyr::mutate(geneID = case_when(species == "Sr" ~ str_replace_all(geneID, "$","\\.1$"),
-                                   TRUE ~ geneID
-                                   )) 
-  
 }
 
 # Save a tidy version of the complied genomic CAI value dataset if it doesn't exist
@@ -199,7 +160,11 @@ species.specific.dat.df <- dat.genomic.df %>%
     species == 'Ce' ~ Ce_CAI,
     species != 'Ce' ~ Sr_CAI
   )) %>%
-  dplyr:: select(geneID, species_CAI, species) %>%
+  dplyr::mutate(outgroup_CAI = case_when(
+    species == 'Ce' ~ Sr_CAI,
+    species != 'Ce' ~ Ce_CAI
+  )) %>%
+  #dplyr:: select(geneID, species_CAI, species) %>%
   group_by(species)
 
 
@@ -288,300 +253,238 @@ post.hoc <- dunn.test::dunn.test(species.specific.GC.df$GC, species.specific.GC.
 
 
 ## Analyze Codon Adaptation Index (CAI) values displayed by gene sets of interest  
-Loading Hunt *et al* 2016 Ensembl Compara database, so I can use those gene sets to select genes of interest.      
-```{r loadEnsemblData, message=FALSE}
 
-dat.Ensembl.IDs <- read_excel('./Data/Genomic/Hunt_Parasite_Ensembl_Compara.xlsx', 
-                              sheet = 1, 
-                              skip = 0, 
-                              col_names = T) %>%
-  pivot_longer(-`Compara family id`,
-               values_to = "geneIDs") %>%
-  dplyr::select(c(`Compara family id`, geneIDs)) %>%
-  dplyr::rename(familyID = c(`Compara family id`), geneID = geneIDs)# %>%
-  #dplyr::mutate(geneID = str_remove_all(geneID, "\\.[0-9]$")) %>%
-  #dplyr::mutate(geneID = str_remove_all(geneID, "[a-c]$"))
+### Pull Select Percentiles of Codon Adapted Genes  
+Take genome-wide CAI values, and for each species filter the top 5% and also bottom 5% of codon adapted genes. Will run GO analysis on these to determine whether there are enriched GO Terms.  
 
-dat.Ensembl.families <- read_excel('./Data/Genomic/Hunt_Parasite_Ensembl_Compara.xlsx', 
-                                   sheet = 2, 
-                                   skip = 0, 
-                                   col_names = T) %>%
-  dplyr::select(c(`Compara family id`, `Description`))%>%
-  dplyr::rename(familyID = c(`Compara family id`))
-```
+```{r pullPercentiles}
 
+percentile = 0.02
 
-### Extract List of *Strongyloides* SCP/TAPS protein feamily  
-Get list of geneIDs associated with SCP/TAPs gene sets, use to pull CAI values from genome-wide list. This gene family chosen because it is one of two gene families that dominate lists of genes that are upregulated in parasitic female life stages.    
-```{r pullSCPTAPS, message=FALSE}
-
-dat.SCPTAPS <- dat.Ensembl.families %>%
-  dplyr::filter(str_detect(Description, "SCP/TAP")) %>%
-  left_join(dat.Ensembl.IDs, by = "familyID") %>%
-  dplyr::filter(str_detect(geneID, "SVE|SPAL|SSTP|SRAE")) %>%
-  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[0-9]$"),
-                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
-                                   )) %>%
-  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[a-c]$"),
-                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
-                                   )) %>%
-  left_join(dat.genomic.df, by = "geneID")%>%
-  dplyr::mutate(Description = factor(Description)) %>%
+dat.Top <- species.specific.dat.df %>%
+  #dplyr::filter(species != "Ce") %>%
+  dplyr::mutate(Description = factor("Top")) %>%
   dplyr::group_by(Description, species) %>%
-  dplyr::select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv"))) 
+  dplyr::slice_max(order_by = species_CAI, prop = percentile) %>%
+  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv","Ce")))
 
+tally(dat.Top)
+
+dat.Bot <- species.specific.dat.df %>%
+  # dplyr::filter(species != "Ce") %>%
+  dplyr::mutate(Description = factor("Bot")) %>%
+  dplyr::group_by(Description, species) %>%
+  dplyr::slice_max(order_by = desc(species_CAI), prop = percentile) %>%
+  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv","Ce")))
+
+tally(dat.Bot)
 
 ```
-
-### Extract List of *Strongyloides* astacin genes 
-Get list of geneIDs associated with astacin gene sets, use to pull CAI values from genome-wide list. This gene family chosen because it is one of two gene families that dominate lists of genes that are upregulated in parasitic female life stages.  
-
-```{r pullAstacins, message=FALSE}
-
-dat.astacin <- dat.Ensembl.families %>%
-  dplyr::filter(str_detect(Description, "Astacin")) %>%
-  left_join(dat.Ensembl.IDs, by = "familyID") %>%
-  dplyr::filter(str_detect(geneID, "SVE|SPAL|SSTP|SRAE")) %>%
-  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[0-9]$"),
-                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
-                                   )) %>%
-  dplyr::mutate(geneID = case_when(str_detect(geneID,"SRAE") ~ str_remove_all(geneID, "\\.[a-c]$"),
-                                   str_detect(geneID,"SVE|SPAL|SSTP") ~ geneID
-                                   )) %>%
-  left_join(dat.genomic.df, by = "geneID")%>%
-  dplyr::mutate(Description = factor(Description)) %>%
-  dplyr::group_by(Description, species) %>%
-  dplyr::select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
-
-
-```
-
-### Load Chemoreceptor Data  
-For chemoreceptors, load data listing GC content and CAI indeces.  
-```{r loadGoIData, message=FALSE}
-temp <- c(
-  Ss_GoI = './Data/Chemoreceptors/Ss_Chemoreceptor_Codon_Usage_Report.xlsx',
-  Sr_GoI = './Data/Chemoreceptors/Sr_Chemoreceptor_Codon_Usage_Report.xlsx',
-  Sv_GoI = './Data/Chemoreceptors/Sv_Chemoreceptor_Codon_Usage_Report.xlsx',
-  Sp_GoI = './Data/Chemoreceptors/Sp_Chemoreceptor_Codon_Usage_Report.xlsx')
-
-dat.Ss.GoI <- read_excel(temp[["Ss_GoI"]], 
-                         sheet = 1, 
-                         skip = 3, 
-                         col_names = T) %>%
-  dplyr::select(!c(GC,`cDNA sequence`)) %>%
-  dplyr::mutate(species = "Ss")
-
-dat.Sr.GoI <- read_excel(temp[["Sr_GoI"]], 
-                         sheet = 1, 
-                         skip = 3, 
-                         col_names = T) %>%
-  dplyr::select(!c(GC,`cDNA sequence`)) %>%
-  dplyr::mutate(species = "Sr")
-
-dat.Sv.GoI <- read_excel(temp[["Sv_GoI"]], 
-                         sheet = 1, 
-                         skip = 3, 
-                         col_names = T) %>%
-  dplyr::select(!c(GC,`cDNA sequence`)) %>%
-  dplyr::mutate(species = "Sv")
-
-dat.Sp.GoI <- read_excel(temp[["Sp_GoI"]], 
-                         sheet = 1, 
-                         skip = 3, 
-                         col_names = T) %>%
-  dplyr::select(!c(GC,`cDNA sequence`)) %>%
-  dplyr::mutate(species = "Sp")
-
-
-dat.chemoR <- rbind(dat.Ss.GoI, 
-                    dat.Sr.GoI, 
-                    dat.Sv.GoI, 
-                    dat.Sp.GoI) %>%
-  dplyr:: select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(Description = factor("Chemoreceptor")) %>%
-  dplyr::group_by(Description, species) %>%
-  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
-
-
-dat.chemoR$geneID <- str_remove_all(dat.chemoR$geneID, "\\.[0-9]$")
-dat.chemoR$geneID <- str_remove_all(dat.chemoR$geneID, "[a-z]$")
-```
-
-### Pull Top 1% of Codon Adapted Genes  
-Take genome-wide CAI values, and for each species determine what the top 1% of codon adapted genes are. Will plot these relative to identified gene sets/families of interest.  
-
-```{r pullTopOne}
-dat.TopOne <- dat.genomic.df %>%
-  dplyr::filter(species != "Ce") %>%
-  dplyr::select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(Description = factor("Top1")) %>%
-  dplyr::group_by(Description, species) %>%
-  dplyr::slice_max(order_by = Sr_CAI, prop = .01) %>%
-  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
-
-```
-
-### Randomly Sample of from full list of genomic CAI values  
-Take genome-wide CAI values, and take a random sample that's the approximate size of the other datasets. Will plot these relative to identified gene sets/families of interest.  
-
-```{r pullCAIsample}
-dat.randomSample <- dat.genomic.df %>%
-  dplyr::filter(species != "Ce") %>%
-  dplyr::select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(Description = factor("RandomSample")) %>%
-  dplyr::group_by(Description, species) %>%
-  dplyr::sample_frac(.01) %>%
-  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
-
-```
-
-### Plot Chemoreceptors, Top1, Astacins, and SCP/TAP CAI values  
-Generate a series of plots (separated by species ID) where for each gene grouping the codon adaptation index relative to highly expressed *S. ratti* transcripts is plotted.    
-```{r plotGoIData}
-
-# Generate genome-wide Sr_CAI values that can be merged with the genes-of-interest datasets
-dat.genome <- dat.genomic.df %>%
-  dplyr::filter(species != "Ce") %>%
-  dplyr::select(geneID, Sr_CAI, species) %>%
-  dplyr::mutate(Description = factor("Genome-wide")) %>%
-  dplyr::group_by(Description, species) %>%
-  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv")))
-
-
-tbl <- dat.SCPTAPS %>%
-  dplyr::select(Description, geneID, Sr_CAI, species) %>%
-  rbind(.,dat.chemoR, dat.TopOne, dat.astacin, dat.randomSample, dat.genome) %>%
-  dplyr::mutate(Description = factor(Description, levels = c("Genome-wide","RandomSample", "Astacin", "SCP/TAP", "Chemoreceptor", "Top1")))
-
-tbl <- tbl[complete.cases(tbl),]
-
-cai_plot <- ggplot(tbl, aes(Description,Sr_CAI, species)) +
-  #geom_violin(mapping = aes(color = Description), trim = FALSE, alpha = 0.7) +
-  geom_jitter(mapping = aes(color = Description), shape = 1) +
-  stat_summary(fun = "median",
-               geom = "point",
-               shape = 20,
-               size = 2,
-               color = "black",
-               show.legend = FALSE) +
-  scale_color_hue (l=40)+
-  facet_wrap(~species) +
-  labs(title = "Species-specific codon adaptiveness",
-       subtitle = "Random sample of 1% of genomic values, SCP/TAP genes & Astacins (i.e. parasitism-associated genes), Chemoreceptors genes, Top 1% of codon adapted genes",
-       x = "Gene Set Identity",
-       y = "Codon Bias relative to \n S. ratti usage rules (CAI)") +
+### Plot Relative CAI for Gene Sets  
+This section/plot asks questions like: Are the most-codon-adapted *Strongyloides* genes less codon adapted relative to the *C. elegans* usage rules? Similarly, are the least-codon-adapted genes less codon adapted relative to the other usage rule. The goal of this is to try and understand whether there is likely to be overlap between  
+```{r plotGOI}
+tbl <- rbind(dat.Top, dat.Bot) %>%
+  mutate(Description = recode(Description, Top = "Most-adapted genes",
+                              Bot = "Least-adapted genes"))
+# tbl <- pivot_longer(tbl,
+#              cols = c("species_CAI", "outgroup_CAI"),
+#              names_to = "value",
+#              values_to = "CAI"
+#              )
+ggplot(tbl, aes(species,outgroup_CAI, Description)) +
+  geom_jitter(mapping = aes(color = species), shape = 1) +
+  facet_wrap( ~Description) +
+  scale_color_hue (l = 40) +
+  labs(y = "Codon bias relative to non-genus usage rules") +
   theme_bw() +
-  
   theme(plot.title.position = "plot",
+        plot.caption.position = "panel",
         plot.title = element_text(face = "bold",
                                   size = 8, hjust = 0),
+        plot.subtitle = element_text(size = 8),
+        legend.title = element_text(size = 8),
         axis.title = element_text(size = 8),
-        axis.text = element_text(size = 8),
-        text = element_text(size = 8),
-        title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1))
+        axis.text = element_text(size = 8))
+
 
 ```
 
-#### CAI values across gene families
-Gene groups plotted here include chemoreceptors, top 1% of codon adapted genes in genome, and members of the *Strongyloides* genome project families.  
-``` {r}
-cai_plot
 
-```
 
-<!-- #### Kruskal-Wallis Test with Dunn's Post tests for differences in CAI values across species   -->
-<!-- ```{r genomic.cai.kwtest} -->
-<!-- # Kruskal-Wallis testing of CAI values in functional groups  -->
-<!-- KW_species <-  lapply(levels(tbl$species), function(y){ -->
-<!--    cai_sub <- dplyr::filter(tbl, species == y) -->
-<!--    one.way <- kruskal.test(Sr_CAI ~ Description, data = cai_sub) -->
-<!--    post.hoc <- FSA::dunnTest(Sr_CAI ~ Description,  -->
-<!--                              data = cai_sub,  -->
-<!--                              method = "bonferroni") -->
+## GO Analysis: Top % Codon Adapted Genes
+Take lists of the top percentile of codon adapted genes in each species, and run GO analysis to see if these genes are enriched for anything interesting.
 
-<!-- }) -->
+```{r functionalEnrichmentTop}
+# Carry out GO enrichment using gProfiler2 ----
 
-<!-- ``` -->
+run_GO <- function (data){
+  GO.geneID <- data %>%
+    ungroup() %>%
+    group_by(species) %>%
+    dplyr::group_map(~ {
+      gost.res <- .x %>%
+        dplyr::select(geneID, species_CAI) %>%
+        unique() 
+    }, .keep = TRUE)
+  
+  names(GO.geneID) <- levels(data$species)
+  
+  gost.results <- lapply(names(GO.geneID), function(y){
+    organism = case_when (y == "Ss" ~ "ststerprjeb528",
+                          y == "Sr" ~ "strattprjeb125",
+                          y == "Sp" ~ "stpapiprjeb525",
+                          y == "Sv" ~ "stveneprjeb530",
+                          y == "Ce" ~ "caelegprjna13758")
+    gost.res <- gost(GO.geneID[[y]]$geneID,
+                     organism = organism, 
+                     evcodes = TRUE,
+                     correction_method = "fdr")
+  })
+  names(gost.results) <- names(GO.geneID)
+  gost.results
+}
 
-## Functional Enrichment Analysis of Top1 Genes
-Take lists of the top 1% of codon adapted genes in each species, and run either GO analysis or GSEA to see if these genes are enriched for anything interesting.
+find_enrichments <- function (gost.results) {
+  # Find GO terms that are enriched with p-values equal or small than a threshold.
+  enriched.terms <- lapply(names(gost.results), function(y){
+    gost.results[[y]]$result %>%
+      as_tibble() %>%
+      dplyr::select(term_id, p_value)
+  }) 
+  names(enriched.terms) <- names(gost.results)
+  enriched.terms
+}
 
-```{r functionalEnrichmentTop1}
-# Carry out GO enrichment of discarded gene set using gProfiler2 ----
-Top1.geneID <- dat.TopOne %>%
-  ungroup() %>%
-  group_by(species) %>%
-  dplyr::group_map(~ {
-    gost.res <- .x %>%
-      dplyr::select(geneID, Sr_CAI) %>%
-      unique() 
-  }, .keep = TRUE)
+find_common_enrichments <- function (data, p.val,n_groups){
+  data %>%
+    dplyr::filter(p_value <= p.val) %>%
+    group_by(term_id) %>%
+    summarize(n= n()) %>%
+    dplyr::filter(n >= n_groups)
+}
 
-names(Top1.geneID) <- levels(dat.TopOne$species)
-
-gost.results <- lapply(names(Top1.geneID), function(y){
-  organism = case_when (y == "Ss" ~ "ststerprjeb528",
-                        y == "Sr" ~ "strattprjeb125",
-                        y == "Sp" ~ "stpapiprjeb525",
-                        y == "Sv" ~ "stveneprjeb530")
-  gost.res <- gost(Top1.geneID[[y]]$geneID,
-                   organism = organism, 
-                   correction_method = "fdr")
-})
-names(gost.results) <- names(Top1.geneID)
-
-# Find GO terms that are enriched with p-values equal or small than a threshold.
-enriched.terms <- lapply(names(Top1.geneID), function(y){
-  gost.results[[y]]$result %>%
-    as_tibble() %>%
-    dplyr::select(term_id, p_value)
-}) 
-names(enriched.terms) <- names(Top1.geneID)
-
-# Select enriched GO terms that are common to all species
-highTerms.overlap <- enriched.terms %>%
+gost.results.top <- run_GO(dat.Top)
+enriched.terms.top <- find_enrichments(gost.results.top)
+highTerms.overlap.top <- enriched.terms.top %>%
   bind_rows(.id = "species") %>%
-  dplyr::filter(p_value <= 0.01) %>%
-  group_by(term_id) %>%
-  summarize(n= n()) %>%
-  dplyr::filter(n >= 4)
+  dplyr::filter(species != "Ce") %>%
+  find_common_enrichments(.,0.001, 4)
+
+
 
 ```
 
 ### Interactive Manhattan Plots  
 #### *S. stercoralis*
 ```{r}
-gostplot(gost.results$Ss, interactive = T, capped = T) 
+gostplot(gost.results.top$Ss, interactive = T, capped = T) 
 ```
 
 #### *S. ratti*
 ```{r}
-gostplot(gost.results$Sr, interactive = T, capped = T) 
+gostplot(gost.results.top$Sr, interactive = T, capped = T) 
 ```
 
 #### *S. papillosus*
 ```{r}
-gostplot(gost.results$Sp, interactive = T, capped = T) 
+gostplot(gost.results.top$Sp, interactive = T, capped = T) 
 ```
 
 #### *S. venezuelensis*
 ```{r}
-gostplot(gost.results$Sv, interactive = T, capped = T) 
+gostplot(gost.results.top$Sv, interactive = T, capped = T) 
 ```
 
-I found GO terms that are commonly enriched in all *Strongyloides* species tested.  
+#### *C. elegans*
 ```{r}
-dplyr::filter(gost.results$Ss$result, term_id %in% highTerms.overlap$term_id) %>%
+gostplot(gost.results.top$Ce, interactive = T, capped = T) 
+```
+
+### Common GO Terms  
+GO terms that are commonly enriched in the top percentile of codon adapted genes in all *Strongyloides* species tested:  
+```{r}
+dplyr::filter(gost.results.top$Ss$result, term_id %in% highTerms.overlap.top$term_id) %>%
+  dplyr::select(term_id, term_name, intersection)
+```
+
+How many of the common *Strongyloides* go terms are found in the *C. elegans* terms?
+```{r}
+dplyr::filter(gost.results.top$Ce$result, term_id %in% highTerms.overlap.top$term_id) %>%
+  dplyr::select(term_id, term_name)
+```
+
+How many are unique to the *Strongyloides* species?  
+```{r}
+temp <- dplyr::filter(highTerms.overlap.top, 
+                      !term_id %in% gost.results.top$Ce$result$term_id)
+dplyr::filter(gost.results.top$Ss$result, term_id %in% temp$term_id) %>%
+  dplyr::select(term_id, term_name)
+```
+
+## GO Analysis: Bottom % Codon Adapted Genes
+Take lists of the bottom percentile of codon adapted genes in each species, and run GO analysis to see if these genes are enriched for anything interesting.
+
+```{r functionalEnrichmentBottom}
+# Carry out GO enrichment using gProfiler2 ----
+gost.results.bot <- run_GO(dat.Bot)
+enriched.terms.bot <- find_enrichments(gost.results.bot)
+highTerms.overlap.bot <- enriched.terms.bot %>%
+  bind_rows(.id = "species") %>%
+  dplyr::filter(species != "Ce") %>%
+  find_common_enrichments(.,0.001, 4)
+
+```
+
+### Interactive Manhattan Plots  
+#### *S. stercoralis*
+```{r}
+gostplot(gost.results.bot$Ss, interactive = T, capped = T) 
+```
+
+#### *S. ratti*
+```{r}
+gostplot(gost.results.bot$Sr, interactive = T, capped = T) 
+```
+
+#### *S. papillosus*
+```{r}
+gostplot(gost.results.bot$Sp, interactive = T, capped = T) 
+```
+
+#### *S. venezuelensis*
+```{r}
+gostplot(gost.results.bot$Sv, interactive = T, capped = T) 
+```
+
+#### *C. elegans*
+```{r}
+gostplot(gost.results.bot$Ce, interactive = T, capped = T) 
+```
+
+### Common GO Terms
+GO terms that are commonly enriched in the bottom percentile of codon adapted genes in all *Strongyloides* species tested: 
+```{r}
+dplyr::filter(gost.results.bot$Ss$result, term_id %in% highTerms.overlap.bot$term_id) %>%
+  dplyr::select(term_id, term_name)
+```
+
+How many of the common *Strongyloides* go terms are found in the *C. elegans* terms?
+```{r}
+dplyr::filter(gost.results.bot$Ce$result, term_id %in% highTerms.overlap.bot$term_id) %>%
+  dplyr::select(term_id, term_name)
+```
+
+How many are unique to the *Strongyloides* species?  
+```{r}
+temp <- dplyr::filter(highTerms.overlap.bot, 
+                      !term_id %in% gost.results.bot$Ce$result$term_id)
+dplyr::filter(gost.results.bot$Ss$result, term_id %in% temp$term_id) %>%
   dplyr::select(term_id, term_name)
 ```
 
 ## Save Files and Plots  
 Saving data and plots generated by the above code.  
-```{r saveFiles, include=TRUE, echo = TRUE}
+```{r saveFiles, include=FALSE}
 
 # Save distribution plot of codon adaptivness by species
 ggsave('./Plots/Codon_Adaptiveness_Distributions_by_Species.pdf', 
@@ -597,65 +500,117 @@ ggsave('./Plots/GC_Distributions_by_Species.pdf',
        units = "in", device = "pdf", 
        useDingbats = FALSE)
 
-# Save .csv lists of CAI values for functional datasets
-lapply(levels(tbl$species), function(y){
-   dplyr::filter(tbl, species == y) %>%
-     pivot_wider(names_from = Description,
-                 values_from = Sr_CAI) %>%
-     
-   write.csv(paste0("./Data/",y,"_FunctionGroupCAI.csv"))
+write_excel <- function(data, sheet_facet, filename){
   
-})
-# Save .csv lists of 1% of codon adapted genes per species
-Top1.geneID <- dat.TopOne %>%
-  ungroup() %>%
-  group_by(species) %>%
-  dplyr::group_map(~ {
-    geneIDs <- .x %>%
-      dplyr::select(geneID) %>%
-      write.csv(paste0("./Data/Genomic/",.y$species,"_Top1_CAI.csv"))
-  }, .keep = TRUE)
+  file <- paste(filename,".xlsx",sep = "")
+  # Workbook
+  to_download <<- createWorkbook()
+  
+  sapply(seq_along(sheet_facet), function(x){
+    addWorksheet(wb = to_download, sheetName = sheet_facet[[x]])
+    
+    sheet_data <- data %>%
+      dplyr::filter(species == sheet_facet[[x]]) 
+    # # Write Data
+    # ## Sheet header
+    # writeData(
+    #   to_download,
+    #   sheet = 1,
+    #   x = c(
+    #     paste0("Strongyloides Codon Usage Report"),
+    #     paste0("Report generated on ", format(Sys.Date(), "%B %d, %Y"))
+    #   )
+    # )
+    # 
+    ## Results of codon usage analysis
+    writeData(
+      to_download,
+      sheet = x,
+      x = sheet_data,
+      startRow = 1,
+      startCol = 1,
+      headerStyle = createStyle(
+        textDecoration = "Bold",
+        halign = "center",
+        border = "bottom"
+      )
+    )
+    
+  })
+  saveWorkbook(to_download, file, overwrite=TRUE)
+}  
 
+# Save files with top and bottom percentiles of codon adapted genes per species
+tbl %>%
+      dplyr::select(geneID, species_CAI, GC, Description, species) %>%
+  write_excel(levels(tbl$species), 'Percentile_CAI_Genes')
 
-# Save plot of codon adaptivness in gene sets of interest
-ggsave('./Plots/Top1_ChemoR_SGPF_CAI_Plot.pdf', plot = cai_plot, 
-       width = 6, height = 4, 
-       units = "in", device = "pdf", 
-       useDingbats = FALSE)
-
-# Save list of all significantly enriched GO terms for each species, 
-# for the top 1% of codon adapted genes
-lapply(names(Top1.geneID), function(y){
-  gost.results[[y]]$result %>%
+# Save list of common GO terms for each species, and the genes id that intersect
+# between the GO term and the query
+# for the top and bottom percentile of codon adapted genes
+a<-lapply(names(gost.results.bot), function(y){
+  gost.results.bot[[y]]$result %>%
+    dplyr::filter(term_id %in%  highTerms.overlap.bot$term_id) %>%
     as_tibble() %>%
-    dplyr::filter(significant == TRUE) %>%
     dplyr::select(-c(query, significant,parents)) %>%
     dplyr::arrange(p_value) %>%
-    dplyr::relocate(term_id, source, term_name, .before = everything()) %>%
-    write.csv(paste0("./Data/Genomic/",y,"_Top1_EnrichedTerms.csv"))
-  
-}) 
+    dplyr::mutate(species = y)
+}) %>% bind_rows %>%
+  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv","Ce"))) %>%
+  dplyr::mutate(Description = "Least-adapted genes")  %>%
+  dplyr::relocate(Description,species,term_id, source, term_name, .before = everything()) 
 
-# Save Functional Enrichment Plots and Tables
-lapply(names(Top1.geneID), function(y){
-  gost.res <- gost.results[[y]]
+b <- lapply(names(gost.results.top), function(y){
+  gost.results.top[[y]]$result %>%
+    dplyr::filter(term_id %in%  highTerms.overlap.top$term_id) %>%
+    as_tibble() %>%
+    dplyr::select(-c(query, significant,parents)) %>%
+    dplyr::arrange(p_value) %>%
+    dplyr::mutate(species = y)
+}) %>% bind_rows %>%
+  dplyr::mutate(species = factor(species, levels = c("Ss", "Sr", "Sp", "Sv","Ce"))) %>%
+  dplyr::mutate(Description = "Most-adapted genes")  %>%
+  dplyr::relocate(Description,species,term_id, source, term_name, .before = everything()) 
+
+rbind(a,b) %>%
+  write_excel(levels(a$species), 'Percentile_GO_Analysis')
+
+
+# Save Functional Enrichment Plots for bottom percentile
+lapply(names(gost.results.bot), function(y){
+  gost.res <- gost.results.bot[[y]]
   
   gost.ggplot <- gostplot(gost.res, interactive = F, capped = T) +
-    labs(title = paste0(y, "Top 1% Codon Adapted Genes")) +
+    labs(title = paste(y, "Bottom", percentile*100,"% Codon Adapted Genes")) +
     theme(plot.title.position = "plot",
           plot.caption.position = "plot",
           plot.title = element_text(face = "bold",
                                     size = 8, hjust = 0))
   gost.ggplot.pub<- publish_gostplot(gost.ggplot,
-                                     highlight_terms = highTerms.overlap$term_id)
-  ggsave(paste0('./Plots/',y,'_Top1_CAI_Plot.pdf'), plot = gost.ggplot.pub,
-         width = 4, height = 5,
+                                     highlight_terms = highTerms.overlap.bot$term_id)
+  ggsave(paste0('./Plots/',y,'_Bot_CAI_Plot.pdf'), plot = gost.ggplot.pub,
+         width = 7, height = 4,
          units = "in", device = "pdf",
          useDingbats = FALSE)
   
-  publish_gosttable(gost.res,
-                    highlight_terms = highTerms.overlap$term_id,
-                    filename = paste0('./Plots/',y,'_Top1_CAI_Table.pdf'))
+})
+
+# Save Functional Enrichment Plots for top percentile
+lapply(names(gost.results.top), function(y){
+  gost.res <- gost.results.top[[y]]
+  
+  gost.ggplot <- gostplot(gost.res, interactive = F, capped = T) +
+    labs(title = paste(y, "Top", percentile*100,"% Codon Adapted Genes")) +
+    theme(plot.title.position = "plot",
+          plot.caption.position = "plot",
+          plot.title = element_text(face = "bold",
+                                    size = 8, hjust = 0))
+  gost.ggplot.pub<- publish_gostplot(gost.ggplot,
+                                     highlight_terms = highTerms.overlap.top$term_id)
+  ggsave(paste0('./Plots/',y,'_Top_CAI_Plot.pdf'), plot = gost.ggplot.pub,
+         width = 7, height = 5,
+         units = "in", device = "pdf",
+         useDingbats = FALSE)
   
 })
 ```
