@@ -6,10 +6,12 @@
 
 analyze_cDNA_list <- function(gene.seq, vals){
     withProgress(message = "Calculating...",expr = {
-        setProgress(.05)
-        
+        setProgress(0)
+       
     ## Calculate info each sequence (S. ratti index) ----
+    calc.inc <- 0.4/nrow(gene.seq)
     temp<- lapply(gene.seq$cDNA, function (x){
+        incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
                 calc_sequence_stats(.,w)}
@@ -18,7 +20,6 @@ analyze_cDNA_list <- function(gene.seq, vals){
         }
     }) 
     
-    setProgress(0.25)
     # Strongyloides CAI values ----
     info.gene.seq<- temp %>%
         map("GC") %>%
@@ -41,6 +42,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     setProgress(0.5)
     ## Calculate info each sequence (C. elegans index) ----
     Ce.temp<- lapply(gene.seq$cDNA, function (x){
+        incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
                 calc_sequence_stats(.,Ce.w)}
@@ -54,7 +56,6 @@ analyze_cDNA_list <- function(gene.seq, vals){
         unlist() %>%
         as_tibble_col(column_name = 'Ce_CAI')
     
-    setProgress(0.75)
     
     ## Merge both tibbles
     info.gene.seq <- add_column(info.gene.seq, 

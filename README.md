@@ -40,7 +40,7 @@ The *Strongyloides* Codon Adapter Shiny App adapts and automates that process of
 
   2. **Analysis Mode:** This tab reports the endogenous codon optimization for a given gene relative to the codon usage weights of highly expressed *Strongyloides ratti* transcripts (1) or *C. elegans* genes (2). Stable Gene or Transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.   
 
-  Users may download an excel file containing the codon adaptation index and cDNA sequences for the user-provided genes. The app also generates a scatter plot displaying, for each gene, codon adaptiveness values relative to S. ratti vs C. elegans usage weights. Users may download this plot as a PDF file.  
+  Users may download an excel file containing the codon adaptation index and cDNA sequences for the user-provided genes.
 
 ## Analysis Methods
 ### CAI (Codon Adaptation Index) 

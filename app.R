@@ -256,6 +256,16 @@ server <- function(input, output, session) {
                Sr_CAI =c(vals$og_CAI, vals$opt_CAI),
                Ce_CAI = c(vals$og_CeCAI, vals$opt_CeCAI))
     },
+    caption = paste(
+        "GC = G+C ratio", tags$br(),
+            "Sr_CAI = CAI score relative to",
+            "codon usage in highly expressed",
+            htmltools::tags$em("S. ratti"),
+            "sequences", tags$br(),
+            "Ce_CAI = CAI score relative to",
+            "codon usage in highly expressed",
+            tags$em("C. elegans"),"sequences"
+    ),
     striped = T,
     bordered = T)
     
@@ -266,7 +276,9 @@ server <- function(input, output, session) {
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                           "Sequence Info")), 
                      status = "primary",
-                     tableOutput("info"))
+                     tableOutput("info")
+
+                     )
         do.call(panel,args)
     })
     
@@ -353,6 +365,16 @@ server <- function(input, output, session) {
         tbl<-analyze_sequence()
         info_analysis.DT <- tbl %>%
             DT::datatable(rownames = FALSE,
+                          caption = tags$caption(
+                              style = 'caption-side: bottom; text-align: left;',
+                              "GC = G+C ratio", tags$br(),
+                              "Sr_CAI = CAI score relative to",
+                              "codon usage in highly expressed",
+                             htmltools::tags$em("S. ratti"),
+                               "sequences", tags$br(),
+                          "Ce_CAI = CAI score relative to",
+                          "codon usage in highly expressed",
+                          tags$em("C. elegans"),"sequences"),
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',
                                          scrollCollapse = TRUE,
@@ -368,63 +390,15 @@ server <- function(input, output, session) {
         
         info_analysis.DT
         
-    }
-    )
+    })
     
-    ## Plot comparing, for each gene, Ce_CAI vs Sr_CAI
-    output$cai_plot <- renderPlot({
-        tbl<-analyze_sequence()
-        
-        # Generate summary statistics for the linear regression below
-        linearMod <- lm(Sr_CAI ~ Ce_CAI, data = tbl) %>%
-            summary() 
-        
-        vals$cai_plot <- ggplot(tbl, aes(Sr_CAI, Ce_CAI)) +
-            geom_smooth(method=lm, color = "steelblue4", fill = "steelblue1",linetype = 2, size = 0.5, formula = "y ~ x") +
-            geom_point(shape = 1, size = 3) +
-            labs(title = "Species-specific codon adaptiveness",
-                 subtitle = paste("Blue line/shading = linear regression \n",
-                                  "w/ 95% confidence regions (formula = y ~ x). \n",
-                                  "Adj R-squared =", 
-                                  round(linearMod$adj.r.squared,3) ,
-                                  "
-                 "),
-                 
-                 x = "Codon bias relative to \n S. ratti usage rules (CAI)",
-                 y = "Codon Bias relative to \n C. elegans usage rules (CAI)",
-                 caption = "") +
-            coord_equal() +
-            theme_bw() +
-            theme(plot.title.position = "plot",
-                  plot.caption.position = "panel",
-                  plot.title = element_text(face = "bold",
-                                            size = 13, hjust = 0),
-                  axis.title = element_text(size = 12),
-                  axis.text = element_text(size = 10))
-        vals$cai_plot
-        
-        
-    }) 
-    
-    # Save CAI Plot
-    output$download_CAI_plot <- downloadHandler(
-        filename = function(){
-            paste('CAIplot_', Sys.Date(),'.pdf', sep = "")
-        },
-        content = function(file){
-            ggsave(file, plot = vals$cai_plot, 
-                   width = 11, height = 8, 
-                   units = "in", device = "pdf", 
-                   useDingbats = FALSE)
-        }
-    )
     
     # Generate and Download report
     source("Server/generate_excel_report.R", local = TRUE)
     
     # Shiny output for analysis datatable
     output$analysisinfo <- renderUI({
-        req(input$goAnalyze, vals$geneIDs)
+        req(input$goAnalyze)
         args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                           "Sequence Info")), 
                      status = "primary",
@@ -436,20 +410,6 @@ server <- function(input, output, session) {
                      ))
         do.call(panel,args)
     })
-    
-    # Shiny output for CAI plot
-    output$analysisplot<- renderUI({
-        req(input$goAnalyze)
-        args <- list(heading = tagList(h5(shiny::icon("fas fa-mountain"),
-                                          "Analysis Plot")), 
-                     status = "primary",
-                     plotOutput('cai_plot'),
-                     downloadButton("download_CAI_plot",
-                                    "Download Plot as PDF",
-                                    class = "btn-primary"))
-        do.call(panel,args)
-    })
-    
     
     # About Tab: Download codon usage charts ----
     StudyInfo.filename.About <- reactive({
