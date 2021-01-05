@@ -11,11 +11,11 @@ analyze_geneID_list <- function(genelist, vals){
     Ce.seq <- NULL
     transcript.seq <- NULL
     
-    withProgress(message = "Accessing BioMaRT",expr = {
+    withProgress(message = "Searching for sequences...",expr = {
         setProgress(.05)
         # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, or `WB` check if they are geneIDs
-        if (any(grepl('SSTP|SVE|SPAL|WB', genelist$geneID))) {
-            Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'cdna'),
+        if (any(grepl('SSTP|SVE|SPAL|WB', genelist$queryID))) {
+            Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'wbps_transcript_id', 'cdna'),
                               # grab the cDNA sequences for the given genes from WormBase Parasite
                               mart = useMart(biomart="parasite_mart", 
                                              dataset = "wbps_gene", 
@@ -28,17 +28,20 @@ analyze_geneID_list <- function(genelist, vals){
                                               'stpapiprjeb525',
                                               'stveneprjeb530',
                                               'caelegprjna13758'),
-                                            genelist$geneID),
+                                            genelist$queryID),
                               useCache = F) %>%
                 as_tibble() %>%
                 #we need to rename the columns retreived from biomart
-                dplyr::rename(geneID = wbps_gene_id, cDNA = cdna)
+                dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)%>%
+                dplyr::mutate(queryID = geneID) # save the query used for indexing
             Sspp.seq$cDNA <- tolower(Sspp.seq$cDNA)
         } 
+        
+        if (isTruthy(Sspp.seq) && nrow(Sspp.seq) == 0) {Sspp.seq <- NULL}
         setProgress(.2)
         # If any of the items in genelist contain the string `SRAE` check if they are external geneIDs
-        if (any(grepl('SRAE', genelist$geneID))) {
-            Sr.seq <- getBM(attributes=c('external_gene_id', 'cdna'),
+        if (any(grepl('SRAE', genelist$queryID))) {
+            Sr.seq <- getBM(attributes=c('external_gene_id', 'wbps_transcript_id', 'cdna'),
                             # grab the cDNA sequences for the given genes from WormBase Parasite
                             mart = useMart(biomart="parasite_mart", 
                                            dataset = "wbps_gene", 
@@ -47,16 +50,18 @@ analyze_geneID_list <- function(genelist, vals){
                             filters = c('species_id_1010',
                                         'gene_name'),
                             values = list(c('strattprjeb125'),
-                                          genelist$geneID),
+                                          genelist$queryID),
                             useCache = F) %>%
                 as_tibble() %>%
                 #we need to rename the columns retreived from biomart
-                dplyr::rename(geneID = external_gene_id, cDNA = cdna)
+                dplyr::rename(geneID = external_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)%>%
+                dplyr::mutate(queryID = geneID) # save the query used for indexing
             Sr.seq$cDNA <- tolower(Sr.seq$cDNA)
         }
+        if (isTruthy(Sr.seq) && nrow(Sr.seq) == 0) {Sr.seq <- NULL}
         setProgress(0.4)
         # Check all items in geneList to see if they are transcript ids
-        transcript.seq <- getBM(attributes=c('wbps_transcript_id', 'cdna'),
+        transcript.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
                                 # grab the cDNA sequences for the given genes from WormBase Parasite
                                 mart = useMart(biomart="parasite_mart", 
                                                dataset = "wbps_gene", 
@@ -69,44 +74,47 @@ analyze_geneID_list <- function(genelist, vals){
                                                 'stpapiprjeb525',
                                                 'stveneprjeb530',
                                                 'caelegprjna13758'),
-                                              genelist$geneID),
+                                              genelist$queryID),
                                 useCache = F) %>%
             as_tibble() %>%
             #we need to rename the columns retreived from biomart
-            dplyr::rename(geneID = wbps_transcript_id, cDNA = cdna)
+            dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna) %>%
+            dplyr::mutate(queryID = transcriptID) # save the query used for indexing
         transcript.seq$cDNA <- tolower(transcript.seq$cDNA)
-        if (nrow(transcript.seq) == 0) {
-            transcript.seq <- NULL}
+        if (isTruthy(transcript.seq) && nrow(transcript.seq) == 0) {transcript.seq <- NULL}
         
         setProgress(0.6)
         # If any of the items in genelist contain the string `Ce-`, remove that string and search as gene names
-        if (any(grepl('Ce', genelist$geneID))) {
-            genelist$geneID <- genelist$geneID %>%
+        if (any(grepl('Ce', genelist$queryID))) {
+            genelist$queryID <- genelist$queryID %>%
                 gsub("^Ce-", "",.)
-            Ce.seq <- getBM(attributes=c('external_gene_id', 'cdna'),
+            Ce.seq <- getBM(attributes=c('external_gene_id', 'wbps_transcript_id','cdna'),
                             # grab the cDNA sequences for the given genes from WormBase Parasite
-                            mart = useMart(biomart="parasite_mart", 
-                                           dataset = "wbps_gene", 
-                                           host="https://parasite.wormbase.org", 
+                            mart = useMart(biomart="parasite_mart",
+                                           dataset = "wbps_gene",
+                                           host="https://parasite.wormbase.org",
                                            port = 443),
                             filters = c('species_id_1010',
                                         'gene_name'),
                             values = list('caelegprjna13758',
-                                          genelist$geneID),
+                                          genelist$queryID),
                             useCache = F) %>%
                 as_tibble() %>%
                 #we need to rename the columns retreived from biomart
-                dplyr::rename(geneID = external_gene_id, cDNA = cdna)
+                dplyr::rename(geneID = external_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna)%>%
+                dplyr::mutate(queryID = geneID) # save the query used for indexing
             Ce.seq$cDNA <- tolower(Ce.seq$cDNA)
         }
+        if (isTruthy(Ce.seq) && nrow(Ce.seq) == 0) {Ce.seq <- NULL}
+        
         validate(
             need({isTruthy(Sspp.seq)|isTruthy(Sr.seq)|isTruthy(transcript.seq)|isTruthy(Ce.seq)}, "The call to BioMaRT did not return any records matching the submitted gene(s). \n Please check the gene lists and try again. \n Note: letters must be capitalized correctly, i.e. 'srae_' and 'CE' will produce errors.")
         )
-        
         setProgress(0.7)
         gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,transcript.seq,Ce.seq) %>%
-            dplyr::left_join(genelist, . , by = "geneID")
-       
+            dplyr::left_join(genelist, . , by = "queryID")
+        
+        
         ## Calculate info each sequence (S. ratti index) ----
         calc.inc <- 0.15/nrow(gene.seq)
         
@@ -132,8 +140,11 @@ analyze_geneID_list <- function(genelist, vals){
             as_tibble_col(column_name = 'Sr_CAI') %>%
             add_column(info.gene.seq, .)
         
+        # Gene Identifiers
         info.gene.seq <- info.gene.seq %>%
-            add_column(geneID = gene.seq$geneID, .before = 'GC') 
+            add_column(geneID = gene.seq$geneID, .before = 'GC') %>%
+            add_column(transcriptID = gene.seq$transcriptID, .after = 'Sr_CAI') %>%
+            add_column(queryID = gene.seq$queryID, .after = 'transcriptID')
         
         
         # C. elegans CAI values ----
@@ -158,12 +169,13 @@ analyze_geneID_list <- function(genelist, vals){
         ## Merge both tibbles
         info.gene.seq <- add_column(info.gene.seq, 
                                     Ce_CAI = ce.info.gene.seq$Ce_CAI, .after = "Sr_CAI")
+        vals$geneIDs <- suppressMessages(info.gene.seq %>%
+           left_join(.,gene.seq) %>%
+            rename('cDNA sequence' = cDNA) %>%
+            dplyr::select(!queryID))
         
-        vals$geneIDs <- info.gene.seq %>%
-            left_join(.,gene.seq, by = "geneID") %>%
-            rename('cDNA sequence' = cDNA)
-        
-        info.gene.seq
+        info.gene.seq %>%
+            dplyr::select(!queryID)
         
     })
 }

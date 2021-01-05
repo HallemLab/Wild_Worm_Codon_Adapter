@@ -120,6 +120,10 @@ tags$head(
     caption {
     color: #7b8a8b;
     }
+    
+    #info_analysis {
+    min-height: 120px;
+    }
 
                     "))
     

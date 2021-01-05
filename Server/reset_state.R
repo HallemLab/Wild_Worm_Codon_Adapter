@@ -15,7 +15,7 @@ observeEvent(input$resetOptimization,{
 output$analysis_file_upload <- renderUI({
     input$resetAnalysis
     fileInput('loadfile',
-              h6('List of Gene IDs or cDNA sequences (.csv, .fa)'),
+              h6('Upload file (.csv, .fa)'),
               multiple = FALSE)
 })
 
