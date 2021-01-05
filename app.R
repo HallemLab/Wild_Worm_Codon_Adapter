@@ -401,7 +401,6 @@ server <- function(input, output, session) {
     #Shiny output for analysis datatable
     output$downloadbutton_AM <- renderUI({
         req(input$goAnalyze, vals$geneIDs)
-        browser()
         output$generate_excel_report <- generate_excel_report(vals$geneIDs)
         downloadButton(
             "generate_excel_report",
