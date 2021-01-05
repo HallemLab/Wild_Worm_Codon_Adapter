@@ -98,18 +98,39 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      
                                )
                         ),
-                        column(width = 7, 
+                        column(width = 6, 
                                conditionalPanel(condition = "input.goAnalyze",
                                                 panel(heading = tagList(h5(shiny::icon("fas fa-calculator"),
                                                                            "Sequence Info")),
                                                       status = "primary",
-                                                      DTOutput("info_analysis"),
-                                                      uiOutput("downloadbutton_AM")
+                                                      DTOutput("info_analysis")
                                                       )
                                )
+                        ),
+                        column(width = 3,
+                               conditionalPanel(condition ="input.goAnalyze != 0 && output.info_analysis",
+                                                panel(heading = tagList(h5(shiny::icon("fas fa-file-download"),
+                                                                           "Download Options")),
+                                                      status = "primary",
+                                                      checkboxGroupInput("download_options",
+                                                                    h5("Select data types to download:"),
+                                                                    choiceNames = c("GC ratio",
+                                                                    "Sr_CAI values",
+                                                                    "Ce_CAI values",
+                                                                    "cDNA sequences"
+                                                                    ),
+                                                                    choiceValues = c("GC",
+                                                                                     "Sr_CAI",
+                                                                                     "Ce_CAI",
+                                                                                     "cDNA sequence"),
+                                                                    selected =  c("GC",
+                                                                                  "Sr_CAI",
+                                                                                  "Ce_CAI",
+                                                                                  "cDNA sequence")),
+                                                      uiOutput("downloadbutton_AM")
+                                                      ))
+                        
                         )
-                        
-                        
                     )
            ),
            ## About Tab ----

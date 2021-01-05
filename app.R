@@ -401,10 +401,14 @@ server <- function(input, output, session) {
     #Shiny output for analysis datatable
     output$downloadbutton_AM <- renderUI({
         req(input$goAnalyze, vals$geneIDs)
-        output$generate_excel_report <- generate_excel_report(vals$geneIDs)
+        
+        # Select data columns to download, depending on user inputs
+        download.tbl <- vals$geneIDs %>% dplyr::select(any_of(c("geneID", "transcriptID",input$download_options)))
+        
+        output$generate_excel_report <- generate_excel_report(download.tbl)
         downloadButton(
             "generate_excel_report",
-            "Create Excel Report",
+            "Download",
             class = "btn-primary"
         )
     })
