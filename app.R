@@ -115,8 +115,10 @@ server <- function(input, output, session) {
         } else if (lang == "AA") {
             AA_dat <- toupper(dat)
             info_dat <- list("GC" = NA, "CAI" = NA)
+            Ce_info_dat <- list("GC" = NA, "CAI" = NA)
         } else if (lang == "error") {
             info_dat <- list("GC" = NA, "CAI" = NA)
+            Ce_info_dat <- list("GC" = NA, "CAI" = NA)
             vals$cds_opt <- NULL
             return("Error: Input sequence contains unrecognized characters. 
                    Check to make sure it only includes characters representing
@@ -258,13 +260,13 @@ server <- function(input, output, session) {
     },
     caption = paste(
         "GC = G+C ratio", tags$br(),
-            "Sr_CAI = CAI score relative to",
-            "codon usage in highly expressed",
-            htmltools::tags$em("S. ratti"),
-            "sequences", tags$br(),
-            "Ce_CAI = CAI score relative to",
-            "codon usage in highly expressed",
-            tags$em("C. elegans"),"sequences"
+        "Sr_CAI = CAI score relative to",
+        "codon usage in highly expressed",
+        htmltools::tags$em("S. ratti"),
+        "sequences", tags$br(),
+        "Ce_CAI = CAI score relative to",
+        "codon usage in highly expressed",
+        tags$em("C. elegans"),"sequences"
     ),
     striped = T,
     bordered = T)
@@ -277,8 +279,8 @@ server <- function(input, output, session) {
                                           "Sequence Info")), 
                      status = "primary",
                      tableOutput("info")
-
-                     )
+                     
+        )
         do.call(panel,args)
     })
     
@@ -291,7 +293,7 @@ server <- function(input, output, session) {
         validate(
             need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input stable gene/transcript IDs or sequences for analysis")
         )
-        
+        vals$geneIDs <- NULL
         isolate({
             if (isTruthy(input$idtext)){
                 # If user provides input using the textbox, 
@@ -300,7 +302,7 @@ server <- function(input, output, session) {
                     gsub(" ", "", ., fixed = TRUE) %>%
                     str_split(pattern = ",") %>%
                     unlist() %>%
-                    as_tibble_col(column_name = "geneID")
+                    as_tibble_col(column_name = "queryID")
                 
                 info.gene.seq<-analyze_geneID_list(genelist, vals)
                 
@@ -350,8 +352,8 @@ server <- function(input, output, session) {
                         #Assume every other input structure is a list of geneIDs 
                     } else {
                         genelist <- genelist %>%
-                            pivot_longer(cols = everything(), values_to = "geneID") %>%
-                            dplyr::select(geneID)
+                            pivot_longer(cols = everything(), values_to = "queryID") %>%
+                            dplyr::select(queryID)
                         info.gene.seq<-analyze_geneID_list(genelist, vals)
                     }
                 } 
@@ -370,11 +372,11 @@ server <- function(input, output, session) {
                               "GC = G+C ratio", tags$br(),
                               "Sr_CAI = CAI score relative to",
                               "codon usage in highly expressed",
-                             htmltools::tags$em("S. ratti"),
-                               "sequences", tags$br(),
-                          "Ce_CAI = CAI score relative to",
-                          "codon usage in highly expressed",
-                          tags$em("C. elegans"),"sequences"),
+                              htmltools::tags$em("S. ratti"),
+                              "sequences", tags$br(),
+                              "Ce_CAI = CAI score relative to",
+                              "codon usage in highly expressed",
+                              tags$em("C. elegans"),"sequences"),
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',
                                          scrollCollapse = TRUE,
@@ -393,22 +395,19 @@ server <- function(input, output, session) {
     })
     
     
-    # Generate and Download report
-    source("Server/generate_excel_report.R", local = TRUE)
+    # Generate Downloadable Report
+    source("Server/generate_excel_report.R")
     
-    # Shiny output for analysis datatable
-    output$analysisinfo <- renderUI({
-        req(input$goAnalyze)
-        args <- list(heading = tagList(h5(shiny::icon("fas fa-calculator"),
-                                          "Sequence Info")), 
-                     status = "primary",
-                     DTOutput("info_analysis"),
-                     downloadButton(
-                         "generate_excel_report",
-                         "Create Excel Report",
-                         class = "btn-primary"
-                     ))
-        do.call(panel,args)
+    #Shiny output for analysis datatable
+    output$downloadbutton_AM <- renderUI({
+        req(input$goAnalyze, vals$geneIDs)
+        browser()
+        output$generate_excel_report <- generate_excel_report(vals$geneIDs)
+        downloadButton(
+            "generate_excel_report",
+            "Create Excel Report",
+            class = "btn-primary"
+        )
     })
     
     # About Tab: Download codon usage charts ----

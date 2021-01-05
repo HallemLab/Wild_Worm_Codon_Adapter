@@ -1,4 +1,6 @@
-output$generate_excel_report <- downloadHandler(
+generate_excel_report <- function(data){
+
+temp<- downloadHandler(
     
     filename = function(){
         paste("Codon_Usage_Report_",Sys.Date(),".xlsx",sep = "")
@@ -29,7 +31,7 @@ output$generate_excel_report <- downloadHandler(
             writeData(
                 to_download,
                 sheet = 1,
-                x = vals$geneIDs,
+                x = data,
                 startRow = 4,
                 startCol = 1,
                 headerStyle = createStyle(
@@ -60,3 +62,4 @@ output$generate_excel_report <- downloadHandler(
         )
     }  
 )
+}

@@ -17,7 +17,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    status = "primary",
                                    
                                    h5('Add Sequence', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Please input a cDNA or amino acid sequence for optimization. Alternatively, upload a gene sequence file (.gb, .fasta, or .txt files accepted).', style = "color: #7b8a8b")),
+                                   p(tags$em('Please input a cDNA or single-letter amino acid sequence for optimization. Alternatively, upload a gene sequence file (.gb, .fasta, or .txt files accepted).', style = "color: #7b8a8b")),
                                    p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                    
                                    ### Sequence (text box)
@@ -49,17 +49,17 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                
                         ),
                         
-                        column(width = 4,
-                               uiOutput("seqinfo")
-                        ),
-                        
                         column(width = 9,
                                conditionalPanel(condition = "input.goButton",
                                                 panel(heading = tagList(h5(shiny::icon("fas fa-dna"),
                                                                            "Optimized Sequences")),
                                                       status = "primary",
                                                       uiOutput("tabs"))
-                               ))
+                               )),
+                        
+                        column(width = 4,
+                               uiOutput("seqinfo")
+                        )
                         
                         
                     )
@@ -74,14 +74,14 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      status = "primary",
                                      ## GeneID Upload
                                      h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                     p(tags$em('Gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; or C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1) can be provided either through direct input via the textbox below, or in bulk as a .csv file of gene IDs. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     p(tags$em('Gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs can be provided either through direct input via the textbox below, or in bulk as a .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
                                      p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                      
                                      ### GeneID (text box)
                                      textAreaInput('idtext',
-                                                   h6('Gene Stable IDs'),
+                                                   h6('Gene IDs'),
                                                    rows = 5, 
                                                    resize = "vertical"),
                                      
@@ -99,7 +99,14 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                )
                         ),
                         column(width = 7, 
-                               uiOutput("analysisinfo")
+                               conditionalPanel(condition = "input.goAnalyze",
+                                                panel(heading = tagList(h5(shiny::icon("fas fa-calculator"),
+                                                                           "Sequence Info")),
+                                                      status = "primary",
+                                                      DTOutput("info_analysis"),
+                                                      uiOutput("downloadbutton_AM")
+                                                      )
+                               )
                         )
                         
                         
