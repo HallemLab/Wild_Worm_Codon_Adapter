@@ -4,7 +4,7 @@ The *Strongyloides* Codon Adapter Shiny App adapts and automates that process of
 ### Optimize Sequences Mode  
 This tab optimizes genetic sequences for expression in *Strongyloides* species.  
 
-It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of artificial introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
+It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of artificial introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
 Optimized sequences with or without artificial introns may be downloaded as .txt files.    
 
 ### Analyze Sequences Mode  
