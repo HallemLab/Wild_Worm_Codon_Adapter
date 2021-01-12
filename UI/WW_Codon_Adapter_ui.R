@@ -236,8 +236,8 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                         tags$br(),
                                         'The underlying code is avaliable on Github:', 
                                         tags$a(
-                                            href = "https://github.com/astrasb/Strongyloides_Codon_Adapter", 
-                                            'https://github.com/astrasb/Strongyloides_Codon_Adapter', target = "blank")
+                                            href = "https://github.com/astrasb/Wild_Worm_Codon_Adapter", 
+                                            'https://github.com/astrasb/Wild_Worm_Codon_Adapter', target = "blank")
                                       ))
                         )
                     )

@@ -129,9 +129,11 @@ server <- function(input, output, session) {
             lut <- custom.codons %>% rename_with( ~ case_when(
                     col.lengths[.x] == 3 ~ "Codon",
                     col.lengths[.x] == 1 ~ "AA")
-                )
+                ) %>%
+                dplyr::arrange(AA)
             
             species_sel <- "custom"
+            
         } else {
         ### If using built-in codon optimization rules
 

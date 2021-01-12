@@ -16,20 +16,20 @@ Web-based Shiny App for automatic codon optimzation and analysis based on codon 
 This repository contains the infrastructure for generating a Shiny web application. The app is deployed via Shinyapps.io but can also be run locally. See App Setup and App Features sections below for additional details.  
 
 ## App Setup & Development
-To access a stable deployment of the Wild Worm Codon Adapter Web App, please visit:   [https://asbryant.shinyapps.io/Strongyloides_Codon_Adapter/](https://asbryant.shinyapps.io/Strongyloides_Codon_Adapter/)  
+To access a stable deployment of the Wild Worm Codon Adapter Web App, please visit:   [https://asbryant.shinyapps.io/Wild_Worm_Codon_Adapter/](https://asbryant.shinyapps.io/Strongyloides_Codon_Adapter/)  
 
 To run the latest version locally from Github, use the following command in R/RStudio:  
 `library(shiny)`  
-`shiny::runGitHub(repo = 'Strongyloides_Codon_Adapter', username = 'astrasb')`  
+`shiny::runGitHub(repo = 'Wild_Worm_Codon_Adapter', username = 'astrasb')`  
 
 To run a specific release locally use the following commands in R/RStudio:  
   * For PCs --  
     `library(shiny)`  
-    `shiny::runUrl('https://github.com/astrasb/Strongyloides_RNAseq_Browser/archive/<RELEASE_VERSION>.zip') ` 
+    `shiny::runUrl('https://github.com/astrasb/Wild_Worm_Codon_Adapter/archive/<RELEASE_VERSION>.zip') ` 
 
   * For Macs --  
     `library(shiny)`  
-    `shiny::runUrl('https://github.com/astrasb/Strongyloides_RNAseq_Browser/archive/<RELEASE_VERSION>.tar.gz')`  
+    `shiny::runUrl('https://github.com/astrasb/Wild_Worm_Codon_Adapter/archive/<RELEASE_VERSION>.tar.gz')`  
 
 Please note: the download step for runURL/runGitHub may take a substantial amount of time. We recommend downloading this archive and running the application locally.
 
@@ -95,7 +95,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 ### User Interface for the Wild Worm Codon Adapter in Optimize Sequences Mode
 ![An example of the User Interface for the Wild Worm Codon Adapter in Optimize Sequences Mode](/Static/WWCA_OptimizeMode.png)
 
-### User Interface for the Wild WormCodon Adapter App in Analyze Sequences Mode
+### User Interface for the Wild Worm Codon Adapter App in Analyze Sequences Mode
 ![An example of the User Interface for the Wild Worm Codon Adapter in Analyze Sequences Mode](/Static/WWCA_AnalyzeMode.png)
 
 ## Sources  
