@@ -73,7 +73,7 @@ CAI values are not calculated when optimizating for *Pristionchus* species or wh
 The fraction of G+C bases of the nucleic acid sequences. Calculated using the `seqinr` library.  
 
 ### Inserting Introns
-Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical *C. elegans* synthetic introns (8), *P. pacificus* native introns (5), or PATC-rich introns (*smu-2* introns 3-4) that enhance germine expression of transgenes in *C. elegans* (9).
+Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical Fire lab synthetic introns (8), *P. pacificus* native introns (5), or PATC-rich introns (*smu-2* introns 3-4) that enhance germine expression of transgenes in *C. elegans* (9).
 
 #### Intron Number and Spacing  
 The Fire lab established three unique introns, spaced equidistantly within a gene as canon (8); this configuration is thus set as default, and is recommended. In *C. elegans*, the location of the intron site influences the degree of intron mediated enhancement, such that a single 5′-intron is more effective than a single 3′-intron [6,9]. Therefore when only 1 or 2 introns are desired, 3 possible intron insertion sites are identified and filled as needed, starting from the 5′ site.
@@ -111,7 +111,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
   - *Brugia malayi*: [*Brugia* Codon Usage Table](http://big.icp.ucl.ac.be/~opperd/private/C_U_B_%20Table.html)
   - *C. elegans*: [Sharp and Bradnam, 1997](https://www.ncbi.nlm.nih.gov/books/NBK20194/)
 * Intron Sequences:  
-  - Canonical *C. elegans* artificial introns: [Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf)
+  - Canonical Fire lab artificial introns: [Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf)
   - PATC-rich introns: [Aljohani *et al* (2020)](https://www.nature.com/articles/s41467-020-19898-0)
   - *P. pacificus* native introns: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
 * Intron/Exon Splice Sites: [Redemann *et al* 2011](https://pubmed.ncbi.nlm.nih.gov/21278743/) and [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
