@@ -20,16 +20,16 @@ To access a stable deployment of the Wild Worm Codon Adapter Web App, please vis
 
 To run the latest version locally from Github, use the following command in R/RStudio:  
 `library(shiny)`  
-`shiny::runGitHub(repo = 'Strongyloides_Codon_Adapter', username = 'astrasb')`  
+`shiny::runGitHub(repo = 'Wild_Worm_Codon_Adapter', username = 'astrasb')`  
 
 To run a specific release locally use the following commands in R/RStudio:  
   * For PCs --  
     `library(shiny)`  
-    `shiny::runUrl('https://github.com/astrasb/Strongyloides_RNAseq_Browser/archive/<RELEASE_VERSION>.zip') ` 
+    `shiny::runUrl('https://github.com/astrasb/Wild_Worm_Codon_Adapter/archive/<RELEASE_VERSION>.zip') ` 
 
   * For Macs --  
     `library(shiny)`  
-    `shiny::runUrl('https://github.com/astrasb/Strongyloides_RNAseq_Browser/archive/<RELEASE_VERSION>.tar.gz')`  
+    `shiny::runUrl('https://github.com/astrasb/Wild_Worm_Codon_Adapter/archive/<RELEASE_VERSION>.tar.gz')`  
 
 Please note: the download step for runURL/runGitHub may take a substantial amount of time. We recommend downloading this archive and running the application locally.
 
