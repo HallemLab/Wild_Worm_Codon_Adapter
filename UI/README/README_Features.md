@@ -1,4 +1,3 @@
-   
 The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*C. elegans* nematode species, including: *Strongyloididae* species, *Pristionchus* species, and *Brugia malayai*. It also permits codon optimization via user-provided custom optimal codon sets. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to *Strongyloididae* and *C. elegans* codon usage rules. 
 
 The app has two usage modes:  
@@ -6,7 +5,7 @@ The app has two usage modes:
 ### Optimize Sequences Mode  
 This tab optimizes genetic sequences for expression in *Strongyloididae* species, *Pristionchus* species, and *Brugia malayai*, as well as user-provided optimal codon sets. 
 
-It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical *C. elegans* synthetic introns, PATC-rich introns, or *P. pacificus* native introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
+It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical Fire lab synthetic introns, PATC-rich introns, or *P. pacificus* native introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
 Optimized sequences with or without artificial introns may be downloaded as .txt files.    
 
 ### Analyze Sequences Mode  
