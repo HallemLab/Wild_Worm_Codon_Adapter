@@ -1,6 +1,6 @@
 # Header ----
-navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
-           windowTitle = "Str Codon Adapter",
+navbarPage(h3("Wild Worm Codon Adapter"),
+           windowTitle = "WWCA",
            theme = shinytheme("flatly"),
            collapsible = TRUE,
            id = "tab",
@@ -16,6 +16,20 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    
                                    status = "primary",
                                    
+                                   ### Option to pick what species the sequence will be codon optimized for
+                                   h5('Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   p(tags$em('Select the codon usage pattern to apply.', style = "color: #7b8a8b")),
+                                   selectInput('sp_Opt',
+                                               h6('Built-in Rules'),
+                                               choices = list("Strongyloididae",
+                                                           "Pristionchus",
+                                                           "Brugia"),
+                                               selected = "Strongyloididae"),
+                                   
+                                   ### Upload custom optimal codon table
+                                   uiOutput('custom_lut_upload'),
+                                   p(tags$em('Note: uploading a custom list of optimal codons will override the dropdown menu selection above. Please use the Clear button if switching between custom and built-in usage rules.', style = "color: #7b8a8b")),
+                                   
                                    h5('Add Sequence', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                    p(tags$em('Please input a cDNA or single-letter amino acid sequence for optimization. Alternatively, upload a gene sequence file (.gb, .fasta, or .txt files accepted).', style = "color: #7b8a8b")),
                                    p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
@@ -23,18 +37,28 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                    ### Sequence (text box)
                                    textAreaInput('seqtext',
                                                  h6('Sequence (DNA or AA)'),
-                                                 rows = 10,
+                                                 rows = 5,
                                                  resize = "vertical"),
                                    
                                    ### Upload list of sequences
                                    uiOutput('optimization_file_upload'),
                                    
+                                   h5('Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   p(tags$em('Users may choose between three sets of intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences', style = "color: #7b8a8b")),
+                                   
+                                   ### Option to pick intron sequences (pulldown)
+                                   selectInput('type_Int',
+                                               h6('Sequence Source'),
+                                               choices = list("Canonical (Fire)",
+                                                              "PATC-rich",
+                                                           "Pristionchus"),
+                                               selected = "Canonical (Fire)"),
+                                   
                                    ### Option to add introns (pulldown)
                                    selectInput('num_Int',
-                                               h6('Introns'),
+                                               h6('Number of Introns'),
                                                choices = 0:3,
-                                               selected = 3,
-                                               width = '40%'),
+                                               selected = 3),
                                    
                                    actionButton('goButton',
                                                 'Submit',
@@ -74,7 +98,7 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      status = "primary",
                                      ## GeneID Upload
                                      h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                     p(tags$em('Gene stable IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs can be provided either through direct input via the textbox below, or in bulk as a .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     p(tags$em('Gene or transcript IDs starting with SSTP, SRAE, SPAL, SVEN, or PTRK; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs can be provided either through direct input via the textbox below, or in bulk as a .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
                                      p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
@@ -112,8 +136,9 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                                 panel(heading = tagList(h5(shiny::icon("fas fa-file-download"),
                                                                            "Download Options")),
                                                       status = "primary",
+                                                      h5('Select data types to download', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                                       checkboxGroupInput("download_options",
-                                                                    h5("Select data types to download:"),
+                                                                    NULL,
                                                                     choiceNames = c("GC ratio",
                                                                     "Sr_CAI values",
                                                                     "Ce_CAI values",
@@ -176,18 +201,18 @@ navbarPage(h3(em("Strongyloides"), "Codon Adapter"),
                                      p('The following datasets used can be
         downloaded using the dropdown menu and download button below:',
                                        tags$ol(
-                                           tags$li(tags$em('C. elegans'), 'codon usage counts (.csv)'),
-                                           tags$li(tags$em('S. ratti'), 'codon usage counts (.csv)'),
-                                           tags$li('Multi-species codon frequency chart (.csv)'),
+                                           tags$li('Multi-species codon frequency/relative adaptiveness table (.csv)'),
+                                           tags$li('Multi-species optimal codon lookup table (.csv)'),
+                                           tags$li('Custom optimal codon lookup table template (.csv)'),
                                            tags$li('Example geneID List (.csv)'),
                                            tags$li('Example 2-column geneID/cDNA List (.csv)')
                                        )),
                                      
                                      pickerInput("which.Info.About",
                                                  NULL, 
-                                                 choices =  c('Ce codon usage counts',
-                                                              'Sr codon usage counts',
-                                                              "Multi-species codon frequency chart",
+                                                 choices =  c('Multi-species codon frequency table',
+                                                              "Multi-species optimal codon table",
+                                                              "Custom codon lookup table template",
                                                               "Example geneID List",
                                                               "Example 2-column geneID/cDNA List"),
                                                  options = list(style = 'btn btn-primary',
