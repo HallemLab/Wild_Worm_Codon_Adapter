@@ -95,7 +95,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 ### User Interface for the Wild Worm Codon Adapter in Optimize Sequences Mode
 ![An example of the User Interface for the Wild Worm Codon Adapter in Optimize Sequences Mode](/Static/WWCA_OptimizeMode.png)
 
-### User Interface for the Wild WormCodon Adapter App in Analyze Sequences Mode
+### User Interface for the Wild Worm Codon Adapter App in Analyze Sequences Mode
 ![An example of the User Interface for the Wild Worm Codon Adapter in Analyze Sequences Mode](/Static/WWCA_AnalyzeMode.png)
 
 ## Sources  
