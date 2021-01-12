@@ -1,4 +1,3 @@
-   
 The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*C. elegans* nematode species, including: *Strongyloididae* species, *Pristionchus* species, and *Brugia malayai*. It also permits codon optimization via user-provided custom optimal codon sets. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to *Strongyloididae* and *C. elegans* codon usage rules. 
 
 The app has two usage modes:  
