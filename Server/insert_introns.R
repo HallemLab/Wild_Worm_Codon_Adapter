@@ -1,11 +1,6 @@
 # Insert artificial introns into identified splice sites
-# Uses 3 canonical artificial introns from Fire lab
-
-syntrons <- list(
-    alpha = 'gtaagtttaaacatatatatactaactaaccctgattatttaaattttcag',
-    beta = 'gtaagtttaaacagttcggtactaactaaccatacatatttaaattttcag',
-    gamma = 'gtaagtttaaacatgattttactaactaactaatctgatttaaattttcag'
-)
+# sequences used for introns are either canonical Fire lab sequences or 
+# P. pacificus native introns sequences, as specified by the user.
 
 ## Remove any non-unique insert sites. 
 loc_iS <- unique(loc_iS)
@@ -18,6 +13,11 @@ loc_iS <- unique(loc_iS)
 ## exon length for Strongyloides spp (stercoralis = 265 bp, ratti = 263 bp)
 ## For now, not going to include the following line of code.
 #loc_iS[diff(loc_iS)>=51]
+## On the other hand, there is recent evidence that in C. elegans, 
+## intron-mediated expression enhancement requires a first exon that is 
+## <350 bp and preferably shorter than 150 bp.
+## (https://www.nature.com/articles/s41467-020-19898-0)
+## For now, let's stick with equidistant
 
 segmented_x <- substring(x, 
                          first = c(1,loc_iS), 

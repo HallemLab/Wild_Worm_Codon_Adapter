@@ -1,4 +1,4 @@
-# Strongyloides Codon Adapter Shiny App
+# Wild Worm Codon Adapter Shiny App
 
 ## --- Libraries ---
 suppressPackageStartupMessages({
@@ -30,18 +30,18 @@ options(shiny.maxRequestSize = 45*1024^2)
 ## --- end_of_chunk ---
 
 ## --- Background ---
-## Load *Strongyloides* and *C. elegans* codon usage chart
-## For both species usage charts: 
-## Calculate the relative adaptiveness of each codon
-## Generate lookup tables that are readible by the seqinr::cai function
-source('Static/generate_codon_lut.R', local = TRUE)
+## Load optimal codon usage charts for species
+## For all species: 
+## Generate table of relative adaptiveness for each codon that are readible by the seqinr::cai function
+## Generate lookup table for codon optimization
+source('Static/load_preprocess_data.R', local = TRUE)
 
 ## --- end_of_chunk ---
 
 ## ---- UI ----
 ui <- fluidPage(
     
-    source('UI/Str_Codon_Adapter_ui.R', local = TRUE)$value,
+    source('UI/WW_Codon_Adapter_ui.R', local = TRUE)$value,
     
     source('UI/custom_css.R', local = T)$value
 )
@@ -52,15 +52,10 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output, session) {
     
-    vals <- reactiveValues(cds_opt = NULL,
-                           og_GC = NULL,
-                           og_CAI = NULL,
-                           opt_GC = NULL,
-                           og_CeCAI = NULL,
-                           geneIDs = NULL,
-                           analysisType = NULL)
+    vals <- reactiveValues()
     
     # The bits that have to be responsive start here.
+    source("Server/reset_state.R", local = TRUE)
     
     ## Codon Optimization Mode ----
     ## Parse nucleotide inputs
@@ -102,50 +97,102 @@ server <- function(input, output, session) {
                         file_ext(input$loadseq$name) == "gb"}, "File type not recognized. Please try again."))
             }
         }
+        
+        ## Parse species optimization rule choice
+        ### If user-provided optimal codons are available
+        if (isTruthy(input$loadlut)) {
+            validate(need({file_ext(input$loadlut$name) == "csv"}, 
+                          "Please provide a .csv file."))
+            # Users should have provided a 2 column matrix with AA and Codon sequence
+            
+            custom.codons <- suppressWarnings(read.csv(input$loadlut$datapath, 
+                                                  header = FALSE, 
+                                                  colClasses = "character", 
+                                                  strip.white = T)) %>%
+                as_tibble() %>%
+                dplyr::filter(!grepl('codon|aa', V1, ignore.case = T))
+            validate(need({ncol(custom.codons) == 2},
+                          "Please provide a 2-column file."))
+            
+            # Rename columns based on length of strings
+            col.lengths <- summarize_each(custom.codons, str_length) %>%
+                summarize_each(dplyr::first)
+            
+            flag.1 <- which(col.lengths$V1 ==1 && col.lengths$V2 == 3)
+            flag.2 <- which(col.lengths$V1 ==3 && col.lengths$V2 == 1)
+            
+            validate(need({isTruthy(flag.1) | isTruthy(flag.2)},
+                     "Column values appear to have incorrect character lengths.
+                     Please ensure that one column contains 1-letter Amino Acid codes,
+                     and another column contains 3-letter codon sequences."))
+            
+            lut <- custom.codons %>% rename_with( ~ case_when(
+                    col.lengths[.x] == 3 ~ "Codon",
+                    col.lengths[.x] == 1 ~ "AA")
+                )
+            
+            species_sel <- "custom"
+        } else {
+        ### If using built-in codon optimization rules
+
+        species_sel <- switch(input$sp_Opt,
+                              "Strongyloididae" = "Sr",
+                              "Pristionchus" = "Pp",
+                              "Brugia" = "Bm")
+        
+        lut <- lut.tbl %>%
+            dplyr::select(AA, contains(species_sel)) %>%
+            dplyr::rename(Codon = contains(species_sel))
+        }
+        
+        w <- w.tbl %>%
+            dplyr::select(contains(species_sel)) %>%
+            pull()
+        
         ## Determine whether input sequence in nucleotide or amino acid
         lang <- detect_language(dat)
         
         ## Calculate info for original sequence
         if (lang == "nuc"){
             info_dat <- calc_sequence_stats(dat, w)
-            Ce_info_dat <- calc_sequence_stats(dat,Ce.w)
             
             ## Translate nucleotides to AA
             source('Server/translate_nucleotides.R', local = TRUE)
         } else if (lang == "AA") {
             AA_dat <- toupper(dat)
             info_dat <- list("GC" = NA, "CAI" = NA)
-            Ce_info_dat <- list("GC" = NA, "CAI" = NA)
         } else if (lang == "error") {
             info_dat <- list("GC" = NA, "CAI" = NA)
-            Ce_info_dat <- list("GC" = NA, "CAI" = NA)
             vals$cds_opt <- NULL
             return("Error: Input sequence contains unrecognized characters. 
                    Check to make sure it only includes characters representing
                    nucleotides or amino acids.")
         }
-        
         ## Codon optimize back to nucleotides
         source('Server/codon_optimize.R', local = TRUE)
         
         ## Calculate info for optimized sequence
         info_opt <- calc_sequence_stats(opt, w)
-        Ce_info_opt <- calc_sequence_stats(opt,Ce.w)
         
         vals$og_GC <- info_dat$GC
         vals$og_CAI <- info_dat$CAI
-        vals$og_CeCAI <- Ce_info_dat$CAI
         vals$opt_GC <- info_opt$GC
         vals$opt_CAI <- info_opt$CAI
-        vals$opt_CeCAI <- Ce_info_opt$CAI
-        
         vals$cds_opt <- cds_opt
     })
     
     
-    add_introns <- reactive({
+    add_introns <- eventReactive (input$goButton, {
         req(vals$cds_opt)
         cds_opt <- vals$cds_opt
+        
+        intron_sel <- switch(input$type_Int,
+                             "Canonical (Fire)" = "Canon",
+                             "PATC-rich" = "PATC",
+                             "Pristionchus" = "Pristionchus"
+        )
+        
+        syntrons <- syntrons.list[[intron_sel]]
         
         ## Detect insertion sites for artificial introns
         source('Server/locate_intron_sites.R', local = TRUE)
@@ -255,18 +302,12 @@ server <- function(input, output, session) {
     output$info <- renderTable({
         tibble(Sequence = c("Original", "Optimized"),
                GC = c(vals$og_GC, vals$opt_GC),
-               Sr_CAI =c(vals$og_CAI, vals$opt_CAI),
-               Ce_CAI = c(vals$og_CeCAI, vals$opt_CeCAI))
+               CAI =c(vals$og_CAI, vals$opt_CAI))
     },
     caption = paste(
-        "GC = G+C ratio", tags$br(),
-        "Sr_CAI = CAI score relative to",
-        "codon usage in highly expressed",
-        htmltools::tags$em("S. ratti"),
-        "sequences", tags$br(),
-        "Ce_CAI = CAI score relative to",
-        "codon usage in highly expressed",
-        tags$em("C. elegans"),"sequences"
+        "GC = fractional G+C content", tags$br(),
+        "CAI = Codon adaptation index score relative to",
+        "user-selected codon usage rules"
     ),
     striped = T,
     bordered = T)
@@ -286,7 +327,6 @@ server <- function(input, output, session) {
     
     
     ## Analysis Mode ----
-    source("Server/reset_state.R", local = TRUE)
     
     # Primary reactive element in the Analysis Mode
     analyze_sequence <- eventReactive(input$goAnalyze, {
@@ -369,14 +409,15 @@ server <- function(input, output, session) {
             DT::datatable(rownames = FALSE,
                           caption = tags$caption(
                               style = 'caption-side: bottom; text-align: left;',
-                              "GC = G+C ratio", tags$br(),
+                              "GC = fractional G-C content", tags$br(),
                               "Sr_CAI = CAI score relative to",
                               "codon usage in highly expressed",
                               htmltools::tags$em("S. ratti"),
-                              "sequences", tags$br(),
+                              "genes", tags$br(),
                               "Ce_CAI = CAI score relative to",
                               "codon usage in highly expressed",
-                              tags$em("C. elegans"),"sequences"),
+                              tags$em("C. elegans"),"genes"),
+                          
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',
                                          scrollCollapse = TRUE,
@@ -403,7 +444,9 @@ server <- function(input, output, session) {
         req(input$goAnalyze, vals$geneIDs)
         
         # Select data columns to download, depending on user inputs
-        download.tbl <- vals$geneIDs %>% dplyr::select(any_of(c("geneID", "transcriptID",input$download_options)))
+        download.tbl <- vals$geneIDs %>% dplyr::select(any_of(c("geneID", 
+                                                                "transcriptID",
+                                                                input$download_options)))
         
         output$generate_excel_report <- generate_excel_report(download.tbl)
         downloadButton(
@@ -416,9 +459,9 @@ server <- function(input, output, session) {
     # About Tab: Download codon usage charts ----
     StudyInfo.filename.About <- reactive({
         Info.file <- switch(input$which.Info.About,
-                            `Ce codon usage counts` = './www/Ce_usage_counts.csv',
-                            `Sr codon usage counts` = './www/Sr_top50_usage_counts.csv',
-                            `Multi-species codon frequency chart` = "./www/codon_usage_chart.csv",
+                            `Multi-species codon frequency table` = "./www/rel_adaptiveness_chart.csv",
+                            `Multi-species optimal codon table` = "./www/codon_lut.csv",
+                            `Custom codon lookup table template`= "./www/example_custom_lut.csv",
                             `Example geneID List` = "./www/example_geneList.csv",
                             `Example 2-column geneID/cDNA List` = "./www/example_2col_cDNAList.csv")
         

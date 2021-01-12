@@ -7,10 +7,10 @@
 analyze_cDNA_list <- function(gene.seq, vals){
     withProgress(message = "Calculating...",expr = {
         setProgress(0)
-       
+
     ## Calculate info each sequence (S. ratti index) ----
     calc.inc <- 0.4/nrow(gene.seq)
-    temp<- lapply(gene.seq$cDNA, function (x){
+    Sr.temp<- lapply(gene.seq$cDNA, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
@@ -21,12 +21,12 @@ analyze_cDNA_list <- function(gene.seq, vals){
     }) 
     
     # Strongyloides CAI values ----
-    info.gene.seq<- temp %>%
+    info.gene.seq<- Sr.temp %>%
         map("GC") %>%
         unlist() %>%
         as_tibble_col(column_name = 'GC')
     
-    info.gene.seq<- temp %>%
+    info.gene.seq<- Sr.temp %>%
         map("CAI") %>%
         unlist() %>%
         as_tibble_col(column_name = 'Sr_CAI') %>%
@@ -37,8 +37,6 @@ analyze_cDNA_list <- function(gene.seq, vals){
     
     
     # C. elegans CAI values ----
-    # Only run this under certain conditions
-    # 
     setProgress(0.5)
     ## Calculate info each sequence (C. elegans index) ----
     Ce.temp<- lapply(gene.seq$cDNA, function (x){
@@ -51,15 +49,16 @@ analyze_cDNA_list <- function(gene.seq, vals){
         }
     }) 
     
-    ce.info.gene.seq<- Ce.temp %>%
+    Ce.info.gene.seq<- Ce.temp %>%
         map("CAI") %>%
         unlist() %>%
         as_tibble_col(column_name = 'Ce_CAI')
     
-    
-    ## Merge both tibbles
+
+    ## Merge tibbles
     info.gene.seq <- add_column(info.gene.seq, 
-                                Ce_CAI = ce.info.gene.seq$Ce_CAI, .after = "Sr_CAI")
+                                Ce_CAI = Ce.info.gene.seq$Ce_CAI, 
+                                .after = "Sr_CAI")
     
     vals$geneIDs <- info.gene.seq %>%
         left_join(.,gene.seq, by = "geneID") %>%

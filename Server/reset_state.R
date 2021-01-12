@@ -6,7 +6,15 @@ output$optimization_file_upload <- renderUI({
               multiple = FALSE)
 })
 
-## Optimization Mode: Generate/Reset Sequence File Upload ----
+## Optimization Mode: Generate/Reset Custom Optimal Codon Lookup Table File Upload ----
+output$custom_lut_upload <- renderUI({
+    input$resetOptimization
+    fileInput('loadlut',
+              h6('Custom Optimal Codon Rule (.csv)'),
+              multiple = FALSE)
+})
+
+## Optimization Mode: Reset Sequence Text Box ----
 observeEvent(input$resetOptimization,{
     updateTextAreaInput(session,"seqtext",value = "")
 })
@@ -19,7 +27,7 @@ output$analysis_file_upload <- renderUI({
               multiple = FALSE)
 })
 
-## Analysis Mode: Generate/Reset Gene File Upload ----
+## Analysis Mode: Generate/Reset Gene Text Box ----
 observeEvent(input$resetAnalysis,{
     updateTextAreaInput(session,"idtext",value = "")
 })

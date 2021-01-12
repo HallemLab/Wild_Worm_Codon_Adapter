@@ -7,7 +7,3 @@ cds_opt <- sapply(AA_dat, match, table = lut$AA) %>%
 
 opt <- c2s(cds_opt) %>%
     s2c(.)
-
-# ## Save variables for export
-# vals$seq_opt <- c2s(opt)
-# vals$cds_opt <- toupper(cds_opt)

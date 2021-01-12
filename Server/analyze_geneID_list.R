@@ -11,10 +11,10 @@ analyze_geneID_list <- function(genelist, vals){
     Ce.seq <- NULL
     transcript.seq <- NULL
     
-    withProgress(message = "Searching for sequences...",expr = {
+    withProgress(message = "Searching for cDNA sequences...",expr = {
         setProgress(.05)
-        # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, or `WB` check if they are geneIDs
-        if (any(grepl('SSTP|SVE|SPAL|WB', genelist$queryID))) {
+        # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, `WB`, or `PTRK` check if they are geneIDs
+        if (any(grepl('SSTP|SVE|SPAL|WB|PTRK', genelist$queryID))) {
             Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'wbps_transcript_id', 'cdna'),
                               # grab the cDNA sequences for the given genes from WormBase Parasite
                               mart = useMart(biomart="parasite_mart", 
@@ -27,7 +27,8 @@ analyze_geneID_list <- function(genelist, vals){
                                               'ststerprjeb528',
                                               'stpapiprjeb525',
                                               'stveneprjeb530',
-                                              'caelegprjna13758'),
+                                              'caelegprjna13758',
+                                              'patricprjeb515'),
                                             genelist$queryID),
                               useCache = F) %>%
                 as_tibble() %>%
@@ -59,31 +60,9 @@ analyze_geneID_list <- function(genelist, vals){
             Sr.seq$cDNA <- tolower(Sr.seq$cDNA)
         }
         if (isTruthy(Sr.seq) && nrow(Sr.seq) == 0) {Sr.seq <- NULL}
-        setProgress(0.4)
-        # Check all items in geneList to see if they are transcript ids
-        transcript.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
-                                # grab the cDNA sequences for the given genes from WormBase Parasite
-                                mart = useMart(biomart="parasite_mart", 
-                                               dataset = "wbps_gene", 
-                                               host="https://parasite.wormbase.org", 
-                                               port = 443),
-                                filters = c('species_id_1010', 
-                                            'wbps_transcript_id'),
-                                values = list(c('strattprjeb125',
-                                                'ststerprjeb528',
-                                                'stpapiprjeb525',
-                                                'stveneprjeb530',
-                                                'caelegprjna13758'),
-                                              genelist$queryID),
-                                useCache = F) %>%
-            as_tibble() %>%
-            #we need to rename the columns retreived from biomart
-            dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna) %>%
-            dplyr::mutate(queryID = transcriptID) # save the query used for indexing
-        transcript.seq$cDNA <- tolower(transcript.seq$cDNA)
-        if (isTruthy(transcript.seq) && nrow(transcript.seq) == 0) {transcript.seq <- NULL}
         
-        setProgress(0.6)
+        setProgress(0.4)
+        
         # If any of the items in genelist contain the string `Ce-`, remove that string and search as gene names
         if (any(grepl('Ce', genelist$queryID))) {
             genelist$queryID <- genelist$queryID %>%
@@ -107,6 +86,38 @@ analyze_geneID_list <- function(genelist, vals){
         }
         if (isTruthy(Ce.seq) && nrow(Ce.seq) == 0) {Ce.seq <- NULL}
         
+        setProgress(0.6)
+        
+        # Check to see if all the queryIDs have been found, if not, search for transcript IDs
+        if (any(isTruthy(Ce.seq), isTruthy(Sspp.seq), isTruthy(Sr.seq)) && 
+            nrow(bind_rows(Ce.seq, Sr.seq, Sspp.seq)) >= length(genelist$queryID)) {
+            transcript.seq <- NULL
+        } else {
+        # Check all items in geneList to see if they are transcript ids
+        transcript.seq <- getBM(attributes=c('wbps_gene_id','wbps_transcript_id', 'cdna'),
+                                # grab the cDNA sequences for the given genes from WormBase Parasite
+                                mart = useMart(biomart="parasite_mart", 
+                                               dataset = "wbps_gene", 
+                                               host="https://parasite.wormbase.org", 
+                                               port = 443),
+                                filters = c('species_id_1010', 
+                                            'wbps_transcript_id'),
+                                values = list(c('strattprjeb125',
+                                                'ststerprjeb528',
+                                                'stpapiprjeb525',
+                                                'stveneprjeb530',
+                                                'caelegprjna13758',
+                                                'patricprjeb515'),
+                                              genelist$queryID),
+                                useCache = F) %>%
+            as_tibble() %>%
+            #we need to rename the columns retreived from biomart
+            dplyr::rename(geneID = wbps_gene_id, transcriptID = wbps_transcript_id, cDNA = cdna) %>%
+            dplyr::mutate(queryID = transcriptID) # save the query used for indexing
+        transcript.seq$cDNA <- tolower(transcript.seq$cDNA)
+        if (isTruthy(transcript.seq) && nrow(transcript.seq) == 0) {transcript.seq <- NULL}
+        }
+        
         validate(
             need({isTruthy(Sspp.seq)|isTruthy(Sr.seq)|isTruthy(transcript.seq)|isTruthy(Ce.seq)}, "The call to BioMaRT did not return any records matching the submitted gene(s). \n Please check the gene lists and try again. \n Note: letters must be capitalized correctly, i.e. 'srae_' and 'CE' will produce errors.")
         )
@@ -118,23 +129,23 @@ analyze_geneID_list <- function(genelist, vals){
         ## Calculate info each sequence (S. ratti index) ----
         calc.inc <- 0.15/nrow(gene.seq)
         
-        temp<- lapply(gene.seq$cDNA, function (x){
+        Sr.temp<- lapply(gene.seq$cDNA, function (x){
             incProgress(amount = calc.inc)
             if (!is.na(x)) {
                 s2c(x) %>%
-                    calc_sequence_stats(.,w)}
+                    calc_sequence_stats(.,w.tbl$Sr_relAdapt)}
             else {
                 list(GC = NA, CAI = NA)
             }
         }) 
         
         # Strongyloides CAI values ----
-        info.gene.seq<- temp %>%
+        info.gene.seq<- Sr.temp %>%
             map("GC") %>%
             unlist() %>%
             as_tibble_col(column_name = 'GC')
         
-        info.gene.seq<- temp %>%
+        info.gene.seq<- Sr.temp %>%
             map("CAI") %>%
             unlist() %>%
             as_tibble_col(column_name = 'Sr_CAI') %>%
@@ -148,27 +159,29 @@ analyze_geneID_list <- function(genelist, vals){
         
         
         # C. elegans CAI values ----
-        # Only run this under certain conditions
         # 
         ## Calculate info each sequence (C. elegans index) ----
         Ce.temp<- lapply(gene.seq$cDNA, function (x){
             incProgress(amount = calc.inc)
             if (!is.na(x)) {
                 s2c(x) %>%
-                    calc_sequence_stats(.,Ce.w)}
+                    calc_sequence_stats(.,w.tbl$Ce_relAdapt)}
             else {
                 list(GC = NA, CAI = NA)
             }
         }) 
         
-        ce.info.gene.seq<- Ce.temp %>%
+        Ce.info.gene.seq<- Ce.temp %>%
             map("CAI") %>%
             unlist() %>%
             as_tibble_col(column_name = 'Ce_CAI')
         
-        ## Merge both tibbles
+        
+        ## Merge tibbles
         info.gene.seq <- add_column(info.gene.seq, 
-                                    Ce_CAI = ce.info.gene.seq$Ce_CAI, .after = "Sr_CAI")
+                                    Ce_CAI = Ce.info.gene.seq$Ce_CAI,
+                                    .after = "Sr_CAI")
+        
         vals$geneIDs <- suppressMessages(info.gene.seq %>%
            left_join(.,gene.seq) %>%
             rename('cDNA sequence' = cDNA) %>%
