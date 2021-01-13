@@ -54,7 +54,7 @@ The primary non-responsive data inputs to the Wild Worm Codon Adapter App are tw
 These tables are loaded by the Shiny server function and used to calculate CAI valuess and optimize sequences.  
 
 ### Codon Usage Rules
-Codon bias in nematode transcripts can vary as a function of gene expression levels such that highly expressed genes appear to have the greatest degree of codon bias. Thus, codon frequency rates from highly expressed genes are used, whenever possible. Codon frequency rates for *Strongyloididae* species are based on highly expressed *S. ratti* transcripts (50 most abundant expressed sequence tag clusters, 1). Codon frequency rates for *C. elegans* were based on highly expressed *C. elegans* gene count data. Codon frequency rates for *B. malayi* are based on count data from the [*Brugia* Codon Usage Table](http://big.icp.ucl.ac.be/~opperd/private/C_U_B_%20Table.html).
+Codon bias in nematode transcripts can vary as a function of gene expression levels such that highly expressed genes appear to have the greatest degree of codon bias. Thus, codon frequency rates from highly expressed genes are used, whenever possible. Codon frequency rates for *Strongyloididae* species are based on highly expressed *S. ratti* transcripts (50 most abundant expressed sequence tag clusters, 1). Codon frequency rates for *C. elegans* were based on highly expressed *C. elegans* gene count data. Codon frequency rates for *B. malayi* are based on count data from the *Brugia malayi* codon usage table accessed at the [Codon Usage Database](http://www.kazusa.or.jp/codon/).  
 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 **For *S. ratti*, *C. elegans*, and *B. malayi*: ** The relative adaptiveness values of every possible codon was generated as follows: individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.
@@ -73,7 +73,7 @@ CAI values are not calculated when optimizating for *Pristionchus* species or wh
 The fraction of G+C bases of the nucleic acid sequences. Calculated using the `seqinr` library.  
 
 ### Inserting Introns
-Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical Fire lab synthetic introns (8), *P. pacificus* native introns (5), or PATC-rich introns (*smu-2* introns 3-4) that enhance germine expression of transgenes in *C. elegans* (9).
+Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical Fire lab synthetic introns (8), *P. pacificus* native introns (5), or PATC-rich introns (*smu-2* introns 3-5) that enhance germine expression of transgenes in *C. elegans* (9).
 
 #### Intron Number and Spacing  
 The Fire lab established three unique introns, spaced equidistantly within a gene as canon (8); this configuration is thus set as default, and is recommended. In *C. elegans*, the location of the intron site influences the degree of intron mediated enhancement, such that a single 5′-intron is more effective than a single 3′-intron [6,9]. Therefore when only 1 or 2 introns are desired, 3 possible intron insertion sites are identified and filled as needed, starting from the 5′ site.
@@ -108,7 +108,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 * Codon Usage Patterns:  
   - *Strongyloides spp*: [Mitreva *et al* 2006](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/)
   - *Pristionchus spp*: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
-  - *Brugia malayi*: [*Brugia* Codon Usage Table](http://big.icp.ucl.ac.be/~opperd/private/C_U_B_%20Table.html)
+  - *Brugia malayi*: [Codon Usage Database](http://www.kazusa.or.jp/codon/).
   - *C. elegans*: [Sharp and Bradnam, 1997](https://www.ncbi.nlm.nih.gov/books/NBK20194/)
 * Intron Sequences:  
   - Canonical Fire lab artificial introns: [Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf)
