@@ -138,7 +138,7 @@ server <- function(input, output, session) {
         ### If using built-in codon optimization rules
 
         species_sel <- switch(input$sp_Opt,
-                              "Strongyloididae" = "Sr",
+                              "Strongyloides" = "Sr",
                               "Pristionchus" = "Pp",
                               "Brugia" = "Bm")
         

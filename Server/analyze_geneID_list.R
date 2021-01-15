@@ -13,7 +13,7 @@ analyze_geneID_list <- function(genelist, vals){
     
     withProgress(message = "Searching for cDNA sequences...",expr = {
         setProgress(.05)
-        # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, `WB`, or `PTRK` check if they are geneIDs
+        # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, or `WB`, check if they are geneIDs
         if (any(grepl('SSTP|SVE|SPAL|WB|PTRK', genelist$queryID))) {
             Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'wbps_transcript_id', 'cdna'),
                               # grab the cDNA sequences for the given genes from WormBase Parasite
@@ -27,8 +27,7 @@ analyze_geneID_list <- function(genelist, vals){
                                               'ststerprjeb528',
                                               'stpapiprjeb525',
                                               'stveneprjeb530',
-                                              'caelegprjna13758',
-                                              'patricprjeb515'),
+                                              'caelegprjna13758'),
                                             genelist$queryID),
                               useCache = F) %>%
                 as_tibble() %>%
@@ -106,8 +105,7 @@ analyze_geneID_list <- function(genelist, vals){
                                                 'ststerprjeb528',
                                                 'stpapiprjeb525',
                                                 'stveneprjeb530',
-                                                'caelegprjna13758',
-                                                'patricprjeb515'),
+                                                'caelegprjna13758'),
                                               genelist$queryID),
                                 useCache = F) %>%
             as_tibble() %>%
