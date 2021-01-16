@@ -31,3 +31,8 @@ output$analysis_file_upload <- renderUI({
 observeEvent(input$resetAnalysis,{
     updateTextAreaInput(session,"idtext",value = "")
 })
+
+## Analysis Mode: Generate/Reset cDNA sequence Text Box ----
+observeEvent(input$resetAnalysis,{
+    updateTextAreaInput(session,"cDNAtext",value = "")
+})
