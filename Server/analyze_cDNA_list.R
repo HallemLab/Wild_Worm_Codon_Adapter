@@ -9,12 +9,12 @@ analyze_cDNA_list <- function(gene.seq, vals){
         setProgress(0)
 
     ## Calculate info each sequence (S. ratti index) ----
-    calc.inc <- 0.4/nrow(gene.seq)
+    calc.inc <- 0.3/nrow(gene.seq)
     Sr.temp<- lapply(gene.seq$cDNA, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
-                calc_sequence_stats(.,w)}
+                calc_sequence_stats(.,w.tbl$Sr_relAdap)}
         else {
             list(GC = NA, CAI = NA)
         }
@@ -37,13 +37,13 @@ analyze_cDNA_list <- function(gene.seq, vals){
     
     
     # C. elegans CAI values ----
-    setProgress(0.5)
+    setProgress(0.35)
     ## Calculate info each sequence (C. elegans index) ----
     Ce.temp<- lapply(gene.seq$cDNA, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
-                calc_sequence_stats(.,Ce.w)}
+                calc_sequence_stats(.,w.tbl$Ce_relAdapt)}
         else {
             list(GC = NA, CAI = NA)
         }
@@ -54,15 +54,33 @@ analyze_cDNA_list <- function(gene.seq, vals){
         unlist() %>%
         as_tibble_col(column_name = 'Ce_CAI')
     
+    # B. malayi CAI values ----
+    setProgress(0.7)
+    ## Calculate info each sequence (B. malayi index) ----
+    Bm.temp<- lapply(gene.seq$cDNA, function (x){
+        incProgress(amount = calc.inc)
+        if (!is.na(x)) {
+            s2c(x) %>%
+                calc_sequence_stats(.,w.tbl$Bm_relAdapt)}
+        else {
+            list(GC = NA, CAI = NA)
+        }
+    }) 
+    
+    Bm.info.gene.seq<- Bm.temp %>%
+        map("CAI") %>%
+        unlist() %>%
+        as_tibble_col(column_name = 'Bm_CAI')
 
     ## Merge tibbles
     info.gene.seq <- add_column(info.gene.seq, 
-                                Ce_CAI = Ce.info.gene.seq$Ce_CAI, 
+                                Ce_CAI = Ce.info.gene.seq$Ce_CAI,
+                                Bm_CAI = Bm.info.gene.seq$Bm_CAI,
                                 .after = "Sr_CAI")
     
-    vals$geneIDs <- info.gene.seq %>%
-        left_join(.,gene.seq, by = "geneID") %>%
-        rename('cDNA sequence' = cDNA)
+    vals$geneIDs <- suppressMessages(info.gene.seq %>%
+                                         left_join(.,gene.seq) %>%
+                                         rename('cDNA sequence' = cDNA))
     
     setProgress(1)
     info.gene.seq
