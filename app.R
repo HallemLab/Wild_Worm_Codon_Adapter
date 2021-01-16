@@ -333,13 +333,13 @@ server <- function(input, output, session) {
     # Primary reactive element in the Analysis Mode
     analyze_sequence <- eventReactive(input$goAnalyze, {
         validate(
-            need({isTruthy(input$idtext) | isTruthy(input$loadfile)}, "Please input stable gene/transcript IDs or sequences for analysis")
+            need({isTruthy(input$idtext) | isTruthy(input$loadfile) | isTruthy(input$cDNAtext)}, "Please input stable gene/transcript IDs or sequences for analysis")
         )
         vals$geneIDs <- NULL
         isolate({
             if (isTruthy(input$idtext)){
-                # If user provides input using the textbox, 
-                # assume they are provided a list of gene/transcript IDs
+                # If user provides input using the gene/transcript ID textbox, 
+                # assume they provided a list of gene/transcript IDs
                 genelist <- input$idtext %>%
                     gsub(" ", "", ., fixed = TRUE) %>%
                     str_split(pattern = ",") %>%
@@ -347,6 +347,18 @@ server <- function(input, output, session) {
                     as_tibble_col(column_name = "queryID")
                 
                 info.gene.seq<-analyze_geneID_list(genelist, vals)
+                
+            } else if (isTruthy(input$cDNAtext)){
+                # If user provides input using the cDNA sequence textbox, 
+                # assume they provided a transgene cDNA sequence 
+            
+                genelist <- input$cDNAtext %>%
+                    gsub(" ", "", ., fixed = TRUE) %>%
+                    as_tibble_col(column_name = "cDNA") %>%
+                    dplyr::mutate(geneID = "submittedGene",
+                                  .before = cDNA)
+                   
+                info.gene.seq <- analyze_cDNA_list(genelist, vals)
                 
             } else if (isTruthy(input$loadfile)){
                 file <- input$loadfile
@@ -415,10 +427,13 @@ server <- function(input, output, session) {
                               "Sr_CAI = CAI score relative to",
                               "codon usage in highly expressed",
                               htmltools::tags$em("S. ratti"),
-                              "genes", tags$br(),
+                              "sequences", tags$br(),
                               "Ce_CAI = CAI score relative to",
                               "codon usage in highly expressed",
-                              tags$em("C. elegans"),"genes"),
+                              tags$em("C. elegans"),"genes", tags$br(),
+                              "Bm_CAI = CAI score relative to",
+                              "codon usage in",
+                              tags$em("B. malayi")),
                           
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',
@@ -431,7 +446,7 @@ server <- function(input, output, session) {
                                                         "50")))
         
         info_analysis.DT <- info_analysis.DT %>%
-            DT::formatRound(columns = 2:4, digits = 2)
+            DT::formatRound(columns = 2:5, digits = 2)
         
         info_analysis.DT
         

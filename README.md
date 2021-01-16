@@ -40,7 +40,7 @@ The app has two usage modes:
 
   1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *Pristionchus* species, and *Brugia malayi*, as well as user-provided optimal codon sets. It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical *C. elegans* synthetic introns, PATC-rich introns, or *P. pacificus* native introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files. Optimized sequences with or without introns may be downloaded as .txt files.    
 
-  2. **Analysis Mode:** For user-provided genes, this tab reports the fractional GC content, cDNA sequence, and codon optimization relative to the codon usage weights of highly expressed *Strongyloides ratti* transcripts (1) or *C. elegans* genes (2). Stable Gene or Transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "PTRK", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.   
+  2. **Analysis Mode:** For user-provided genes or sequences, this tab reports the fractional GC content, cDNA sequence, and codon optimization relative to the codon usage weights of highly expressed *Strongyloides ratti* transcripts (1), *C. elegans* genes (2), and *Brugia malayi* genes. To analyze transgenes, cDNA sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "PTRK", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.   
 
   Users may download an excel file containing fractional GC content values, codon adaptation indeces, and cDNA sequences for the user-provided genes.
 
@@ -51,7 +51,7 @@ The primary non-responsive data inputs to the Wild Worm Codon Adapter App are tw
 2. Optimal codon lookup table for *Strongyloides spp*, *Pristionchus spp* , *B. malayi*, and *C. elegans*
 3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid)
 
-These tables are loaded by the Shiny server function and used to calculate CAI valuess and optimize sequences.  
+These tables are loaded by the Shiny server function and used to calculate CAI values and optimize sequences.  
 
 ### Codon Usage Rules
 Codon bias in nematode transcripts can vary as a function of gene expression levels such that highly expressed genes appear to have the greatest degree of codon bias. Thus, codon frequency rates from highly expressed genes are used, whenever possible. Codon frequency rates for *Strongyloides* species are based on highly expressed *S. ratti* transcripts (50 most abundant expressed sequence tag clusters, 1). Codon frequency rates for *C. elegans* were based on highly expressed *C. elegans* gene count data. Codon frequency rates for *B. malayi* are based on count data from the *Brugia malayi* codon usage table accessed at the [Codon Usage Database](http://www.kazusa.or.jp/codon/).  
@@ -65,7 +65,7 @@ Codon bias in nematode transcripts can vary as a function of gene expression lev
 In all cases, codon optimization is performed by replacing non-optimal codons with optimal codons.  
 
 ### Codon Adaptation Index Values
-In the case of optimization for *Strongyloides* species or *B malayi*: sequences (both original and optimized) are scored by calculating the Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence (3,4). The CAI is calculated via the `seqinr` library. 
+In the case of optimization for *Strongyloides* species or *B malayi*: sequences (both original and optimized) are scored by calculating the Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence (3,4). In Analysis mode, CAI values for user-inputted sequences are calculated relative to *Strongyloides*, *Brugia* and *C. elegans* codon adaptiveness charts. The CAI is calculated via the `seqinr` library. 
 
 CAI values are not calculated when optimizing for *Pristionchus* species or when using a user-provided custom optimization rule.
 

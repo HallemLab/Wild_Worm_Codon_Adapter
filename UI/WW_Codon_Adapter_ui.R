@@ -97,18 +97,27 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                      width = NULL,
                                      status = "primary",
                                      ## GeneID Upload
-                                     h5('Pick Genes', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                     p(tags$em('Gene or transcript IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs can be provided either through direct input via the textbox below, or in bulk as a .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
-                                     p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
+                                     h5('Analyze Transgene', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                     p(tags$em('To measure the codon bias of an individual transgene, supply the cDNA sequence.', style = "color: #7b8a8b")),
+                                      ### Sequence direct input
+                                     textAreaInput('cDNAtext',
+                                                   h6('Transgene sequence'),
+                                                   rows = 2, 
+                                                   resize = "vertical"),
+                                     
+                                     h5('Analyze Native Sequences', class = 'text-danger', style = "margin: 5px 0px 5px 0px"),
+                                     p(tags$em('To perform analysis of native cDNA sequences, list sequence IDS as: gene or transcript IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     
+                                     p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing sequence names and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                      
                                      ### GeneID (text box)
                                      textAreaInput('idtext',
-                                                   h6('Gene IDs'),
-                                                   rows = 5, 
+                                                   h6('Gene/Transcript IDs'),
+                                                   rows = 2, 
                                                    resize = "vertical"),
-                                     
+
                                      uiOutput('analysis_file_upload'),
                                      
                                      actionButton('goAnalyze',
@@ -136,21 +145,25 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                                 panel(heading = tagList(h5(shiny::icon("fas fa-file-download"),
                                                                            "Download Options")),
                                                       status = "primary",
-                                                      h5('Select data types to download', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                                      checkboxGroupInput("download_options",
-                                                                    NULL,
+                                                      prettyCheckboxGroup("download_options",
+                                                                          'Select Values to Download',
+                                                                    status = "default",
+                                                                    icon = icon("check"),
                                                                     choiceNames = c("GC ratio",
                                                                     "Sr_CAI values",
                                                                     "Ce_CAI values",
+                                                                    "Bm_CAI values",
                                                                     "cDNA sequences"
                                                                     ),
                                                                     choiceValues = c("GC",
                                                                                      "Sr_CAI",
                                                                                      "Ce_CAI",
+                                                                                     "Bm_CAI",
                                                                                      "cDNA sequence"),
                                                                     selected =  c("GC",
                                                                                   "Sr_CAI",
                                                                                   "Ce_CAI",
+                                                                                  "Bm_CAI",
                                                                                   "cDNA sequence")),
                                                       uiOutput("downloadbutton_AM")
                                                       ))
