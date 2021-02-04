@@ -195,13 +195,14 @@ analyze_geneID_list <- function(genelist, vals){
         info.gene.seq <- add_column(info.gene.seq, 
                                     Ce_CAI = Ce.info.gene.seq$Ce_CAI,
                                     Bm_CAI = Bm.info.gene.seq$Bm_CAI,
-                                    .after = "Sr_CAI")
+                                    .after = "Sr_CAI") %>%
+            drop_na() #remove any rows that just have NA values
         
         vals$geneIDs <- suppressMessages(info.gene.seq %>%
            left_join(.,gene.seq) %>%
             rename('cDNA sequence' = cDNA) %>%
             dplyr::select(!queryID))
-        
+       
         info.gene.seq %>%
             dplyr::select(!queryID)
         
