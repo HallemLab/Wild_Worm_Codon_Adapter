@@ -446,7 +446,7 @@ server <- function(input, output, session) {
                                                         "50")))
         
         info_analysis.DT <- info_analysis.DT %>%
-            DT::formatRound(columns = 2:5, digits = 2)
+            DT::formatRound(columns = (ncol(tbl)-3):ncol(tbl), digits = 2)
         
         info_analysis.DT
         
@@ -478,7 +478,7 @@ server <- function(input, output, session) {
         Info.file <- switch(input$which.Info.About,
                             `Multi-species codon frequency table` = "./www/rel_adaptiveness_chart.csv",
                             `Multi-species optimal codon table` = "./www/codon_lut.csv",
-                            `Custom codon lookup table template`= "./www/example_custom_lut.csv",
+                            `Example custom preferred codon table`= "./www/example_custom_lut.csv",
                             `Example geneID List` = "./www/example_geneList.csv",
                             `Example 2-column geneID/cDNA List` = "./www/example_2col_cDNAList.csv")
         
