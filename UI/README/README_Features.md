@@ -9,7 +9,7 @@ It accepts either nucleotide or single-letter amino acid sequences, and will gen
 Optimized sequences with or without artificial introns may be downloaded as .txt files.    
 
 ### Analyze Sequences Mode  
-For user-provided genes/sequences, this tab reports the fractional GC content, cDNA sequence, and codon optimization relative to the codon usage weights of highly expressed *S. ratti* transcripts [(Mitreva *et al* 2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/), highly expressed *C. elegans* genes [(Sharp and Bradnam, 1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/), *N. brasiliensis* contigs, and *B. malayi* genes. 
+For user-provided genes/sequences, this tab reports the fractional GC content, cDNA sequence, and codon optimization relative to the codon usage weights of: highly expressed *S. ratti* transcripts [(Mitreva *et al* 2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/), highly expressed *C. elegans* genes [(Sharp and Bradnam, 1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/), *N. brasiliensis* coding sequences, and *B. malayi* coding sequences. 
 
 To analyze transgenes, cDNA sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing sequence names and cDNA sequences, or a .fa file containing named cDNA sequences.   
 
