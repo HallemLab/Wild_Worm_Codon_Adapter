@@ -450,7 +450,7 @@ server <- function(input, output, session) {
                                                         "50")))
         
         info_analysis.DT <- info_analysis.DT %>%
-            DT::formatRound(columns = (ncol(tbl)-3):ncol(tbl), digits = 2)
+            DT::formatRound(columns = (ncol(tbl)-4):ncol(tbl), digits = 2)
         
         info_analysis.DT
         

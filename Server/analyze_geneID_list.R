@@ -5,7 +5,7 @@
 # 
 
 analyze_geneID_list <- function(genelist, vals){
-    # Get cDNA sequences for given geneIDs from BioMaRT
+    # Get cDNA sequences for given geneIDs from BioMaRT----
     Sspp.seq <- NULL
     Sr.seq <- NULL
     Ce.seq <- NULL
@@ -123,9 +123,10 @@ analyze_geneID_list <- function(genelist, vals){
         gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,transcript.seq,Ce.seq) %>%
             dplyr::left_join(genelist, . , by = "queryID")
         
-        ## Calculate info each sequence (S. ratti index) ----
+        
         calc.inc <- 0.1/nrow(gene.seq)
         
+        # Strongyloides CAI values ----
         Sr.temp<- lapply(gene.seq$cDNA, function (x){
             incProgress(amount = calc.inc)
             if (!is.na(x)) {
@@ -136,7 +137,7 @@ analyze_geneID_list <- function(genelist, vals){
             }
         }) 
         
-        # Strongyloides CAI values ----
+        ## Calculate info each sequence (S. ratti index)
         info.gene.seq<- Sr.temp %>%
             map("GC") %>%
             unlist() %>%
@@ -156,7 +157,7 @@ analyze_geneID_list <- function(genelist, vals){
         
         # C. elegans CAI values ----
         # 
-        ## Calculate info each sequence (C. elegans index) ----
+        ## Calculate info each sequence (C. elegans index)
         Ce.temp<- lapply(gene.seq$cDNA, function (x){
             incProgress(amount = calc.inc)
             if (!is.na(x)) {
@@ -174,7 +175,7 @@ analyze_geneID_list <- function(genelist, vals){
         
         # B. malayi CAI values ----
         # 
-        ## Calculate info each sequence (B. malayi index) ----
+        ## Calculate info each sequence (B. malayi index)
         Bm.temp<- lapply(gene.seq$cDNA, function (x){
             incProgress(amount = calc.inc)
             if (!is.na(x)) {
@@ -189,12 +190,31 @@ analyze_geneID_list <- function(genelist, vals){
             map("CAI") %>%
             unlist() %>%
             as_tibble_col(column_name = 'Bm_CAI')
+        browser()
+        # N. brasiliensis CAI values ----
+        # 
+        ## Calculate info each sequence ( N. brasiliensis index) 
+        Nb.temp<- lapply(gene.seq$cDNA, function (x){
+            incProgress(amount = calc.inc)
+            if (!is.na(x)) {
+                s2c(x) %>%
+                    calc_sequence_stats(.,w.tbl$Nb_relAdapt)}
+            else {
+                list(GC = NA, CAI = NA)
+            }
+        }) 
+        
+        Nb.info.gene.seq<- Nb.temp %>%
+            map("CAI") %>%
+            unlist() %>%
+            as_tibble_col(column_name = 'Nb_CAI')
         
         
-        ## Merge tibbles
+        ## Merge tibbles ----
         info.gene.seq <- add_column(info.gene.seq, 
                                     Ce_CAI = Ce.info.gene.seq$Ce_CAI,
                                     Bm_CAI = Bm.info.gene.seq$Bm_CAI,
+                                    Nb_CAI = Nb.info.gene.seq$Nb_CAI,
                                     .after = "Sr_CAI") %>%
             drop_na() #remove any rows that just have NA values
         

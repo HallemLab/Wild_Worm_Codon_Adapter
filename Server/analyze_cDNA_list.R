@@ -8,8 +8,10 @@ analyze_cDNA_list <- function(gene.seq, vals){
     withProgress(message = "Calculating...",expr = {
         setProgress(0)
 
-    ## Calculate info each sequence (S. ratti index) ----
+    
     calc.inc <- 0.3/nrow(gene.seq)
+    
+    # Strongyloides CAI values ----
     Sr.temp<- lapply(gene.seq$cDNA, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
@@ -20,7 +22,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
         }
     }) 
     
-    # Strongyloides CAI values ----
+    ## Calculate info each sequence (S. ratti index)
     info.gene.seq<- Sr.temp %>%
         map("GC") %>%
         unlist() %>%
@@ -38,7 +40,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     
     # C. elegans CAI values ----
     setProgress(0.35)
-    ## Calculate info each sequence (C. elegans index) ----
+    ## Calculate info each sequence (C. elegans index)
     Ce.temp<- lapply(gene.seq$cDNA, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
@@ -56,7 +58,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     
     # B. malayi CAI values ----
     setProgress(0.7)
-    ## Calculate info each sequence (B. malayi index) ----
+    ## Calculate info each sequence (B. malayi index)
     Bm.temp<- lapply(gene.seq$cDNA, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
@@ -72,10 +74,29 @@ analyze_cDNA_list <- function(gene.seq, vals){
         unlist() %>%
         as_tibble_col(column_name = 'Bm_CAI')
 
-    ## Merge tibbles
+    # N. brasiliensis CAI values ----
+    # 
+    ## Calculate info each sequence ( N. brasiliensis index) 
+    Nb.temp<- lapply(gene.seq$cDNA, function (x){
+        incProgress(amount = calc.inc)
+        if (!is.na(x)) {
+            s2c(x) %>%
+                calc_sequence_stats(.,w.tbl$Nb_relAdapt)}
+        else {
+            list(GC = NA, CAI = NA)
+        }
+    }) 
+    
+    Nb.info.gene.seq<- Nb.temp %>%
+        map("CAI") %>%
+        unlist() %>%
+        as_tibble_col(column_name = 'Nb_CAI')
+    
+    ## Merge tibbles ----
     info.gene.seq <- add_column(info.gene.seq, 
                                 Ce_CAI = Ce.info.gene.seq$Ce_CAI,
                                 Bm_CAI = Bm.info.gene.seq$Bm_CAI,
+                                Nb_CAI = Nb.info.gene.seq$Nb_CAI,
                                 .after = "Sr_CAI")
     
     vals$geneIDs <- suppressMessages(info.gene.seq %>%

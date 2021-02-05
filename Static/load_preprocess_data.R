@@ -8,7 +8,8 @@
 # *Strongyloides spp.*  
 # *C. elegans*
 # *Pristionchus pacificus*
-# *Brugia spp*
+# *Brugia malai*
+# *Nippostrongylus brasiliensis*
 # 
 # 2. specifies intron sequences that can be inserted into sequences.
 # There are 3 options for intron sequences:
@@ -19,7 +20,7 @@
 # Load optimized codon lookup tables ----
 lut.tbl <- read_csv('Static/codon_lut.csv', 
                        quote = "", 
-                       col_types = 'fcccc'
+                       col_types = 'fccccc'
 )
 
 # Generate list of amino acids ----
@@ -33,7 +34,7 @@ AAs <- str_c(lut.tbl$AA, collapse = "") %>%
 # seqinr::cai function, as the "w" input.
 w.tbl <- read_csv('Static/rel_adaptiveness_chart.csv', 
                                 quote = "", 
-                                col_types = 'fcnnnnnn'
+                                col_types = 'fcnnnnnnnn'
 ) %>%
     dplyr::select(AA, Codon, contains("relAdapt"))  %>%
     add_column(Pp_relAdapt = NA, custom_relAdapt = NA)%>%
