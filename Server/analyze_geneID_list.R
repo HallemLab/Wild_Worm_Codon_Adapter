@@ -123,7 +123,6 @@ analyze_geneID_list <- function(genelist, vals){
         gene.seq <- dplyr::bind_rows(Sspp.seq,Sr.seq,transcript.seq,Ce.seq) %>%
             dplyr::left_join(genelist, . , by = "queryID")
         
-        
         ## Calculate info each sequence (S. ratti index) ----
         calc.inc <- 0.1/nrow(gene.seq)
         
@@ -152,7 +151,7 @@ analyze_geneID_list <- function(genelist, vals){
         # Gene Identifiers
         info.gene.seq <- info.gene.seq %>%
             add_column(geneID = gene.seq$geneID, .before = 'GC') %>%
-            add_column(transcriptID = gene.seq$transcriptID, .after = 'Sr_CAI') %>%
+            add_column(transcriptID = gene.seq$transcriptID, .after = 'geneID') %>%
             add_column(queryID = gene.seq$queryID, .after = 'transcriptID')
         
         # C. elegans CAI values ----
@@ -196,13 +195,14 @@ analyze_geneID_list <- function(genelist, vals){
         info.gene.seq <- add_column(info.gene.seq, 
                                     Ce_CAI = Ce.info.gene.seq$Ce_CAI,
                                     Bm_CAI = Bm.info.gene.seq$Bm_CAI,
-                                    .after = "Sr_CAI")
+                                    .after = "Sr_CAI") %>%
+            drop_na() #remove any rows that just have NA values
         
         vals$geneIDs <- suppressMessages(info.gene.seq %>%
            left_join(.,gene.seq) %>%
             rename('cDNA sequence' = cDNA) %>%
             dplyr::select(!queryID))
-        
+       
         info.gene.seq %>%
             dplyr::select(!queryID)
         
