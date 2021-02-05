@@ -140,6 +140,7 @@ server <- function(input, output, session) {
         species_sel <- switch(input$sp_Opt,
                               "Strongyloides" = "Sr",
                               "Pristionchus" = "Pp",
+                              "Nippostrongylus" = "Nb",
                               "Brugia" = "Bm")
         
         lut <- lut.tbl %>%
@@ -433,7 +434,10 @@ server <- function(input, output, session) {
                               tags$em("C. elegans"),"genes", tags$br(),
                               "Bm_CAI = CAI score relative to",
                               "codon usage in",
-                              tags$em("B. malayi")),
+                              tags$em("B. malayi"), tags$br(),
+                              "Nb_CAI = CAI score relative to",
+                              "codon usage in",
+                              tags$em("N. brasiliensis")),
                           
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',

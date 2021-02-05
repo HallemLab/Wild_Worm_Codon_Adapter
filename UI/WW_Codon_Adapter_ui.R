@@ -22,6 +22,7 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    selectInput('sp_Opt',
                                                h6('Built-in Rules'),
                                                choices = list("Strongyloides",
+                                                              "Nippostrongylus",
                                                            "Pristionchus",
                                                            "Brugia"),
                                                selected = "Strongyloides"),
@@ -153,17 +154,20 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                                                     "Sr_CAI values",
                                                                     "Ce_CAI values",
                                                                     "Bm_CAI values",
+                                                                    "Nb_CAI values",
                                                                     "cDNA sequences"
                                                                     ),
                                                                     choiceValues = c("GC",
                                                                                      "Sr_CAI",
                                                                                      "Ce_CAI",
                                                                                      "Bm_CAI",
+                                                                                     "Nb_CAI",
                                                                                      "cDNA sequence"),
                                                                     selected =  c("GC",
                                                                                   "Sr_CAI",
                                                                                   "Ce_CAI",
                                                                                   "Bm_CAI",
+                                                                                  "Nb_CAI",
                                                                                   "cDNA sequence")),
                                                       uiOutput("downloadbutton_AM")
                                                       ))
@@ -247,10 +251,10 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                         tags$a(href="http://www.hallemlab.com/",'Hallem Lab'), 'at UCLA.', 
                                         tags$br(),
                                         tags$br(),
-                                        'The underlying code is avaliable on Github:', 
+                                        'The underlying code is avaliable on GitHub:', 
                                         tags$a(
-                                            href = "https://github.com/astrasb/Wild_Worm_Codon_Adapter", 
-                                            'https://github.com/astrasb/Wild_Worm_Codon_Adapter', target = "blank")
+                                            href = "https://github.com/HallemLab/Wild_Worm_Codon_Adapter", 
+                                            'https://github.com/HallemLab/Wild_Worm_Codon_Adapter', target = "blank")
                                       ))
                         )
                     )
