@@ -251,10 +251,16 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                         tags$a(href="http://www.hallemlab.com/",'Hallem Lab'), 'at UCLA.', 
                                         tags$br(),
                                         tags$br(),
-                                        'The underlying code is avaliable on GitHub:', 
+                                        'The source code for this app is available on GitHub:', 
                                         tags$a(
                                             href = "https://github.com/HallemLab/Wild_Worm_Codon_Adapter", 
-                                            'https://github.com/HallemLab/Wild_Worm_Codon_Adapter', target = "blank")
+                                            'https://github.com/HallemLab/Wild_Worm_Codon_Adapter', target = "blank"),
+                                        tags$br(),
+                                        tags$br(),
+                                        'The source code for data preprocessing steps is also available on GitHub:',
+                                        tags$a(
+                                            href = "https://github.com/HallemLab/Bryant-and-Hallem-2021", 
+                                            'https://github.com/HallemLab/Bryant-and-Hallem-2021', target = "blank")
                                       ))
                         )
                     )

@@ -41,6 +41,10 @@ source('Static/load_preprocess_data.R', local = TRUE)
 ## ---- UI ----
 ui <- fluidPage(
     
+    tags$head(
+        HTML('<base target="_blank">')
+    ),
+    
     source('UI/WW_Codon_Adapter_ui.R', local = TRUE)$value,
     
     source('UI/custom_css.R', local = T)$value
