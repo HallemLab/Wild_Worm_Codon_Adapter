@@ -1,5 +1,5 @@
 # Wild Worm Codon Adapter
-Web-based Shiny App for automatic codon optimization and analysis based on codon usage rules in "wild" worm species, including: *Strongyloides* species, *Pristionchus* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, as well as custom codon usage rules provided by users.  
+Web-based Shiny App for automatic codon optimization and analysis based on codon usage rules in non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Pristionchus* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, as well as any other species of interest via custom codon usage rules provided by users.  
 
 ## Table of Contents  
 1. [General Information](#general-information)
