@@ -190,7 +190,7 @@ analyze_geneID_list <- function(genelist, vals){
             map("CAI") %>%
             unlist() %>%
             as_tibble_col(column_name = 'Bm_CAI')
-        browser()
+       
         # N. brasiliensis CAI values ----
         # 
         ## Calculate info each sequence ( N. brasiliensis index) 
