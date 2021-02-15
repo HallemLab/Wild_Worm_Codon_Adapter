@@ -50,10 +50,10 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
                                                h6('Sequence Source'),
-                                               choices = list("Canonical (Fire)",
+                                               choices = list("Canonical (Fire lab)",
                                                               "PATC-rich",
                                                            "Pristionchus"),
-                                               selected = "Canonical (Fire)"),
+                                               selected = "Canonical (Fire lab)"),
                                    
                                    ### Option to add introns (pulldown)
                                    selectInput('num_Int',
@@ -107,7 +107,7 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                                    resize = "vertical"),
                                      
                                      h5('Analyze Native Sequences', class = 'text-danger', style = "margin: 5px 0px 5px 0px"),
-                                     p(tags$em('To perform analysis of native cDNA sequences, list sequence IDS as: gene or transcript IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     p(tags$em('To perform analysis of native cDNA sequences, list sequence IDs as: gene or transcript IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
                                      
                                      p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing sequence names and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
