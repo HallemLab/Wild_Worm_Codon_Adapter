@@ -53,6 +53,8 @@ if (is_empty(index_iS) || length(index_iS) < num_Int) {
 
 ## Generate nucleotide locations of splice sites 
 ## where an intron can be inserted
+## Do this by looking for the possible intron insertion site
+## that is the closest to each optimal intron insertion site
 
 if (!is_empty(index_iS)) {
     loc_iS <- sapply(opt_iS, function(x) {which.min(abs(index_iS-x[1]))}) %>%
