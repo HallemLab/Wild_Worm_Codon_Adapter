@@ -39,7 +39,8 @@ index_iS <- index_iS[,1]
 
 ##  QUALITY CONTROL 1 
 ##  If the more stringent splice sites are not present,
-##  or if there are fewer than 3 possible insertion sites,
+##  or if there are fewer possible insertion sites than the requested
+##  number of introns,
 ##  use the minimal consensus sequences
 ##  Reference (see Fig. 3): https://www.ncbi.nlm.nih.gov/books/NBK20075/
 if (is_empty(index_iS) || length(index_iS) < num_Int) {
@@ -70,7 +71,8 @@ if (!is_empty(index_iS)) {
 ## the user can choose to manually delete an artifical intron.
 
 ## QUALITY CONTROL 3
-## If the number of unique insertion sites is less than 3
+## If the number of unique insertion sites is less than the 
+## requested number of introns
 ## rerun with the minimal consensus sequences 
 ## (if that hasn't already been done)
 if (length(unique(loc_iS)) < num_Int && strict_iS) {
