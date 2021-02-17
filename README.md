@@ -48,7 +48,7 @@ The app has two usage modes:
 ### Inputs
 The primary non-responsive data inputs to the Wild Worm Codon Adapter App are two .csv files containing the following information:  
 1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *C. elegans*, *N. brasiliensis* and *B. malayi*  
-2. Optimal codon lookup table for *Strongyloides spp*, *Pristionchus spp* , *B. malayi*, *N. brasiliensis*, and *C. elegans*
+2. Optimal codon lookup table for *Strongyloides spp*, *Pristionchus spp*, *B. malayi*, *N. brasiliensis*, and *C. elegans*
 3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid)
 
 These tables are loaded by the Shiny server function and used to calculate CAI values and optimize sequences.  
