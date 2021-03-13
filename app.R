@@ -21,6 +21,7 @@ suppressPackageStartupMessages({
     source('Server/detect_language.R',local = TRUE)
     source("Server/analyze_geneID_list.R", local = TRUE)
     source("Server/analyze_cDNA_list.R", local = TRUE)
+    source("Server/navbarPageWithText.R")
     
 })
 

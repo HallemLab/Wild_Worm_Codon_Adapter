@@ -2,8 +2,9 @@
 navbarPage(h3("Wild Worm Codon Adapter"),
            windowTitle = "WWCA",
            theme = shinytheme("flatly"),
-           collapsible = TRUE,
+           collapsible = F,
            id = "tab",
+           text = "v1.0.0",
            
            
            # Optimize Sequence Mode Tab ----
