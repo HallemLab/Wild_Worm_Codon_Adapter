@@ -81,7 +81,8 @@ server <- function(input, output, session) {
                     tolower %>%
                     trimSpace %>%
                     s2c
-            } else if (tools::file_ext(input$loadseq$name) == "fasta") {
+            } else if (tools::file_ext(input$loadseq$name) == "fasta" |
+                       tools::file_ext(input$loadseq$name) == "fa") {
                 dat <- suppressMessages(read.fasta(input$loadseq$datapath,
                                                    seqonly = T)) 
                 dat <- dat[[1]] %>%
@@ -99,6 +100,7 @@ server <- function(input, output, session) {
             } else {
                 validate(need({file_ext(input$loadseq$name) == "txt" | 
                         file_ext(input$loadseq$name) == "fasta" |
+                        file_ext(input$loadseq$name) == "fa" |
                         file_ext(input$loadseq$name) == "gb"}, "File type not recognized. Please try again."))
             }
         }
@@ -111,9 +113,9 @@ server <- function(input, output, session) {
             # Users should have provided a 2 column matrix with AA and Codon sequence
             
             custom.codons <- suppressWarnings(read.csv(input$loadlut$datapath, 
-                                                  header = FALSE, 
-                                                  colClasses = "character", 
-                                                  strip.white = T)) %>%
+                                                       header = FALSE, 
+                                                       colClasses = "character", 
+                                                       strip.white = T)) %>%
                 as_tibble() %>%
                 dplyr::filter(!grepl('codon|aa', V1, ignore.case = T))
             validate(need({ncol(custom.codons) == 2},
@@ -127,30 +129,30 @@ server <- function(input, output, session) {
             flag.2 <- which(col.lengths$V1 ==3 && col.lengths$V2 == 1)
             
             validate(need({isTruthy(flag.1) | isTruthy(flag.2)},
-                     "Column values appear to have incorrect character lengths.
+                          "Column values appear to have incorrect character lengths.
                      Please ensure that one column contains 1-letter Amino Acid codes,
                      and another column contains 3-letter codon sequences."))
             
             lut <- custom.codons %>% rename_with( ~ case_when(
-                    col.lengths[.x] == 3 ~ "Codon",
-                    col.lengths[.x] == 1 ~ "AA")
-                ) %>%
+                col.lengths[.x] == 3 ~ "Codon",
+                col.lengths[.x] == 1 ~ "AA")
+            ) %>%
                 dplyr::arrange(AA)
             
             species_sel <- "custom"
             
         } else {
-        ### If using built-in codon optimization rules
-
-        species_sel <- switch(input$sp_Opt,
-                              "Strongyloides" = "Sr",
-                              "Pristionchus" = "Pp",
-                              "Nippostrongylus" = "Nb",
-                              "Brugia" = "Bm")
-        
-        lut <- lut.tbl %>%
-            dplyr::select(AA, contains(species_sel)) %>%
-            dplyr::rename(Codon = contains(species_sel))
+            ### If using built-in codon optimization rules
+            
+            species_sel <- switch(input$sp_Opt,
+                                  "Strongyloides" = "Sr",
+                                  "Pristionchus" = "Pp",
+                                  "Nippostrongylus" = "Nb",
+                                  "Brugia" = "Bm")
+            
+            lut <- lut.tbl %>%
+                dplyr::select(AA, contains(species_sel)) %>%
+                dplyr::rename(Codon = contains(species_sel))
         }
         
         w <- w.tbl %>%
@@ -189,18 +191,30 @@ server <- function(input, output, session) {
         vals$cds_opt <- cds_opt
     })
     
-    
     add_introns <- eventReactive (input$goButton, {
         req(vals$cds_opt)
         cds_opt <- vals$cds_opt
         
-        intron_sel <- switch(input$type_Int,
-                             "Canonical (Fire)" = "Canon",
-                             "PATC-rich" = "PATC",
-                             "Pristionchus" = "Pristionchus"
-        )
-        
-        syntrons <- syntrons.list[[intron_sel]]
+        ### If user-provided optimal codons are available
+        if (isTruthy(input$loadintron)){
+            
+            file <- input$loadintron
+            ext <- tools::file_ext(file$datapath)
+            validate(need(ext == "fa" | ext == "fasta", 
+                          "Please upload a fasta file"))
+            
+            syntrons <- suppressMessages(read.fasta(input$loadintron$datapath,
+                                                   as.string = T,
+                                                   set.attributes = F))
+        } else {
+            ### If using built-in codon optimization rules
+            intron_sel <- switch(input$type_Int,
+                                 "Canonical (Fire)" = "Canon",
+                                 "PATC-rich" = "PATC",
+                                 "Pristionchus" = "Pristionchus"
+            )
+            syntrons <- syntrons.list[[intron_sel]]
+        }
         
         ## Detect insertion sites for artificial introns
         source('Server/locate_intron_sites.R', local = TRUE)
@@ -357,22 +371,22 @@ server <- function(input, output, session) {
             } else if (isTruthy(input$cDNAtext)){
                 # If user provides input using the cDNA sequence textbox, 
                 # assume they provided a transgene cDNA sequence 
-            
+                
                 genelist <- input$cDNAtext %>%
                     gsub(" ", "", ., fixed = TRUE) %>%
                     as_tibble_col(column_name = "cDNA") %>%
                     dplyr::mutate(geneID = "submittedGene",
                                   .before = cDNA)
-                   
+                
                 info.gene.seq <- analyze_cDNA_list(genelist, vals)
                 
             } else if (isTruthy(input$loadfile)){
                 file <- input$loadfile
                 ext <- tools::file_ext(file$datapath)
-                validate(need(ext == "csv" | ext == "fa", 
-                              "Please upload a csv  or a .fa file"))
+                validate(need(ext == "csv" | ext == "fa" | ext == "fasta", 
+                              "Please upload a csv or fasta file"))
                 
-                if (tools::file_ext(input$loadfile$name) == "fa") {
+                if (ext == "fa" | ext == "fasta") {
                     # If user provides input using the file upload, &
                     # if it's a .fa file assume they are providing
                     # named cDNA sequences

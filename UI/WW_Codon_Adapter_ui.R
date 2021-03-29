@@ -1,11 +1,10 @@
 # Header ----
-navbarPage(h3("Wild Worm Codon Adapter"),
+navbarPageWithText(h3("Wild Worm Codon Adapter"),
            windowTitle = "WWCA",
            theme = shinytheme("flatly"),
            collapsible = F,
            id = "tab",
            text = "v1.0.0",
-           
            
            # Optimize Sequence Mode Tab ----
            tabPanel(h4("Optimize Sequences"),
@@ -50,17 +49,30 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
-                                               h6('Sequence Source'),
+                                               h6('Built-in Sequence Source'),
                                                choices = list("Canonical (Fire)",
                                                               "PATC-rich",
                                                            "Pristionchus"),
                                                selected = "Canonical (Fire)"),
                                    
-                                   ### Option to add introns (pulldown)
+                                   ### Upload custom intron file (file loader)
+                                   uiOutput('custom_intron_upload'),
+                                   p(tags$em('Note: uploading a custom list of introns will override the dropdown menu selections above. Please use the Clear button if switching between custom and built-in introns.', style = "color: #7b8a8b")),
+                                   
+                                   ### Option to pick number of introns (pulldown)
                                    selectInput('num_Int',
                                                h6('Number of Introns'),
                                                choices = 0:3,
                                                selected = 3),
+                                   
+                                   ## Option to pick intron insertion strategy (radio)
+                                   radioButtons('mode_Int',
+                                                 h6('Intron Insertion Mode'),
+                                                 choiceNames = list("Canonincal invertebrate exon splice junction (AG^A or AG^G)",
+                                                             "Equidistantly along sequence length (Fire lab strategy)"),
+                                                choiceValues = list("Canon",
+                                                                    "Equidist")),
+                                   
                                    
                                    actionButton('goButton',
                                                 'Submit',

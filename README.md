@@ -38,7 +38,7 @@ The Wild Worm Codon Adapter Web Tool adapts and automates that process of codon 
 
 The app has two usage modes:  
 
-  1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *Pristionchus* species, *N. brasiliensis*, and *B. malayi*, as well as user-provided optimal codon sets. It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical *C. elegans* synthetic introns, PATC-rich introns, or *Pristionchus pacificus* native introns. Users may input sequences using the text box provided, or may upload sequences as .fasta/.gb/.txt files. Optimized sequences with or without introns may be downloaded as .txt files.    
+  1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *Pristionchus* species, *N. brasiliensis*, and *B. malayi*, as well as user-provided optimal codon sets. It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical *C. elegans* synthetic introns, PATC-rich introns, *Pristionchus pacificus* native introns, or user-provided custom introns. Users may input sequences for optimization using the text box provided, or may upload sequences as .fasta/.gb/.txt files. Optimized sequences with or without introns may be downloaded as .txt files.    
 
   2. **Analysis Mode:** For user-provided genes or sequences, this tab reports the fractional GC content, cDNA sequence, and codon optimization relative to the codon usage weights of highly expressed *Strongyloides ratti* transcripts (1), *C. elegans* genes (2), *N. brasiliensis* coding sequences, and *B. malayi* coding sequences. To analyze transgenes, cDNA sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.   
 
@@ -74,13 +74,13 @@ CAI values are not calculated when optimizing for *Pristionchus* species or when
 The fraction of G+C bases of the nucleic acid sequences. Calculated using the `seqinr` library.  
 
 ### Inserting Introns
-Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical Fire lab synthetic introns (8), *P. pacificus* native introns (5), or PATC-rich introns (*smu-2* introns 3-5) that enhance germline expression of transgenes in *C. elegans* (9).
+Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical Fire lab synthetic introns (8), *P. pacificus* native introns (5), PATC-rich introns (*smu-2* introns 3-5) that enhance germline expression of transgenes in *C. elegans* (9), or a user-provided set of custom sequences.
 
 #### Intron Number and Spacing  
 The Fire lab established three unique introns, spaced equidistantly within a gene as canon (8); this configuration is thus set as default, and is recommended. In *C. elegans*, the location of the intron site influences the degree of intron mediated enhancement, such that a single 5′-intron is more effective than a single 3′-intron [6,9]. Therefore when only 1 or 2 introns are desired, 3 possible intron insertion sites are identified and filled as needed, starting from the 5′ site.
 
 #### Identifying Intron Insertion Sites  
-Introns are placed between the 3rd and 4th nucleotide of one of the following sequences: "aagg", "aaga", "cagg", "caga", as in Redemann *et al* (2011) (10). If those sequences are not present, introns are placed between the 2nd and 3rd nucleotide of one of the following minimal *C. elegans* splice site consensus sequences was used: "aga", "agg" (11).
+Users may choose between placing introns are equidistantly spaced locations, or between the 2nd and 3rd nucleotide of one of the following minimal invertebrate splice site consensus sequences was used: "aga", "agg" (10, 11).
             
 ## References
 1. [Mitreva *et al* (2006). Codon usage patterns in Nematoda: analysis based on over 25 million codons in thirty-two species. *Genome Biology* 7: R75](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/). 
@@ -92,7 +92,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
 7. [Junio *et al* (2008). *Strongyloides stercoralis* cell- and tissue-specific transgene expression and co-transformation with vector constructs incorporating a common multifunctional 3′ UTR'. *Experimental Parasitology* 118: 253-265](https://pubmed.ncbi.nlm.nih.gov/17945217/). 
 8. [Fire Lab Vector Kit (1995)](https://media.addgene.org/cms/files/Vec95.pdf)
 9. [Aljohani *et al* (2020). Engineering rules that minimize germline silencing of transgenes in simple extrachromosomal arrays in *C. elegans*. *Nature Communications* 11: 6300](https://www.nature.com/articles/s41467-020-19898-0).
-10. [Redemann *et al* (2011). Codon adaptation-based control of protein expression in *C. elegans*. *Nature Methods* 8: 250-252](https://pubmed.ncbi.nlm.nih.gov/21278743/). 
+10. [Shaprio and Senepathy (1987). RNA splice junctions of different classes of eukayotes: sequence statistics and funtional implications in gene expression. *Nucleic Acids Research* 15: 7155-7174](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC306199/). 
 11. [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
 
 ## Examples of Shiny App UI  
@@ -116,7 +116,7 @@ Introns are placed between the 3rd and 4th nucleotide of one of the following se
   - Canonical Fire lab artificial introns: [Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf)
   - PATC-rich introns: [Aljohani *et al* (2020)](https://www.nature.com/articles/s41467-020-19898-0)
   - *P. pacificus* native introns: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
-* Intron/Exon Splice Sites: [Redemann *et al* 2011](https://pubmed.ncbi.nlm.nih.gov/21278743/) and [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
+* Intron/Exon Splice Sites: [Shaprio and Senapathy (1987)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC306199/) and [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
 
 ## License  
 This project is licensed under the MIT License. 

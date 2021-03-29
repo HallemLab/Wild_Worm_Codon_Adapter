@@ -14,6 +14,14 @@ output$custom_lut_upload <- renderUI({
               multiple = FALSE)
 })
 
+## Optimization Mode: Generate/Reset Custom Optimal Codon Lookup Table File Upload ----
+output$custom_intron_upload <- renderUI({
+    input$resetOptimization
+    fileInput('loadintron',
+              h6('Custom Intron Sequence(s) (.csv,.fasta)'),
+              multiple = FALSE)
+})
+
 ## Optimization Mode: Reset Sequence Text Box ----
 observeEvent(input$resetOptimization,{
     updateTextAreaInput(session,"seqtext",value = "")
