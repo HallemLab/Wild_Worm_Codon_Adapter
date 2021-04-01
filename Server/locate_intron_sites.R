@@ -16,7 +16,7 @@ length_x <- str_length(x)
 ## Divide the sequence into 4 evenly sized "exons" 
 ## This assumes a maximum number of introns as 3, 
 ## which is the canonical choice established by Andy Fire's lab.
-## This will determine 3 possible insertion sites, which will be filled 
+## This will determine up to 3 possible insertion sites, which will be filled 
 ## as needed, starting from the 5' site and 
 ## moving towards the 3' end of the gene
 num_Ex <- 4 #num_Int + 1
@@ -65,6 +65,7 @@ if (input$mode_Int == "Equidist") {
     } else {
         loc_iS <- NA
     }
+
 }
 ## QUALITY CONTROL NOTE
 ## We'd like these sites to be roughly equidistant from each other. 
