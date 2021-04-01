@@ -13,7 +13,7 @@ For user-provided genes/sequences, this tab reports the fractional GC content, c
 
 * highly expressed *S. ratti* transcripts [(Mitreva *et al* 2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/) 
 * highly expressed *C. elegans* genes [(Sharp and Bradnam, 1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/) 
-* highly expressed *N. brasiliensis* genes [(Eccles *et al* 2018](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4), [Chandler *et al* 2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/) 
+* highly expressed *N. brasiliensis* genes [(Eccles *et al* 2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4) 
 * highly expressed *B. malayi* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947)
 * highly expressed *P. pacificus* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947) 
 
