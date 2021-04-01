@@ -3,6 +3,7 @@
 ## --- Libraries ---
 suppressPackageStartupMessages({
     library(shiny)
+    library(shinyjs)
     library(seqinr)
     library(htmltools)
     library(shinyWidgets)
@@ -42,6 +43,7 @@ source('Static/load_preprocess_data.R', local = TRUE)
 ## ---- UI ----
 ui <- fluidPage(
     
+    useShinyjs(),
     tags$head(
         HTML('<base target="_blank">')
     ),
@@ -105,9 +107,23 @@ server <- function(input, output, session) {
             }
         }
         
-        ## Parse species optimization rule choice
-        ### If user-provided optimal codons are available
-        if (isTruthy(input$loadlut)) {
+        # Save original sequence
+        vals$og_sequence <- dat %>%
+            toupper() %>%
+            seqinr::splitseq()
+        
+        ## Parse which codon optimization rule to apply
+        species_sel <- switch(input$sp_Opt,
+                              "Strongyloides" = "Sr",
+                              "Pristionchus" = "Pp",
+                              "Nippostrongylus" = "Nb",
+                              "Brugia" = "Bm",
+                              "C. elegans" = "Ce",
+                              "Custom" = "custom")
+        
+        ### User-provided optimal codon list
+        if (species_sel == "custom") {
+            validate(need(input$loadlut, "Please upload a custom optimal codon list using the file upload control."))
             validate(need({file_ext(input$loadlut$name) == "csv"}, 
                           "Please provide a .csv file."))
             # Users should have provided a 2 column matrix with AA and Codon sequence
@@ -138,18 +154,8 @@ server <- function(input, output, session) {
                 col.lengths[.x] == 1 ~ "AA")
             ) %>%
                 dplyr::arrange(AA)
-            
-            species_sel <- "custom"
-            
+        ### Built-in optimal codons         
         } else {
-            ### If using built-in codon optimization rules
-            
-            species_sel <- switch(input$sp_Opt,
-                                  "Strongyloides" = "Sr",
-                                  "Pristionchus" = "Pp",
-                                  "Nippostrongylus" = "Nb",
-                                  "Brugia" = "Bm")
-            
             lut <- lut.tbl %>%
                 dplyr::select(AA, contains(species_sel)) %>%
                 dplyr::rename(Codon = contains(species_sel))
@@ -178,6 +184,7 @@ server <- function(input, output, session) {
                    Check to make sure it only includes characters representing
                    nucleotides or amino acids.")
         }
+        
         ## Codon optimize back to nucleotides
         source('Server/codon_optimize.R', local = TRUE)
         
@@ -195,8 +202,16 @@ server <- function(input, output, session) {
         req(vals$cds_opt)
         cds_opt <- vals$cds_opt
         
-        ### If user-provided optimal codons are available
-        if (isTruthy(input$loadintron)){
+        ## Parse which intron set to insert
+        intron_sel <- switch(input$type_Int,
+                             "Canonical (Fire)" = "Canon",
+                             "PATC-rich" = "PATC",
+                             "Pristionchus" = "Pristionchus",
+                             "Custom" = "custom"
+        )
+        ### Custom user-provided intron set
+        if (intron_sel == "custom") {
+            validate(need(input$loadintron, "Please upload a custom optimal codon list using the file upload control."))
             
             file <- input$loadintron
             ext <- tools::file_ext(file$datapath)
@@ -204,15 +219,10 @@ server <- function(input, output, session) {
                           "Please upload a fasta file"))
             
             syntrons <- suppressMessages(read.fasta(input$loadintron$datapath,
-                                                   as.string = T,
-                                                   set.attributes = F))
+                                                    as.string = T,
+                                                    set.attributes = F))
+        ### Built-in intron set 
         } else {
-            ### If using built-in codon optimization rules
-            intron_sel <- switch(input$type_Int,
-                                 "Canonical (Fire)" = "Canon",
-                                 "PATC-rich" = "PATC",
-                                 "Pristionchus" = "Pristionchus"
-            )
             syntrons <- syntrons.list[[intron_sel]]
         }
         
@@ -229,14 +239,22 @@ server <- function(input, output, session) {
     })
     
     ## Outputs: Optimization Mode ----
+    
     ## Reactive run of function that generates optimized sequence without added artificial introns
-    ## Can be assigned to an output slow
+    ## Can be assigned to an output
     output$optimizedSequence <- renderText({
         optimize_sequence()
     })
     
+    ## Reactive run of function that generates optimized sequence without added artificial introns
+    ## Can be assigned to an output
+    output$originalSequence <- renderText({
+        optimize_sequence()
+        vals$og_sequence
+    })
+    
     ## Reactive run of function that generates optimized sequence with added artificial introns
-    ## Can be assigned to an output slow
+    ## Can be assigned to an output
     output$intronic_opt <- renderText({
         if(as.numeric(input$num_Int) > 0){
             optimize_sequence()
@@ -245,6 +263,7 @@ server <- function(input, output, session) {
     })
     
     ## Display optimized sequence with and wihout added artificial introns in a tabbed panel
+    ## Also display original non-optimized sequence in a panel
     output$tabs <- renderUI({
         req(input$goButton)
         
@@ -278,6 +297,7 @@ server <- function(input, output, session) {
                 })
             
             tabs <- list(
+                
                 tabPanel(title = h6("With Introns"), 
                          textOutput("intronic_opt", 
                                     container = div),
@@ -289,9 +309,13 @@ server <- function(input, output, session) {
                                     container = div),
                          downloadButton("download_opt",
                                         "Download Sequence",
-                                        class = "btn-primary"))
+                                        class = "btn-primary")),
+                tabPanel(title = h6("Original"), 
+                         textOutput("originalSequence", 
+                                    container = div))
                 
             )
+            
         } else {
             output$download_opt <- downloadHandler(
                 filename = paste0(name,"_Optimized_NoIntrons.txt"),
@@ -309,7 +333,10 @@ server <- function(input, output, session) {
                                     container = div),
                          downloadButton("download_opt",
                                         "Download Sequence",
-                                        class = "btn-primary")))
+                                        class = "btn-primary")),
+                tabPanel(title = h6("Original"), 
+                         textOutput("originalSequence", 
+                                    container = div)))
         }
         
         args <- c(tabs, list(id = "box", 
@@ -369,14 +396,14 @@ server <- function(input, output, session) {
                 info.gene.seq<-analyze_geneID_list(genelist, vals)
                 
             } else if (isTruthy(input$cDNAtext)){
-                # If user provides input using the cDNA sequence textbox, 
-                # assume they provided a transgene cDNA sequence 
+                # If user provides input using the coding sequence textbox, 
+                # assume they provided a transgene coding sequence 
                 
                 genelist <- input$cDNAtext %>%
                     gsub(" ", "", ., fixed = TRUE) %>%
-                    as_tibble_col(column_name = "cDNA") %>%
+                    as_tibble_col(column_name = "coding") %>%
                     dplyr::mutate(geneID = "submittedGene",
-                                  .before = cDNA)
+                                  .before = coding)
                 
                 info.gene.seq <- analyze_cDNA_list(genelist, vals)
                 
@@ -389,7 +416,7 @@ server <- function(input, output, session) {
                 if (ext == "fa" | ext == "fasta") {
                     # If user provides input using the file upload, &
                     # if it's a .fa file assume they are providing
-                    # named cDNA sequences
+                    # named coding sequences
                     dat <- suppressMessages(read.fasta(input$loadfile$datapath,
                                                        as.string = T,
                                                        set.attributes = F))
@@ -397,7 +424,7 @@ server <- function(input, output, session) {
                         as_tibble() %>%
                         pivot_longer(cols = everything(),
                                      names_to = "geneID", 
-                                     values_to = "cDNA")
+                                     values_to = "coding")
                     
                     info.gene.seq <- analyze_cDNA_list(genelist, vals)
                     
@@ -405,7 +432,7 @@ server <- function(input, output, session) {
                     # If user provides input using the file upload, &
                     # if it's a .csv file assume they either provided 
                     # a list of geneIDs, or 
-                    # a 2 column matrix with geneID and cDNA sequence
+                    # a 2 column matrix with geneID and coding sequence
                     
                     genelist <- suppressWarnings(read.csv(file$datapath, 
                                                           header = FALSE, 
@@ -417,10 +444,10 @@ server <- function(input, output, session) {
                     # that such rows will be header rows.
                     genelist <- dplyr::filter(genelist, !grepl('gene|transcript', V1))
                     # Assume that an input with two columns and more than one 
-                    # row is a list of geneID/cDNA pairs
+                    # row is a list of geneID/coding pairs
                     if (ncol(genelist) > 1 & nrow(genelist) > 1) {
                         genelist <- genelist %>%
-                            dplyr::rename(geneID = V1, cDNA = V2)
+                            dplyr::rename(geneID = V1, coding = V2)
                         info.gene.seq <- analyze_cDNA_list(genelist,vals)
                         
                         #Assume every other input structure is a list of geneIDs 
@@ -452,11 +479,14 @@ server <- function(input, output, session) {
                               "codon usage in highly expressed",
                               tags$em("C. elegans"),"genes", tags$br(),
                               "Bm_CAI = CAI score relative to",
-                              "codon usage in",
-                              tags$em("B. malayi"), tags$br(),
+                              "codon usage in highly expressed",
+                              tags$em("B. malayi"), "genes", tags$br(),
                               "Nb_CAI = CAI score relative to",
-                              "codon usage in",
-                              tags$em("N. brasiliensis")),
+                              "codon usage in highly expressed",
+                              tags$em("N. brasiliensis"), "genes",tags$br(),
+                              "Pp_CAI = CAI score relative to",
+                              "codon usage in highly expressed",
+                              tags$em("P. pacificus"), "genes"),
                           
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',
@@ -469,7 +499,7 @@ server <- function(input, output, session) {
                                                         "50")))
         
         info_analysis.DT <- info_analysis.DT %>%
-            DT::formatRound(columns = (ncol(tbl)-4):ncol(tbl), digits = 2)
+            DT::formatRound(columns = (ncol(tbl)-5):ncol(tbl), digits = 2)
         
         info_analysis.DT
         
@@ -482,7 +512,7 @@ server <- function(input, output, session) {
     #Shiny output for analysis datatable
     output$downloadbutton_AM <- renderUI({
         req(input$goAnalyze, vals$geneIDs)
-        
+       
         # Select data columns to download, depending on user inputs
         download.tbl <- vals$geneIDs %>% dplyr::select(any_of(c("geneID", 
                                                                 "transcriptID",
@@ -502,8 +532,9 @@ server <- function(input, output, session) {
                             `Multi-species codon frequency table` = "./www/rel_adaptiveness_chart.csv",
                             `Multi-species optimal codon table` = "./www/codon_lut.csv",
                             `Example custom preferred codon table`= "./www/example_custom_lut.csv",
-                            `Example geneID List` = "./www/example_geneList.csv",
-                            `Example 2-column geneID/cDNA List` = "./www/example_2col_cDNAList.csv")
+                            `Example geneID list` = "./www/example_geneList.csv",
+                            `Example 2-column geneID/sequence list` = "./www/example_2col_sequenceList.csv",
+                            `Example custon intron list` = "./www/example_custom_intron_file.fasta")
         
         Info.file
         

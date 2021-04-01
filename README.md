@@ -1,16 +1,15 @@
 # Wild Worm Codon Adapter
-Web-based Shiny App for automatic codon optimization and analysis based on codon usage rules in non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Pristionchus* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, as well as any other species of interest via custom codon usage rules provided by users.  
+Web-based Shiny App for automatic codon optimization and analysis based on codon usage rules in non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Pristionchus pacificus*, *Nippostrongylus brasiliensis*, *Brugia malayi*, as well as any other species of interest via custom codon usage rules provided by users.  
 
 ## Table of Contents  
 1. [General Information](#general-information)
 2. [App Setup & Deployment](#app-setup-&-deployment)
 3. [App Features](#app-features)
 4. [App Methods](#app-methods)
-5. [References](#references)
-6. [Examples of App Use](#examples-of-shiny-app-ui)
-7. [Sources](#sources)
-8. [License](#license)
-9. [Authors](#authors)
+5. [Examples of App Use](#examples-of-shiny-app-ui)
+6. [Sources](#sources)
+7. [License](#license)
+8. [Authors](#authors)
 
 ## General Information
 This repository contains the infrastructure for generating a Shiny web application. The app is deployed via Shinyapps.io but can also be run locally. See App Setup and App Features sections below for additional details.  
@@ -34,66 +33,72 @@ To run a specific release locally use the following commands in R/RStudio:
 Please note: the download step for runURL/runGitHub may take a substantial amount of time. We recommend downloading this archive and running the application locally.
 
 ## App Features  
-The Wild Worm Codon Adapter Web Tool adapts and automates that process of codon adaptation for a selection of "wild" worm species, including: *Strongyloides* species, *Pristionchus* species, *N. brasiliensis*, *B. malayi*, as well as custom codon usage rules provided by users. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to codon usage rules for the built-in species listed above plus *Caenorhabditis elegans*. 
+The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Pristionchus pacificus*, as well as *Caenorhabditis elegans*. It also permits codon optimization via user-provided custom optimal codon sets. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to species-specific codon usage rules. 
 
 The app has two usage modes:  
 
-  1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *Pristionchus* species, *N. brasiliensis*, and *B. malayi*, as well as user-provided optimal codon sets. It accepts either nucleotide or amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical *C. elegans* synthetic introns, PATC-rich introns, *Pristionchus pacificus* native introns, or user-provided custom introns. Users may input sequences for optimization using the text box provided, or may upload sequences as .fasta/.gb/.txt files. Optimized sequences with or without introns may be downloaded as .txt files.    
+  1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans*, as well as user-provided optimal codon sets. 
 
-  2. **Analysis Mode:** For user-provided genes or sequences, this tab reports the fractional GC content, cDNA sequence, and codon optimization relative to the codon usage weights of highly expressed *Strongyloides ratti* transcripts (1), *C. elegans* genes (2), *N. brasiliensis* coding sequences, and *B. malayi* coding sequences. To analyze transgenes, cDNA sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", or "WB" can be provided either through direct input via the provided textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide cDNA sequences for analysis, either as a 2-column .csv file listing geneIDs and cDNA sequences, or a .fa file containing named cDNA sequences.   
+It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical Fire lab synthetic introns, PATC-rich introns, *P. pacificus* native introns, or a custom set of user-provided introns. Users may input sequences for optimization using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
+Optimized sequences with or without artificial introns may be downloaded as .txt files.   
 
-  Users may download an excel file containing fractional GC content values, codon adaptation indeces, and cDNA sequences for the user-provided genes.
+  2. **Analysis Mode:** For user-provided genes/sequences, this tab reports the fractional GC content, coding sequence, and codon optimization relative to the codon usage weights of: 
+
+* highly expressed *S. ratti* transcripts [(Mitreva *et al* 2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/) 
+* highly expressed *C. elegans* genes [(Sharp and Bradnam, 1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/) 
+* highly expressed *N. brasiliensis* genes [(Eccles *et al* 2018](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4), [Chandler *et al* 2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/) 
+* highly expressed *B. malayi* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947)
+* highly expressed *P. pacificus* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947) 
+
+To analyze transgenes, coding sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "NBR", "Bma", "Ppa", or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a .fa file containing named coding sequences.   
+
+Users may download an excel file containing fractional GC content values, codon adaptation indeces, and coding sequences for the user-provided genes.
 
 ## Analysis Methods
 ### Inputs
-The primary non-responsive data inputs to the Wild Worm Codon Adapter App are two .csv files containing the following information:  
-1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *C. elegans*, *N. brasiliensis* and *B. malayi*  
-2. Optimal codon lookup table for *Strongyloides spp*, *Pristionchus spp* , *B. malayi*, *N. brasiliensis*, and *C. elegans*
-3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid)
+The primary non-responsive data inputs to the Wild Worm Codon Adapter App are .csv files containing the following information:  
+  1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
+  2. Optimal codon lookup table for *Strongyloides spp*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
+  3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
+  4. <OPTIONAL> Custom intron list (fasta file containing a maximum of 3 introns; intron sequences should begin/end with canonical 5'-GT<intron>AG-3' splice recognition sequences)
 
-These tables are loaded by the Shiny server function and used to calculate CAI values and optimize sequences.  
+These data are loaded by the Shiny server function and used to calculate CAI values and optimize sequences.  
 
 ### Codon Usage Rules
-Codon bias in nematode transcripts can vary as a function of gene expression levels such that highly expressed genes appear to have the greatest degree of codon bias. Thus, codon frequency rates from highly expressed genes are used, whenever possible. Codon frequency rates for *Strongyloides* species are based on highly expressed *S. ratti* transcripts (50 most abundant expressed sequence tag clusters, 1). Codon frequency rates for *C. elegans* were based on highly expressed *C. elegans* gene count data. Codon frequency rates for *N. brasiliensis* and *B. malayi* are based on count data from [Nematode.net](http://www.nematode.net/NN3_frontpage.cgi?navbar_selection=nemagene&subnav_selection=codon_usage_tables).    
+Codon bias in nematode transcripts can vary as a function of gene expression levels such that highly expressed genes appear to have the greatest degree of codon bias. Thus, codon frequency rates from highly expressed genes are used, whenever possible. 
+
+Codon frequency rates for *Strongyloides* species are based on highly expressed *S. ratti* transcripts (50 most abundant expressed sequence tag clusters). Specifically, codon usage rules were generated by calculating the frequency for each codon from count data published in [Mitreva *et al* (2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/); frequency values were manually checked against published frequency values. 
+
+Codon frequency rates for *C. elegans* were based on highly expressed *C. elegans* gene count data published in [Sharp and Bradnam (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/). 
+
+Codon frequency rates for *N. brasiliensis* were calculated coding sequences of highly expressed *N. brasiliensis* genes (10% highest RNA-seq expression values across all samples); RNA-seq data was downloaded from WormBase ParaSite, based on data originally published in [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4),and [Chandler *et al* (2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/). 
+Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (7th bin, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer. 
 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
-For *S. ratti*, *C. elegans*, *N. brasiliensis*, and *B. malayi*: The relative adaptiveness values of every possible codon was generated as follows: individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.
-
-For *Pristionchus* species: Optimal codons were defined by codon usage bias calculations based on the top 10% highly expressed *P. pacificus* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947).
+The relative adaptiveness values of every possible codon was generated as follows: individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.
 
 User-provided custom optimization rules: In addition to the optimization rules provided by the application, users may also provide a custom set of optimal codons. In this case, users may upload a .csv file containing 2 columns listing single-letter amino acid symbols and the corresponding 3-letter optimal codon sequence, using the provided UI interface. Only one optimal codon should be provided per amino acid; stop codons should be designated using the '*' symbol. This custom optimal codon lookup table will be applied during codon optimization; CAI values will not be calculated. 
 
 In all cases, codon optimzation is performed by replacing non-optimal codons with optimal codons.  
 
 ### Codon Adaptation Index Values
-In the case of optimization for *Strongyloides* species, *N. brasiliensis*, or *B. malayi*: sequences (both original and optimized) are scored by calculating the Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence (3,4). In Analysis mode, CAI values for user-inputted sequences are calculated relative to *Strongyloides*, *B. mayali*, *N. brasiliensis*, and *C. elegans* codon adaptiveness charts. The CAI is calculated via the `seqinr` library. 
-
-CAI values are not calculated when optimizing for *Pristionchus* species or when using a user-provided custom optimization rule.
+Sequences (both original and optimized) are scored by calculating the Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence ( [Sharp and Li, 1987](https://pubmed.ncbi.nlm.nih.gov/3547335/), [Jansen *et al* 2003](http://www.ncbi.nlm.nih.gov/pubmed/12682375)). The CAI is calculated via the `seqinr` library using a multi-species relative adaptiveness table (see above).
 
 ### GC Content
 The fraction of G+C bases of the nucleic acid sequences. Calculated using the `seqinr` library.  
 
 ### Inserting Introns
-Including introns into cDNA sequences can signficiant increase gene expression. Intron mediated enchancement of gene expression can be due to a variety of mechanisms, including by increasing the rate of transcription. Intron mediated enhancement occurs in *C. elegans* and *P. pacificus* (5,6), and is at least compatible with expression in *Strongyloides spp.* (7). Here, the desired number of introns are inserted within the DNA sequence, up to a maximum of 3 unique introns. Intron sequences and order are either canonical Fire lab synthetic introns (8), *P. pacificus* native introns (5), PATC-rich introns (*smu-2* introns 3-5) that enhance germline expression of transgenes in *C. elegans* (9), or a user-provided set of custom sequences.
+Including introns into cDNA sequences can signficiant increase gene expression in nematode species [(Crane *et al* 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/), [Han *et al* 2020](https://www.genetics.org/content/216/4/947)], [Junio *et al* 2008](https://pubmed.ncbi.nlm.nih.gov/17945217/), [Li *et al* 2011)](https://pubmed.ncbi.nlm.nih.gov/21723330/).  
 
-#### Intron Number and Spacing  
-The Fire lab established three unique introns, spaced equidistantly within a gene as canon (8); this configuration is thus set as default, and is recommended. In *C. elegans*, the location of the intron site influences the degree of intron mediated enhancement, such that a single 5′-intron is more effective than a single 3′-intron [6,9]. Therefore when only 1 or 2 introns are desired, 3 possible intron insertion sites are identified and filled as needed, starting from the 5′ site.
+In Optimize Sequences mode, users may input a desired number of introns, up to a maximum of three unique introns. The Fire lab established three unique introns, spaced equidistantly within a gene as canon [(Fire Lab Vector Kit 1995)](https://media.addgene.org/cms/files/Vec95.pdf); this configuration is thus set as default, and is recommended.  
+
+Intron sequences and insertion order are either the three canonical Fire lab synthetic introns established by the Fire lab, *P. pacificus* native introns, PATC-rich introns (*smu-2* introns 3-5) that enhance germine expression of transgenes in *C. elegans*, or custom user provided intron sequences [(Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf), [Han *et al* 2020](https://www.genetics.org/content/216/4/947), [Aljohani *et al* 2020)](https://www.nature.com/articles/s41467-020-19898-0). Users may either select the desired built-in intron sequence source using the dropdown menu provided, or upload a fasta file containing up to three custom intron sequences.  
 
 #### Identifying Intron Insertion Sites  
-Users may choose between placing introns are equidistantly spaced locations, or between the 2nd and 3rd nucleotide of one of the following minimal invertebrate splice site consensus sequences was used: "aga", "agg" (10, 11).
-            
-## References
-1. [Mitreva *et al* (2006). Codon usage patterns in Nematoda: analysis based on over 25 million codons in thirty-two species. *Genome Biology* 7: R75](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/). 
-2. [Sharp and Bradnam (1997). Appendix 3: Codon Usage in *C. elegans*. In: *C. elegans* II. 2nd edition; Eds: Riddle, Blumenthal, Meyer *et al*. Cold Spring Harbor Laboratory Press.](https://www.ncbi.nlm.nih.gov/books/NBK20194/).
-3. [Sharp and Li (1987). The Codon Adaptation Index: a measure of directional synonymous codon usage bias, and its potential applications. *Nucleic Acids Research* 15: 1281-95](https://pubmed.ncbi.nlm.nih.gov/3547335/). 
-4. [Jansen *et al* (2003). Revisiting the codon adaptation index from a whole-genome perspective: analyzing the relationship between gene expression and codon occurrence in yeast using a variety of models. *Nucleic Acids Research* 31: 2242-51](http://www.ncbi.nlm.nih.gov/pubmed/12682375).
-5. [Han *et al* (2020). Improving transgenesis efficiency and CRISPR-associated tools through codon optimization and native intron addition in *Pristionchus* nematodes. *GENETICS* 216: 947-56](https://www.genetics.org/content/216/4/947)
-6. [Crane *et al* (2019). *In vivo* measurements reveal a single 5′-intron is sufficient to increase protein expression level in *C. elegans*. *Scientific Reports* 9: 9192](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/). 
-7. [Junio *et al* (2008). *Strongyloides stercoralis* cell- and tissue-specific transgene expression and co-transformation with vector constructs incorporating a common multifunctional 3′ UTR'. *Experimental Parasitology* 118: 253-265](https://pubmed.ncbi.nlm.nih.gov/17945217/). 
-8. [Fire Lab Vector Kit (1995)](https://media.addgene.org/cms/files/Vec95.pdf)
-9. [Aljohani *et al* (2020). Engineering rules that minimize germline silencing of transgenes in simple extrachromosomal arrays in *C. elegans*. *Nature Communications* 11: 6300](https://www.nature.com/articles/s41467-020-19898-0).
-10. [Shaprio and Senepathy (1987). RNA splice junctions of different classes of eukayotes: sequence statistics and funtional implications in gene expression. *Nucleic Acids Research* 15: 7155-7174](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC306199/). 
-11. [*Cis-* Splicing in Worms *in* *C. elegans* II (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/)
+This app divides the optimized cDNA sequence at 3 predicted intron insertion sites spaced approximately equidistantly. Users may choose to further refine insertion site locations by identifying the closest conserved invertebrate exon splice sites (‘AG\^G’, ‘AG\^A’)( [Shapiro and Senapathy](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC306199/), [*Cis-* Splicing in Worms *in* *C. elegans* II, 1997)](https://www.ncbi.nlm.nih.gov/books/NBK20075/). For all insertion sites, '\^' symbol indicates the exact insertion site.  
+
+#### Intron Spacing  
+Once hypothetical intron insertion sites have been identified, the application inserts the user-specified number of introns, using the 5’ insertion site first and continuing in the 3’ direction. In *C. elegans*, the location of the intron site influences the degree of intron mediated enhancement, such that a single 5′-intron is more effective than a single 3′-intron [(Crane *et al* 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/), [Aljohani *et al* 2020)](https://www.nature.com/articles/s41467-020-19898-0). Therefore when only 1 or 2 introns are desired, 3 possible intron insertion sites are identified and filled as needed, starting from the 5′ site.  
 
 ## Examples of Shiny App UI  
 ### User Interface for the Wild Worm Codon Adapter in Optimize Sequences Mode
@@ -104,13 +109,13 @@ Users may choose between placing introns are equidistantly spaced locations, or 
 
 ## Sources  
 * [Shiny](https://shiny.rstudio.com/) - UI framework
-* [WormbaseParasite](https://parasite.wormbase.org/index.html) - GeneIDs and cDNA sequences
+* [Wormbase ParaSite](https://parasite.wormbase.org/index.html) - GeneIDs and coding sequences
 * [Seqinr](https://www.rdocumentation.org/packages/seqinr/versions/3.6-1) - Utilities for calculating Codon Adaptation Index
 * Codon Usage Patterns:  
-  - *Strongyloides spp*: [Mitreva *et al* 2006](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/)
-  - *Pristionchus spp*: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
-  - *Brugia malayi*: [Nematode.net](http://www.nematode.net/NN3_frontpage.cgi?navbar_selection=nemagene&subnav_selection=codon_usage_tables)
-  - *Nippostrongylus brasiliensis*: [Nematode.net](http://www.nematode.net/NN3_frontpage.cgi?navbar_selection=nemagene&subnav_selection=codon_usage_tables)
+  - *Strongyloides spp*: [Mitreva *et al* (2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/)
+  - *Pristionchus pacificus*: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
+  - *Brugia malayi*: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
+  - *Nippostrongylus brasiliensis*: [WormBase ParaSite](https://parasite.wormbase.org/expression/nippostrongylus_brasiliensis_prjeb511/index.html), [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4), [Chandler *et al* (2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/)
   - *C. elegans*: [Sharp and Bradnam, 1997](https://www.ncbi.nlm.nih.gov/books/NBK20194/)
 * Intron Sequences:  
   - Canonical Fire lab artificial introns: [Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf)

@@ -4,7 +4,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
            theme = shinytheme("flatly"),
            collapsible = F,
            id = "tab",
-           text = "v1.0.0",
+           text = "v1.1.0",
            
            # Optimize Sequence Mode Tab ----
            tabPanel(h4("Optimize Sequences"),
@@ -16,22 +16,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    
                                    status = "primary",
                                    
-                                   ### Option to pick what species the sequence will be codon optimized for
-                                   h5('Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Select the codon usage pattern to apply.', style = "color: #7b8a8b")),
-                                   selectInput('sp_Opt',
-                                               h6('Built-in Rules'),
-                                               choices = list("Strongyloides",
-                                                              "Nippostrongylus",
-                                                           "Pristionchus",
-                                                           "Brugia"),
-                                               selected = "Strongyloides"),
-                                   
-                                   ### Upload custom optimal codon table
-                                   uiOutput('custom_lut_upload'),
-                                   p(tags$em('Note: uploading a custom list of optimal codons will override the dropdown menu selection above. Please use the Clear button if switching between custom and built-in usage rules.', style = "color: #7b8a8b")),
-                                   
-                                   h5('Add Sequence', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   h5('Step 1: Upload Sequence', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                    p(tags$em('Please input a cDNA or single-letter amino acid sequence for optimization. Alternatively, upload a gene sequence file (.gb, .fasta, or .txt files accepted).', style = "color: #7b8a8b")),
                                    p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                    
@@ -44,30 +29,52 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    ### Upload list of sequences
                                    uiOutput('optimization_file_upload'),
                                    
-                                   h5('Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   ### Option to pick what species the sequence will be codon optimized for
+                                   h5('Step 2: Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   p(tags$em('Select the codon usage pattern to apply.', style = "color: #7b8a8b")),
+                                   div(id = "ruleDiv",
+                                   selectInput('sp_Opt',
+                                               h6('Select rule'),
+                                               choices = list("Strongyloides",
+                                                              "Nippostrongylus",
+                                                           "Pristionchus",
+                                                           "Brugia",
+                                                           "C. elegans",
+                                                           "Custom"),
+                                               selected = "Strongyloides")
+                                   ),
+                                   
+                                   ### Upload custom optimal codon table
+                                   uiOutput('custom_lut_upload'),
+                                   p(tags$em('Note: to apply a custom list of optimal codons, please also select the "Custom" option via the dropdown menu above.', style = "color: #7b8a8b")),
+                                   
+                                  
+                                   tags$br(),
+                                   h5('Step 3: Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                    p(tags$em('Users may choose between three sets of intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences', style = "color: #7b8a8b")),
                                    
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
-                                               h6('Built-in Sequence Source'),
+                                               h6('Built-in sequence source'),
                                                choices = list("Canonical (Fire)",
                                                               "PATC-rich",
-                                                           "Pristionchus"),
+                                                           "Pristionchus",
+                                                           "Custom"),
                                                selected = "Canonical (Fire)"),
                                    
                                    ### Upload custom intron file (file loader)
                                    uiOutput('custom_intron_upload'),
-                                   p(tags$em('Note: uploading a custom list of introns will override the dropdown menu selections above. Please use the Clear button if switching between custom and built-in introns.', style = "color: #7b8a8b")),
+                                   p(tags$em('Note: to apply a custom list of introns, please also select the "Custom" option via the dropdown menu above.', style = "color: #7b8a8b")),
                                    
                                    ### Option to pick number of introns (pulldown)
                                    selectInput('num_Int',
-                                               h6('Number of Introns'),
+                                               h6('Number of introns'),
                                                choices = 0:3,
                                                selected = 3),
                                    
                                    ## Option to pick intron insertion strategy (radio)
                                    radioButtons('mode_Int',
-                                                 h6('Intron Insertion Mode'),
+                                                 h6('Intron insertion mode'),
                                                  choiceNames = list("Canonincal invertebrate exon splice junction (AG^A or AG^G)",
                                                              "Equidistantly along sequence length (Fire lab strategy)"),
                                                 choiceValues = list("Canon",
@@ -120,9 +127,9 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                    resize = "vertical"),
                                      
                                      h5('Analyze Native Sequences', class = 'text-danger', style = "margin: 5px 0px 5px 0px"),
-                                     p(tags$em('To perform analysis of native cDNA sequences, list sequence IDS as: gene or transcript IDs starting with SSTP, SRAE, SPAL, or SVEN; WB gene IDs for S. ratti and C. elegans genes; C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     p(tags$em('To perform analysis of native coding sequences, list sequence IDS as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
                                      
-                                     p(tags$em('Alternatively, users may directly provide cDNA sequences for analysis, either as a 2-column .csv file listing sequence names and cDNA sequences, or a .fa file containing named cDNA sequences.', style = "color: #7b8a8b")),
+                                     p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a fasta file containing named coding sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                      
@@ -136,7 +143,6 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                      
                                      actionButton('goAnalyze',
                                                   'Submit',
-                                                  # width = '40%',
                                                   class = "btn-primary",
                                                   icon = icon("fas fa-share")),
                                      
@@ -168,20 +174,23 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                                     "Ce_CAI values",
                                                                     "Bm_CAI values",
                                                                     "Nb_CAI values",
-                                                                    "cDNA sequences"
+                                                                    "Pp_CAI values",
+                                                                    "Coding sequences"
                                                                     ),
                                                                     choiceValues = c("GC",
                                                                                      "Sr_CAI",
                                                                                      "Ce_CAI",
                                                                                      "Bm_CAI",
                                                                                      "Nb_CAI",
-                                                                                     "cDNA sequence"),
+                                                                                     "Pp_CAI",
+                                                                                     "coding sequence"),
                                                                     selected =  c("GC",
                                                                                   "Sr_CAI",
                                                                                   "Ce_CAI",
                                                                                   "Bm_CAI",
                                                                                   "Nb_CAI",
-                                                                                  "cDNA sequence")),
+                                                                                  "Pp_CAI",
+                                                                                  "coding sequence")),
                                                       uiOutput("downloadbutton_AM")
                                                       ))
                         
@@ -234,8 +243,9 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                            tags$li('Multi-species codon frequency/relative adaptiveness table (.csv)'),
                                            tags$li('Multi-species optimal codon lookup table (.csv)'),
                                            tags$li('Example custom preferred codon table (.csv)'),
-                                           tags$li('Example geneID List (.csv)'),
-                                           tags$li('Example 2-column geneID/cDNA List (.csv)')
+                                           tags$li('Example geneID .ist (.csv)'),
+                                           tags$li('Example 2-column geneID/sequence list (.csv)'),
+                                           tags$li('Example custom intron list (.fasta)')
                                        )),
                                      
                                      pickerInput("which.Info.About",
@@ -243,8 +253,9 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                  choices =  c('Multi-species codon frequency table',
                                                               "Multi-species optimal codon table",
                                                               "Example custom preferred codon table",
-                                                              "Example geneID List",
-                                                              "Example 2-column geneID/cDNA List"),
+                                                              "Example geneID list",
+                                                              "Example 2-column geneID/sequence list",
+                                                              "Example custon intron list"),
                                                  options = list(style = 'btn btn-primary',
                                                                 title = "Select a file to download")),
                                      uiOutput("StudyInfo.panel.About")

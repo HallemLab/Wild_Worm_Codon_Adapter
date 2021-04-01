@@ -2,7 +2,7 @@
 output$optimization_file_upload <- renderUI({
     input$resetOptimization
     fileInput('loadseq',
-              h6('Sequence file (.gb, .fasta, .txt)'),
+              h6('Upload sequence file (.gb, .fasta, .txt)'),
               multiple = FALSE)
 })
 
@@ -10,7 +10,7 @@ output$optimization_file_upload <- renderUI({
 output$custom_lut_upload <- renderUI({
     input$resetOptimization
     fileInput('loadlut',
-              h6('Custom Optimal Codon Rule (.csv)'),
+              h6('Upload custom optimal codon rule (.csv)'),
               multiple = FALSE)
 })
 
@@ -18,13 +18,15 @@ output$custom_lut_upload <- renderUI({
 output$custom_intron_upload <- renderUI({
     input$resetOptimization
     fileInput('loadintron',
-              h6('Custom Intron Sequence(s) (.csv,.fasta)'),
+              h6('Upload custom intron sequence(s) (.csv,.fasta)'),
               multiple = FALSE)
 })
 
 ## Optimization Mode: Reset Sequence Text Box ----
 observeEvent(input$resetOptimization,{
     updateTextAreaInput(session,"seqtext",value = "")
+    updateSelectInput(session, "sp_Opt", selected = "Strongyloides")
+    updateSelectInput(session, "type_Int", selected = "Canonical (Fire)")
 })
 
 ## Analysis Mode: Generate/Reset Gene File Upload ----
