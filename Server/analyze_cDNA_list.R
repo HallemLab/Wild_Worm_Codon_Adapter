@@ -1,7 +1,7 @@
-# This script includes the the primary computation for analyzing a list of cDNA
+# This script includes the the primary computation for analyzing a list of coding
 # sequences for the Strongyloides Codon Adapter App in Analyze Sequences Mode
 # This script is very similar to analyze_geneID_list.R, except since the user has 
-# already provided cDNA sequences, the calls to BioMart are skipped. Code will analyse 
+# already provided coding sequences, the calls to BioMart are skipped. Code will analyse 
 # GC content and CAI values for each gene using calls to `calc_sequence_stats.R`.
 
 analyze_cDNA_list <- function(gene.seq, vals){
@@ -12,7 +12,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     calc.inc <- 0.3/nrow(gene.seq)
     
     # Strongyloides CAI values ----
-    Sr.temp<- lapply(gene.seq$cDNA, function (x){
+    Sr.temp<- lapply(gene.seq$coding, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
@@ -41,7 +41,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     # C. elegans CAI values ----
     setProgress(0.35)
     ## Calculate info each sequence (C. elegans index)
-    Ce.temp<- lapply(gene.seq$cDNA, function (x){
+    Ce.temp<- lapply(gene.seq$coding, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
@@ -59,7 +59,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     # B. malayi CAI values ----
     setProgress(0.7)
     ## Calculate info each sequence (B. malayi index)
-    Bm.temp<- lapply(gene.seq$cDNA, function (x){
+    Bm.temp<- lapply(gene.seq$coding, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
@@ -77,7 +77,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
     # N. brasiliensis CAI values ----
     # 
     ## Calculate info each sequence ( N. brasiliensis index) 
-    Nb.temp<- lapply(gene.seq$cDNA, function (x){
+    Nb.temp<- lapply(gene.seq$coding, function (x){
         incProgress(amount = calc.inc)
         if (!is.na(x)) {
             s2c(x) %>%
@@ -92,16 +92,35 @@ analyze_cDNA_list <- function(gene.seq, vals){
         unlist() %>%
         as_tibble_col(column_name = 'Nb_CAI')
     
+    # P. pacificus CAI values ----
+    # 
+    ## Calculate info each sequence ( P. pacificus index) 
+    Pp.temp<- lapply(gene.seq$coding, function (x){
+        incProgress(amount = calc.inc)
+        if (!is.na(x)) {
+            s2c(x) %>%
+                calc_sequence_stats(.,w.tbl$Pp_relAdapt)}
+        else {
+            list(GC = NA, CAI = NA)
+        }
+    }) 
+    
+    Pp.info.gene.seq<- Pp.temp %>%
+        map("CAI") %>%
+        unlist() %>%
+        as_tibble_col(column_name = 'Pp_CAI')
+    
     ## Merge tibbles ----
     info.gene.seq <- add_column(info.gene.seq, 
                                 Ce_CAI = Ce.info.gene.seq$Ce_CAI,
                                 Bm_CAI = Bm.info.gene.seq$Bm_CAI,
                                 Nb_CAI = Nb.info.gene.seq$Nb_CAI,
+                                Pp_CAI = Pp.info.gene.seq$Pp_CAI,
                                 .after = "Sr_CAI")
     
     vals$geneIDs <- suppressMessages(info.gene.seq %>%
                                          left_join(.,gene.seq) %>%
-                                         rename('cDNA sequence' = cDNA))
+                                         rename('coding sequence' = coding))
     
     setProgress(1)
     info.gene.seq

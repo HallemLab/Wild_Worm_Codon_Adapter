@@ -7,6 +7,11 @@ tags$head(
     margin: 0px 0px 10px;
     }
     
+    #originalSequence{
+    font-family: monospace;
+    margin: 0px 0px 10px;
+    }
+    
     #intronic_opt{
     font-family: monospace;
     margin: 0px 0px 10px;
@@ -33,6 +38,10 @@ tags$head(
     .navbar-nav>li>a{
     height: 60px;
     padding: 10px 15px;
+    }
+    
+    .navbar-text {
+    float:right;
     }
     
     h4 {
@@ -65,7 +74,6 @@ tags$head(
     font-size: 13px;
     font-weight: normal;
     }
-    
     
     .selectize-input {
     word-wrap: break-word;
@@ -123,6 +131,14 @@ tags$head(
     
     #info_analysis {
     min-height: 120px;
+    }
+    
+    #ruleDiv .selectize-input {
+    font-style: italic;
+    }
+    
+    #ruleDiv .selectize-dropdown-content {
+    font-style: italic;
     }
 
                     "))

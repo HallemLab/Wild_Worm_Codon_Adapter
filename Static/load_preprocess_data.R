@@ -34,10 +34,10 @@ AAs <- str_c(lut.tbl$AA, collapse = "") %>%
 # seqinr::cai function, as the "w" input.
 w.tbl <- read_csv('Static/rel_adaptiveness_chart.csv', 
                                 quote = "", 
-                                col_types = 'fcnnnnnnnn'
+                                col_types = 'fcnnnnnnnnnn'
 ) %>%
     dplyr::select(AA, Codon, contains("relAdapt"))  %>%
-    add_column(Pp_relAdapt = NA, custom_relAdapt = NA)%>%
+    add_column(custom_relAdapt = NA)%>%
     group_by(AA) %>%
     dplyr::arrange(-dplyr::desc(Codon)) %>%
     ungroup() %>%
