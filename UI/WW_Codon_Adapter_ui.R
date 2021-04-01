@@ -31,7 +31,8 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Option to pick what species the sequence will be codon optimized for
                                    h5('Step 2: Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Select the codon usage pattern to apply.', style = "color: #7b8a8b")),
+                                   p(tags$em('Select the codon usage pattern to apply. To apply a custom codon usage pattern, select the "Custom" option then use the file loader to upload a list of optimal codons.', style = "color: #7b8a8b")),
+                                   
                                    div(id = "ruleDiv",
                                    selectInput('sp_Opt',
                                                h6('Select rule'),
@@ -46,13 +47,13 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Upload custom optimal codon table
                                    uiOutput('custom_lut_upload'),
-                                   p(tags$em('Note: to apply a custom list of optimal codons, please also select the "Custom" option via the dropdown menu above.', style = "color: #7b8a8b")),
+                                   
                                    
                                   
                                    tags$br(),
                                    h5('Step 3: Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Users may choose between three sets of intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences', style = "color: #7b8a8b")),
-                                   
+                                   p(tags$em('Users may choose between three sets of built-in intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences. Alternatively, insert custom introns by selecting the "Custom" option then using the file loader to upload a fasta file containing custom introns.', style = "color: #7b8a8b")),
+                                  
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
                                                h6('Built-in sequence source'),
@@ -65,7 +66,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Upload custom intron file (file loader)
                                    uiOutput('custom_intron_upload'),
-                                   p(tags$em('Note: to apply a custom list of introns, please also select the "Custom" option via the dropdown menu above.', style = "color: #7b8a8b")),
+                                   
                                    
                                    ### Option to pick number of introns (pulldown)
                                    selectInput('num_Int',
@@ -131,7 +132,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                      p(tags$em('To perform analysis of native coding sequences, list sequence IDS as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
 
                                      
-                                     p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a fasta file containing named coding sequences.', style = "color: #7b8a8b")),
+                                     p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a .fasta file containing named coding sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                      

@@ -18,7 +18,7 @@ output$custom_lut_upload <- renderUI({
 output$custom_intron_upload <- renderUI({
     input$resetOptimization
     fileInput('loadintron',
-              h6('Upload custom intron sequence(s) (.csv,.fasta)'),
+              h6('Upload custom intron sequence(s) (.fasta)'),
               multiple = FALSE)
 })
 
@@ -33,7 +33,7 @@ observeEvent(input$resetOptimization,{
 output$analysis_file_upload <- renderUI({
     input$resetAnalysis
     fileInput('loadfile',
-              h6('Upload file (.csv, .fa)'),
+              h6('Upload file (.csv, .fasta)'),
               multiple = FALSE)
 })
 
