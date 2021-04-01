@@ -61,6 +61,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                            "Pristionchus",
                                                            "Custom"),
                                                selected = "Canonical (Fire)"),
+
                                    
                                    ### Upload custom intron file (file loader)
                                    uiOutput('custom_intron_upload'),
@@ -128,6 +129,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                      
                                      h5('Analyze Native Sequences', class = 'text-danger', style = "margin: 5px 0px 5px 0px"),
                                      p(tags$em('To perform analysis of native coding sequences, list sequence IDS as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+
                                      
                                      p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a fasta file containing named coding sequences.', style = "color: #7b8a8b")),
                                      p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),

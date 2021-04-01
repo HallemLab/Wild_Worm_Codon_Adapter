@@ -204,7 +204,7 @@ server <- function(input, output, session) {
         
         ## Parse which intron set to insert
         intron_sel <- switch(input$type_Int,
-                             "Canonical (Fire)" = "Canon",
+                             "Canonical (Fire lab)" = "Canon",
                              "PATC-rich" = "PATC",
                              "Pristionchus" = "Pristionchus",
                              "Custom" = "custom"
@@ -233,7 +233,7 @@ server <- function(input, output, session) {
         if (!is.na(loc_iS[[1]])){
             source('Server/insert_introns.R', local = TRUE)
         } else cds_wintrons <- c("Error: no intron insertion sites are 
-                                 avaliable in this sequence")
+                                 avaliable in this sequence.")
         
         return(cds_wintrons)
     })

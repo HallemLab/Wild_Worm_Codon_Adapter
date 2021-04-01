@@ -23,7 +23,7 @@ The relative adaptiveness values of every possible codon was generated as follow
 
 User-provided custom optimization rules: In addition to the optimization rules provided by the application, users may also provide a custom set of optimal codons. In this case, users may upload a .csv file containing 2 columns listing single-letter amino acid symbols and the corresponding 3-letter optimal codon sequence, using the provided UI interface. Only one optimal codon should be provided per amino acid; stop codons should be designated using the '*' symbol. This custom optimal codon lookup table will be applied during codon optimization; CAI values will not be calculated. A template .csv file is available for download.  
 
-In all cases, codon optimzation is performed by replacing non-optimal codons with optimal codons. 
+In all cases, codon optimization is performed by replacing non-optimal codons with optimal codons. 
 
 ### Codon Adaptation Index Values
 Sequences (both original and optimized) are scored by calculating the Codon Adaptation Index: the geometric average of relative adaptiveness of all codons in the gene sequence ( [Sharp and Li, 1987](https://pubmed.ncbi.nlm.nih.gov/3547335/), [Jansen *et al* 2003](http://www.ncbi.nlm.nih.gov/pubmed/12682375)). The CAI is calculated via the `seqinr` library using a multi-species relative adaptiveness table (see above).
