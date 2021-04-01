@@ -26,11 +26,11 @@ segmented_x <- substring(x,
 
 ## If there aren't enough unique introns for the desired 
 ## number of introns (i.e. for custom intron lists),
-## use the maximum number of introns
+## use the maximum number of available introns
 if (num_Int > length(syntrons)) {num_Int <- length(syntrons)}
 
 ## If there aren't enough unique insertion sites for the desired 
-## number of introns, use the maximum number of insertion sites
+## number of introns, use the maximum number of available insertion sites
 if (num_Int > length(loc_iS)) {num_Int <- length(loc_iS)}
 
 

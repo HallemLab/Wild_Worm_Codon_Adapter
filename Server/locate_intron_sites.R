@@ -45,14 +45,10 @@ if (input$mode_Int == "Equidist") {
     
     ##  QUALITY CONTROL 1 
     ##  If there are fewer than 3 possible insertion sites,
-    ##  just insert equidistantly?
+    ##  insert as many introns as there are sites
     ##  
     if (is_empty(index_iS) || length(index_iS) < num_Int) {
-        insertSites_alt <-c('AGG', 'AGA')
-        index_iS <- str_locate_all(x, insertSites_alt) %>%
-            do.call(rbind, .)
-        index_iS <- index_iS[,1]
-        strict_iS <- FALSE
+        num_Int <- length(index_iS)
     }
     
     ## Generate nucleotide locations of splice sites 

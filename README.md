@@ -115,7 +115,7 @@ Once hypothetical intron insertion sites have been identified, the application i
   - *Strongyloides spp*: [Mitreva *et al* (2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/)
   - *Pristionchus pacificus*: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
   - *Brugia malayi*: [Han *et al* (2020)](https://www.genetics.org/content/216/4/947)
-  - *Nippostrongylus brasiliensis*: [WormBase ParaSite](https://parasite.wormbase.org/expression/nippostrongylus_brasiliensis_prjeb511/index.html), [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4), [Chandler *et al* (2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/)
+  - *Nippostrongylus brasiliensis*: [WormBase ParaSite](https://parasite.wormbase.org/expression/nippostrongylus_brasiliensis_prjeb511/index.html), [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4)
   - *C. elegans*: [Sharp and Bradnam, 1997](https://www.ncbi.nlm.nih.gov/books/NBK20194/)
 * Intron Sequences:  
   - Canonical Fire lab artificial introns: [Fire Lab Vector Kit 1995](https://media.addgene.org/cms/files/Vec95.pdf)
