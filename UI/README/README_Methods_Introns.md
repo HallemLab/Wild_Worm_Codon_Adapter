@@ -1,5 +1,5 @@
 ### Overview
-Including introns into cDNA sequences can signficiant increase gene expression in nematode species [(Crane *et al* 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/), [Han *et al* 2020](https://www.genetics.org/content/216/4/947)], [Junio *et al* 2008](https://pubmed.ncbi.nlm.nih.gov/17945217/), [Li *et al* 2011)](https://pubmed.ncbi.nlm.nih.gov/21723330/).  
+Including introns into cDNA sequences can signficiantly increase gene expression in nematode species [(Crane *et al* 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/), [Han *et al* 2020](https://www.genetics.org/content/216/4/947)], [Junio *et al* 2008](https://pubmed.ncbi.nlm.nih.gov/17945217/), [Li *et al* 2011)](https://pubmed.ncbi.nlm.nih.gov/21723330/).  
 
 ### Identifying Splice Sites and Inserting Introns  
 In Optimize Sequences mode, users may input a desired number of introns, up to a maximum of three unique introns. The Fire lab established three unique introns, spaced equidistantly within a gene as canon [(Fire Lab Vector Kit 1995)](https://media.addgene.org/cms/files/Vec95.pdf); this configuration is thus set as default, and is recommended.  

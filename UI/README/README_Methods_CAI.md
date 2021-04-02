@@ -16,7 +16,7 @@ Codon frequency rates for *C. elegans* were based on highly expressed *C. elegan
 
 Codon frequency rates for *N. brasiliensis* were calculated coding sequences of highly expressed *N. brasiliensis* genes (10% highest RNA-seq expression values across all samples); RNA-seq data was downloaded from WormBase ParaSite, based on data originally published in [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4),and [Chandler *et al* (2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/). 
 
-Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (7th bin, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer.
+Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (average frequency in bins 8-11, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer.
 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 The relative adaptiveness values of every possible codon was generated as follows: individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.

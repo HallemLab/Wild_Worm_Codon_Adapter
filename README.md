@@ -72,7 +72,7 @@ Codon frequency rates for *Strongyloides* species are based on highly expressed 
 Codon frequency rates for *C. elegans* were based on highly expressed *C. elegans* gene count data published in [Sharp and Bradnam (1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/). 
 
 Codon frequency rates for *N. brasiliensis* were calculated coding sequences of highly expressed *N. brasiliensis* genes (10% highest RNA-seq expression values across all samples); RNA-seq data was downloaded from WormBase ParaSite, based on data originally published in [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4),and [Chandler *et al* (2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/). 
-Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (7th bin, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer. 
+Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (average frequency bins 8-11, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer. 
 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 The relative adaptiveness values of every possible codon was generated as follows: individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.
@@ -88,7 +88,7 @@ Sequences (both original and optimized) are scored by calculating the Codon Adap
 The fraction of G+C bases of the nucleic acid sequences. Calculated using the `seqinr` library.  
 
 ### Inserting Introns
-Including introns into cDNA sequences can signficiant increase gene expression in nematode species [(Crane *et al* 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/), [Han *et al* 2020](https://www.genetics.org/content/216/4/947)], [Junio *et al* 2008](https://pubmed.ncbi.nlm.nih.gov/17945217/), [Li *et al* 2011)](https://pubmed.ncbi.nlm.nih.gov/21723330/).  
+Including introns into cDNA sequences can signficiantly increase gene expression in nematode species [(Crane *et al* 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6591249/), [Han *et al* 2020](https://www.genetics.org/content/216/4/947)], [Junio *et al* 2008](https://pubmed.ncbi.nlm.nih.gov/17945217/), [Li *et al* 2011)](https://pubmed.ncbi.nlm.nih.gov/21723330/).  
 
 In Optimize Sequences mode, users may input a desired number of introns, up to a maximum of three unique introns. The Fire lab established three unique introns, spaced equidistantly within a gene as canon [(Fire Lab Vector Kit 1995)](https://media.addgene.org/cms/files/Vec95.pdf); this configuration is thus set as default, and is recommended.  
 
