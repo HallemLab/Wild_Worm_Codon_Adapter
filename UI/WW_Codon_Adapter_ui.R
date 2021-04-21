@@ -31,7 +31,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Option to pick what species the sequence will be codon optimized for
                                    h5('Step 2: Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Select the codon usage pattern to apply. To apply a custom codon usage pattern, select the "Custom" option then use the file loader to upload a list of optimal codons.', style = "color: #7b8a8b")),
+                                   p(tags$em('Select the codon usage pattern to apply. To apply a custom codon usage pattern, select the "Custom" option, then use the file loader to upload a list of optimal codons.', style = "color: #7b8a8b")),
                                    
                                    div(id = "ruleDiv",
                                    selectInput('sp_Opt',
@@ -52,7 +52,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                   
                                    tags$br(),
                                    h5('Step 3: Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Users may choose between three sets of built-in intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences. Alternatively, insert custom introns by selecting the "Custom" option then using the file loader to upload a fasta file containing custom introns.', style = "color: #7b8a8b")),
+                                   p(tags$em('Users may choose between three sets of built-in intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences. Alternatively, insert custom introns by selecting the "Custom" option, then using the file loader to upload a fasta file containing custom introns.', style = "color: #7b8a8b")),
                                   
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
@@ -129,7 +129,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                    resize = "vertical"),
                                      
                                      h5('Analyze Native Sequences', class = 'text-danger', style = "margin: 5px 0px 5px 0px"),
-                                     p(tags$em('To perform analysis of native coding sequences, list sequence IDS as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     p(tags$em('To perform analysis of native coding sequences, list sequence IDs as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
 
                                      
                                      p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a .fasta file containing named coding sequences.', style = "color: #7b8a8b")),
@@ -246,7 +246,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                            tags$li('Multi-species codon frequency/relative adaptiveness table (.csv)'),
                                            tags$li('Multi-species optimal codon lookup table (.csv)'),
                                            tags$li('Example custom preferred codon table (.csv)'),
-                                           tags$li('Example geneID .ist (.csv)'),
+                                           tags$li('Example geneID list (.csv)'),
                                            tags$li('Example 2-column geneID/sequence list (.csv)'),
                                            tags$li('Example custom intron list (.fasta)')
                                        )),
