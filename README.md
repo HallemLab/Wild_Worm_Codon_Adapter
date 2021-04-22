@@ -40,23 +40,24 @@ The app has two usage modes:
   1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans*, as well as user-provided optimal codon sets. 
 
 It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical Fire lab synthetic introns, PATC-rich introns, *P. pacificus* native introns, or a custom set of user-provided introns. Users may input sequences for optimization using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
-Optimized sequences with or without artificial introns may be downloaded as .txt files.   
+
+Optimized sequences with or without artificial introns may be downloaded as plain text (.txt) files.   
 
   2. **Analysis Mode:** For user-provided genes/sequences, this tab reports the fractional GC content, coding sequence, and codon optimization relative to the codon usage weights of: 
 
 * highly expressed *S. ratti* transcripts [(Mitreva *et al* 2006)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1779591/) 
 * highly expressed *C. elegans* genes [(Sharp and Bradnam, 1997)](https://www.ncbi.nlm.nih.gov/books/NBK20194/) 
-* highly expressed *N. brasiliensis* genes [(Eccles *et al* 2018](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4), [Chandler *et al* 2017)](https://pubmed.ncbi.nlm.nih.gov/28491281/) 
+* highly expressed *N. brasiliensis* genes [(Eccles *et al* 2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4)
 * highly expressed *B. malayi* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947)
 * highly expressed *P. pacificus* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947) 
 
-To analyze transgenes, coding sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "NBR", "Bma", "Ppa", or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a .fa file containing named coding sequences.   
+To analyze transgenes, coding sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "NBR", "Bma", "Ppa", or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma separated (CSV) text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide coding sequences for analysis, either as a 2-column CSV file listing sequence names and coding sequences, or a FASTA file containing named coding sequences.   
 
 Users may download an excel file containing fractional GC content values, codon adaptation indeces, and coding sequences for the user-provided genes.
 
 ## Analysis Methods
 ### Inputs
-The primary non-responsive data inputs to the Wild Worm Codon Adapter App are .csv files containing the following information:  
+The primary non-responsive data inputs to the Wild Worm Codon Adapter App are CSV files containing the following information:  
   1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
   2. Optimal codon lookup table for *Strongyloides spp*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
   3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
@@ -77,7 +78,7 @@ Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 The relative adaptiveness values for every possible codon were generated as follows. Individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.
 
-User-provided custom optimization rules: In addition to the optimization rules provided by the application, users may also provide a custom set of optimal codons. In this case, users may upload a .csv file containing 2 columns listing single-letter amino acid symbols and the corresponding 3-letter optimal codon sequence, using the provided UI interface. Only one optimal codon should be provided per amino acid; stop codons should be designated using the '*' symbol. This custom optimal codon lookup table will be applied during codon optimization; CAI values will not be calculated. 
+User-provided custom optimization rules: In addition to the optimization rules provided by the application, users may also provide a custom set of optimal codons. In this case, users may upload a CSV file containing 2 columns listing single-letter amino acid symbols and the corresponding 3-letter optimal codon sequence, using the provided UI interface. Only one optimal codon should be provided per amino acid; stop codons should be designated using the '*' symbol. This custom optimal codon lookup table will be applied during codon optimization; CAI values will not be calculated. 
 
 In all cases, codon optimzation is performed by replacing non-optimal codons with optimal codons.  
 

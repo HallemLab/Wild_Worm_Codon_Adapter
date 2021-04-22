@@ -1,9 +1,9 @@
 ### Inputs
-The primary non-responsive data inputs to the Wild Worm Codon Adapter App are .csv files containing the following information:  
+The primary non-responsive data inputs to the Wild Worm Codon Adapter App are CSV files containing the following information:  
   1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
   2. Optimal codon lookup table for *Strongyloides spp*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
-  3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
-  4. <OPTIONAL> Custom intron list (fasta file containing a maximum of 3 introns; intron sequences should begin/end with canonical 5'-GT<intron>AG-3' splice recognition sequences)
+  3. <OPTIONAL> Custom optimal codon lookup table (2 column CSV file: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
+  4. <OPTIONAL> Custom intron list (FASTA file containing a maximum of 3 introns; intron sequences should begin/end with canonical 5'-GT<intron>AG-3' splice recognition sequences)
 
 All files described above are available for download via the Data Availability panel.
 
@@ -21,7 +21,7 @@ Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 The relative adaptiveness values for every possible codon were generated as follows. Individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.
 
-User-provided custom optimization rules: In addition to the optimization rules provided by the application, users may also provide a custom set of optimal codons. In this case, users may upload a .csv file containing 2 columns listing single-letter amino acid symbols and the corresponding 3-letter optimal codon sequence, using the provided UI interface. Only one optimal codon should be provided per amino acid; stop codons should be designated using the '*' symbol. This custom optimal codon lookup table will be applied during codon optimization; CAI values will not be calculated. A template .csv file is available for download.  
+User-provided custom optimization rules: In addition to the optimization rules provided by the application, users may also provide a custom set of optimal codons. In this case, users may upload a CSV file containing 2 columns listing single-letter amino acid symbols and the corresponding 3-letter optimal codon sequence, using the provided UI interface. Only one optimal codon should be provided per amino acid; stop codons should be designated using the '*' symbol. This custom optimal codon lookup table will be applied during codon optimization; CAI values will not be calculated. A template CSV file is available for download.  
 
 In all cases, codon optimization is performed by replacing non-optimal codons with optimal codons. 
 

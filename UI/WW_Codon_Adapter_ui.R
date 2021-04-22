@@ -52,7 +52,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                   
                                    tags$br(),
                                    h5('Step 3: Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Users may choose between three sets of built-in intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences. Alternatively, insert custom introns by selecting the "Custom" option, then using the file loader to upload a fasta file containing custom introns.', style = "color: #7b8a8b")),
+                                   p(tags$em('Users may choose between three sets of built-in intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences. Alternatively, insert custom introns by selecting the "Custom" option, then using the file loader to upload a FASTA file containing custom introns.', style = "color: #7b8a8b")),
                                   
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
@@ -129,11 +129,11 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                    resize = "vertical"),
                                      
                                      h5('Analyze Native Sequences', class = 'text-danger', style = "margin: 5px 0px 5px 0px"),
-                                     p(tags$em('To perform analysis of native coding sequences, list sequence IDs as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column .csv file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
+                                     p(tags$em('To perform analysis of native coding sequences, list sequence IDs as: WormBase gene IDs (prefix: WB), species-specific gene or transcript IDs (prefixes: SSTP, SRAE, SPAL, SVEN, Bma, Ppa, NBR); C. elegans gene names with a "Ce-" prefix (e.g. Ce-ttx-1); or C. elegans transcript IDs. For individual analyses use textbox input; for bulk analysis upload gene/transcript IDs as a single-column CSV file. If using the text box, please separate search terms by a comma.', style = "color: #7b8a8b")),
 
                                      
-                                     p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column .csv file listing sequence names and coding sequences, or a .fasta file containing named coding sequences.', style = "color: #7b8a8b")),
-                                     p(tags$em('Example .csv files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
+                                     p(tags$em('Alternatively, users may directly provide coding sequences for analysis, either as a 2-column CSV file listing sequence names and coding sequences, or a FASTA file containing named coding sequences.', style = "color: #7b8a8b")),
+                                     p(tags$em('Example CSV files can be downloaded using the Data Availability panel in the About tab', style = "color: #7b8a8b")),
                                      p(tags$em(tags$b('Note: Please hit the Clear button if switching between typing and uploading inputs.', style = "color: #F39C12"))),
                                      
                                      ### GeneID (text box)
