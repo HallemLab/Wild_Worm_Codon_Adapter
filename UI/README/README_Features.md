@@ -6,7 +6,8 @@ The app has two usage modes:
 This tab optimizes genetic sequences for expression in *Strongyloides* species, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans*, as well as user-provided optimal codon sets. 
 
 It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical Fire lab synthetic introns, PATC-rich introns, *P. pacificus* native introns, or a custom set of user-provided introns. Users may input sequences for optimization using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
-Optimized sequences with or without artificial introns may be downloaded as .txt files.    
+
+Optimized sequences with or without artificial introns may be downloaded as plain text (.txt) files.    
 
 ### Analyze Sequences Mode  
 For user-provided genes/sequences, this tab reports the fractional GC content, coding sequence, and codon optimization relative to the codon usage weights of: 
