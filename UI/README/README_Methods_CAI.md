@@ -2,8 +2,8 @@
 The primary non-responsive data inputs to the Wild Worm Codon Adapter App are CSV files containing the following information:  
   1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
   2. Optimal codon lookup table for *Strongyloides spp*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
-  3. <OPTIONAL> Custom optimal codon lookup table (2 columns: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
-  4. <OPTIONAL> Custom intron list (fasta file containing a maximum of 3 introns; intron sequences should begin/end with canonical 5'-GT<intron>AG-3' splice recognition sequences)
+  3. <OPTIONAL> Custom optimal codon lookup table (2 column CSV file: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
+  4. <OPTIONAL> Custom intron list (FASTA file containing a maximum of 3 introns; intron sequences should begin/end with canonical 5'-GT<intron>AG-3' splice recognition sequences)
 
 All files described above are available for download via the Data Availability panel.
 
