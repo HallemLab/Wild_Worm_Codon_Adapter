@@ -146,7 +146,7 @@ server <- function(input, output, session) {
             
             validate(need({isTruthy(flag.1) | isTruthy(flag.2)},
                           "Column values appear to have incorrect character lengths.
-                     Please ensure that one column contains 1-letter Amino Acid codes,
+                     Please ensure that one column contains 1-letter amino acid codes,
                      and another column contains 3-letter codon sequences."))
             
             lut <- custom.codons %>% rename_with( ~ case_when(
