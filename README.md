@@ -14,6 +14,8 @@ Web-based Shiny App for automatic codon optimization and analysis based on codon
 ## General Information
 This repository contains the infrastructure for generating a Shiny web application. The app is deployed via Shinyapps.io but can also be run locally. See App Setup and App Features sections below for additional details.  
 
+For more information please see the [G3 paper associated with this project](https://pubmed.ncbi.nlm.nih.gov/33914084/)
+
 ## App Setup & Development
 To access a stable deployment of the Wild Worm Codon Adapter Web App, please visit:   [https://hallemlab.shinyapps.io/Wild_Worm_Codon_Adapter/](https://hallemlab.shinyapps.io/Wild_Worm_Codon_Adapter/)  
 
