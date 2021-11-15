@@ -1,10 +1,9 @@
 # Header ----
-navbarPageWithText(h3("Wild Worm Codon Adapter"),
+navbarPage(h3("Wild Worm Codon Adapter"),
            windowTitle = "WWCA",
            theme = shinytheme("flatly"),
            collapsible = F,
            id = "tab",
-           text = "v1.1.0",
            
            # Optimize Sequence Mode Tab ----
            tabPanel(h4("Optimize Sequences"),
