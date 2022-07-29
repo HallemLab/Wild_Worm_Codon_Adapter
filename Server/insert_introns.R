@@ -42,7 +42,6 @@ intronic_opt<-sapply(1:num_Int, function(x) {
 
 ## Check to see if sequence is a multiple of 3, and if not, add space padding
 ## so that splitseq won't cut off nucleotides
-browser()
 if (nchar(intronic_opt)/3 != round(nchar(intronic_opt)/3)){
     paddingnum <- (ceiling(nchar(intronic_opt)/3)*3)-nchar(intronic_opt)
     pad <- rep_len(" ", paddingnum) %>% paste0(collapse = "")
