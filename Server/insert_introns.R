@@ -1,6 +1,7 @@
 # Insert artificial introns into identified splice sites
-# sequences used for introns are either canonical Fire lab sequences or 
-# P. pacificus native introns sequences, as specified by the user.
+# sequences used for introns are either canonical Fire lab sequences,
+# PATC-rich introns, P. pacificus native introns sequences, or
+# custom intron sequences as specified by the user.
 
 ## Remove any non-unique insert sites. 
 loc_iS <- unique(loc_iS)
@@ -39,6 +40,13 @@ intronic_opt<-sapply(1:num_Int, function(x) {
     paste0(collapse = "") %>%
     paste0(segmented_x[[length(segmented_x)]])
 
-
+## Check to see if sequence is a multiple of 3, and if not, add space padding
+## so that splitseq won't cut off nucleotides
+browser()
+if (nchar(intronic_opt)/3 != round(nchar(intronic_opt)/3)){
+    paddingnum <- (ceiling(nchar(intronic_opt)/3)*3)-nchar(intronic_opt)
+    pad <- rep_len(" ", paddingnum) %>% paste0(collapse = "")
+    intronic_opt <- paste0(intronic_opt, pad)
+}
 cds_wintrons <- splitseq(s2c(intronic_opt), frame = 0, word = 3) 
 
