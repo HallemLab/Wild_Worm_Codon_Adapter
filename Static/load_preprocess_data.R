@@ -37,7 +37,7 @@ w.tbl <- read_csv('Static/rel_adaptiveness_chart.csv',
                                 col_types = 'fcnnnnnnnnnn'
 ) %>%
     dplyr::select(AA, Codon, contains("relAdapt"))  %>%
-    add_column(custom_relAdapt = NA)%>%
+    add_column(custom_relAdapt = NA, none_relAdapt = NA)%>%
     group_by(AA) %>%
     dplyr::arrange(-dplyr::desc(Codon)) %>%
     ungroup() %>%

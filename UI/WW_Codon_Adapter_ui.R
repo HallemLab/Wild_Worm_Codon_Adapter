@@ -1,10 +1,9 @@
 # Header ----
-navbarPageWithText(h3("Wild Worm Codon Adapter"),
+navbarPage(h3("Wild Worm Codon Adapter"),
            windowTitle = "WWCA",
            theme = shinytheme("flatly"),
            collapsible = F,
            id = "tab",
-           text = "v1.1.0",
            
            # Optimize Sequence Mode Tab ----
            tabPanel(h4("Optimize Sequences"),
@@ -31,7 +30,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Option to pick what species the sequence will be codon optimized for
                                    h5('Step 2: Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
-                                   p(tags$em('Select the codon usage pattern to apply. To apply a custom codon usage pattern, select the "Custom" option, then use the file loader to upload a list of optimal codons.', style = "color: #7b8a8b")),
+                                   p(tags$em('Select the codon usage pattern to apply. To insert introns into a pre-optimized sequence, select the "None" option. To apply a custom codon usage pattern, select the "Custom" option, then use the file loader to upload a list of optimal codons.', style = "color: #7b8a8b")),
                                    
                                    div(id = "ruleDiv",
                                    selectInput('sp_Opt',
@@ -41,6 +40,7 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                                            "Pristionchus",
                                                            "Brugia",
                                                            "C. elegans",
+                                                           "None",
                                                            "Custom"),
                                                selected = "Strongyloides")
                                    ),
@@ -273,9 +273,13 @@ navbarPageWithText(h3("Wild Worm Codon Adapter"),
                                       status = "primary",
                                       p('This app was created by', 
                                         tags$a(
-                                            href = "https://scholar.google.com/citations?user=uSGqqakAAAAJ&hl=en", 
-                                            'Astra S. Bryant, PhD'),'for the', 
-                                        tags$a(href="http://www.hallemlab.com/",'Hallem Lab'), 'at UCLA.', 
+                                            href = "https://pbio.uw.edu/directories/faculty/entry/abryant/", 
+                                            'Astra S. Bryant, PhD.'), 
+                                        tags$br(),
+                                        'This app was last updated on 03/15/2024.',
+                                        tags$br(),
+                                        tags$br(),
+                                        'For feature requests or bug reports, please email Dr. Astra Bryant at astrab@uw.edu".',
                                         tags$br(),
                                         tags$br(),
                                         'The source code for this app is available on GitHub:', 

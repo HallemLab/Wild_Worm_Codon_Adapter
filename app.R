@@ -22,7 +22,6 @@ suppressPackageStartupMessages({
     source('Server/detect_language.R',local = TRUE)
     source("Server/analyze_geneID_list.R", local = TRUE)
     source("Server/analyze_cDNA_list.R", local = TRUE)
-    source("Server/navbarPageWithText.R")
     
 })
 
@@ -119,6 +118,7 @@ server <- function(input, output, session) {
                               "Nippostrongylus" = "Nb",
                               "Brugia" = "Bm",
                               "C. elegans" = "Ce",
+                              "None" = "none",
                               "Custom" = "custom")
         
         ### User-provided optimal codon list
@@ -169,9 +169,11 @@ server <- function(input, output, session) {
         lang <- detect_language(dat)
         
         ## Calculate info for original sequence
-        if (lang == "nuc"){
+        if (species_sel == "none"){
+            info_dat <- list("GC" = NA, "CAI" = NA)
+        } else {
+            if (lang == "nuc"){
             info_dat <- calc_sequence_stats(dat, w)
-            
             ## Translate nucleotides to AA
             source('Server/translate_nucleotides.R', local = TRUE)
         } else if (lang == "AA") {
@@ -183,13 +185,17 @@ server <- function(input, output, session) {
             return("Error: Input sequence contains unrecognized characters. 
                    Check to make sure it only includes characters representing
                    nucleotides or amino acids.")
-        }
+        }}
         
         ## Codon optimize back to nucleotides
-        source('Server/codon_optimize.R', local = TRUE)
-        
-        ## Calculate info for optimized sequence
-        info_opt <- calc_sequence_stats(opt, w)
+        if (species_sel != "none"){
+            source('Server/codon_optimize.R', local = TRUE)
+            ## Calculate info for optimized sequence
+            info_opt <- calc_sequence_stats(opt, w)
+        } else {
+            cds_opt <- seqinr::splitseq(dat) %>% toupper()
+            info_opt <- list("GC" = NA, "CAI" = NA)
+            }
         
         vals$og_GC <- info_dat$GC
         vals$og_CAI <- info_dat$CAI
@@ -204,7 +210,7 @@ server <- function(input, output, session) {
         
         ## Parse which intron set to insert
         intron_sel <- switch(input$type_Int,
-                             "Canonical (Fire lab)" = "Canon",
+                             "Canonical (Fire)" = "Canon",
                              "PATC-rich" = "PATC",
                              "Pristionchus" = "Pristionchus",
                              "Custom" = "custom"
@@ -225,7 +231,6 @@ server <- function(input, output, session) {
         } else {
             syntrons <- syntrons.list[[intron_sel]]
         }
-        
         ## Detect insertion sites for artificial introns
         source('Server/locate_intron_sites.R', local = TRUE)
         
