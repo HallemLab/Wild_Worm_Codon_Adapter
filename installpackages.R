@@ -14,5 +14,8 @@ if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
 
 BiocManager::install("biomaRt")
+BiocManager::install("Biostrings")
+library(cubar)
 
-pacman::p_load(shiny,shinyjs,seqinr,htmltools,shinyWidgets,shinythemes,magrittr,tidyverse,openxlsx,read.gb,tools,DT,ggplot2,markdown)
+
+pacman::p_load(shiny,shinyjs,seqinr,htmltools,shinyWidgets,shinythemes,magrittr,tidyverse,openxlsx,read.gb,tools,DT,ggplot2,markdown,cubar)
