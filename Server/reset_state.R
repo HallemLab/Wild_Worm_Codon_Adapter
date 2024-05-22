@@ -45,4 +45,12 @@ observeEvent(input$resetAnalysis,{
 ## Analysis Mode: Generate/Reset cDNA sequence Text Box ----
 observeEvent(input$resetAnalysis,{
     updateTextAreaInput(session,"cDNAtext",value = "")
+})  
+
+## Calculation Mode: Generate/Reset CDS File Upload ----
+    output$calculation_file_upload <- renderUI({
+        input$resetCalculation
+        fileInput('loadCDS',
+                  h6('Upload CDS file (.fasta)'),
+                  multiple = FALSE)
 })

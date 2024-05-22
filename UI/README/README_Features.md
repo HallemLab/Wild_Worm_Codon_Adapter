@@ -1,6 +1,6 @@
-The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Pristionchus pacificus*, as well as *Caenorhabditis elegans*. It also permits codon optimization via user-provided custom optimal codon sets. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to species-specific codon usage rules. 
+The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Pristionchus pacificus*, as well as *Caenorhabditis elegans*. It also permits codon optimization via user-provided custom optimal codon sets or via estimation of optimal codons from a user-provided .fasta file of coding sequences (CDS). Furthermore, users may insert artificial introns into optimized sequences (or into pre-optimized sequences by selecting 'None' for codon optimization rule. Finally, this tool enables users to perform bulk calculations of codon adaptiveness relative to species-specific codon usage rules. 
 
-The app has two usage modes:  
+The app has three usage modes:  
 
 ### Optimize Sequences Mode  
 This tab optimizes genetic sequences for expression in *Strongyloides* species, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans*, as well as user-provided optimal codon sets. 
@@ -22,4 +22,5 @@ To analyze transgenes, coding sequences can be provided via a text box. To analy
 
 Users may download an Excel file containing fractional GC content values, codon adaptation indices, and coding sequences for the user-provided genes.
 
-  
+### Calculate Codon Usage Mode   
+For user-provided .fasta files of coding sequences (i.e., CDS sequences downloaded from WormBase/WormBase ParaSite), this tab estimates the optimal codons using coding sequences longer than 80 nucleotides in length. 
