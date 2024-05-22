@@ -57,11 +57,11 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
                                                h6('Built-in sequence source'),
-                                               choices = list("Canonical (Fire)",
+                                               choices = list("Canonical (Fire lab)",
                                                               "PATC-rich",
                                                            "Pristionchus",
                                                            "Custom"),
-                                               selected = "Canonical (Fire)"),
+                                               selected = "Canonical (Fire lab)"),
 
                                    
                                    ### Upload custom intron file (file loader)
@@ -245,17 +245,28 @@ navbarPage(h3("Wild Worm Codon Adapter"),
            ),
            
            ## About Tab ----
-           tabPanel(h4("About"),
+           tabPanel(h4("About (v1.2.0)"),
                     value = "about",
                     fluidRow(
-                        column(12,
+                        column(8,
                                panel(heading =  tagList(h5(shiny::icon("fas fa-question-circle"),
                                                            "App Overview")),
                                      status = "primary",
                                      id = "About_Overview",
                                      includeMarkdown('UI/README/README_Features.md')
                                )
-                        )),
+                        ),
+                        column(4,
+                               panel( heading =  tagList(h5(shiny::icon("fas fa-drafting-compass"),
+                                                            "Authors and Release Notes")),
+                                      
+                                      status = "primary",
+                                      id = "About_Updates",
+                                      includeMarkdown('UI/README/README_Updates.md')
+                               )
+                        )
+                                      
+                        ),
                     fluidRow(
                         column(8,
                                panel(heading =  tagList(h5(shiny::icon("fas fa-chart-line"),
@@ -308,35 +319,6 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                      uiOutput("StudyInfo.panel.About")
                                      
                                )
-                        ),
-                        column(4,
-                               ## App Credits ----
-                               panel( heading =  tagList(h5(shiny::icon("fas fa-drafting-compass"),
-                                                            "Authors")),
-                                      
-                                      status = "primary",
-                                      p('This app was created by', 
-                                        tags$a(
-                                            href = "https://pbio.uw.edu/directories/faculty/entry/abryant/", 
-                                            'Astra S. Bryant, PhD.'), 
-                                        tags$br(),
-                                        'This app was last updated on 05/21/2024.',
-                                        tags$br(),
-                                        tags$br(),
-                                        'For feature requests or bug reports, please email Dr. Astra Bryant at astrab@uw.edu".',
-                                        tags$br(),
-                                        tags$br(),
-                                        'The source code for this app is available on GitHub:', 
-                                        tags$a(
-                                            href = "https://github.com/HallemLab/Wild_Worm_Codon_Adapter", 
-                                            'https://github.com/HallemLab/Wild_Worm_Codon_Adapter', target = "blank"),
-                                        tags$br(),
-                                        tags$br(),
-                                        'The source code for data preprocessing steps is also available on GitHub:',
-                                        tags$a(
-                                            href = "https://github.com/HallemLab/Bryant-and-Hallem-2021", 
-                                            'https://github.com/HallemLab/Bryant-and-Hallem-2021', target = "blank")
-                                      ))
                         )
                     )
            )
