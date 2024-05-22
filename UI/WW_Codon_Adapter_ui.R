@@ -32,6 +32,8 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    h5('Step 2: Select Optimization Rule', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                    p(tags$em('Select the codon usage pattern to apply. To insert introns into a pre-optimized sequence, select the "None" option. To apply a custom codon usage pattern, select the "Custom" option, then use the file loader to upload a list of optimal codons.', style = "color: #7b8a8b")),
                                    
+                                   p(tags$em('Alternatively, to first estimate optimal codons from a set of coding sequences, then immediately apply those usage rules to your sequence-of-interest, select the "Custom" option, then use the file loader to upload a .fasta file containing CDS sequences.', style = "color: #7b8a8b")),
+                                   
                                    div(id = "ruleDiv",
                                    selectInput('sp_Opt',
                                                h6('Select rule'),
@@ -47,13 +49,11 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    
                                    ### Upload custom optimal codon table
                                    uiOutput('custom_lut_upload'),
-                                   
-                                   
-                                  
+                                 
                                    tags$br(),
                                    h5('Step 3: Pick Intron Options', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
                                    p(tags$em('Users may choose between three sets of built-in intron sequences, the canonical Fire lab set, PATC-rich introns, or native Pristionchus pacificus intron sequences. Alternatively, insert custom introns by selecting the "Custom" option, then using the file loader to upload a FASTA file containing custom introns.', style = "color: #7b8a8b")),
-                                  
+                                    
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
                                                h6('Built-in sequence source'),
@@ -200,6 +200,50 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                         )
                     )
            ),
+           
+           # Calculate Usage Table Mode Tab ----
+           tabPanel(h4("Calculate Usage"),
+                    value = "calculation",
+                    fluidRow(
+                        column(width = 6,
+                               panel(
+                                   heading = tagList(h5(shiny::icon("fas fa-sliders-h"),"Inputs & Options")),
+                                   
+                                   status = "primary",
+                                   
+                                   h5('Step 1: Upload Species CDS', class = 'text-danger', style = "margin: 0px 0px 5px 0px"),
+                                   p(tags$em('Please input a .fasta file containing the the coding sequences (nucleotides). The uploaded sequences will be used to estimate the optimal codon usage in the species', style = "color: #7b8a8b")),
+                                   
+                                   
+                                   ### Upload list of sequences
+                                   uiOutput('calculation_file_upload'),
+                                   
+                                   actionButton('goCalculate',
+                                                'Submit',
+                                                #width = '40%',
+                                                class = "btn-primary",
+                                                icon = icon("fas fa-share")),
+                                   
+                                   actionButton('resetCalculation', 'Clear',
+                                                icon = icon("far fa-trash-alt"))
+                               )
+                               
+                               
+                        ),
+                        
+                        column(width = 6,
+                               conditionalPanel(condition = "input.goCalculate",
+                                                panel(heading = tagList(h5(shiny::icon("fas fa-dna"),
+                                                                           "Estimated Usage")),
+                                                      status = "primary",
+                                                      
+                                                      DTOutput("estimated_usage"),
+                                                      uiOutput("downloadbutton_EM")
+                               ))
+                        )
+                    )
+           ),
+           
            ## About Tab ----
            tabPanel(h4("About"),
                     value = "about",
@@ -276,7 +320,7 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                             href = "https://pbio.uw.edu/directories/faculty/entry/abryant/", 
                                             'Astra S. Bryant, PhD.'), 
                                         tags$br(),
-                                        'This app was last updated on 03/15/2024.',
+                                        'This app was last updated on 05/21/2024.',
                                         tags$br(),
                                         tags$br(),
                                         'For feature requests or bug reports, please email Dr. Astra Bryant at astrab@uw.edu".',

@@ -18,10 +18,13 @@ suppressPackageStartupMessages({
     library(DT)
     library(ggplot2)
     library(markdown)
+    library(cubar)
+    library(Biostrings)
     source('Server/calc_sequence_stats.R')
     source('Server/detect_language.R',local = TRUE)
     source("Server/analyze_geneID_list.R", local = TRUE)
     source("Server/analyze_cDNA_list.R", local = TRUE)
+    source("Server/generate_usage_table.R", local = TRUE)
     
 })
 
@@ -121,13 +124,14 @@ server <- function(input, output, session) {
                               "None" = "none",
                               "Custom" = "custom")
         
-        ### User-provided optimal codon list
+        ### User-provided optimal codon list or a FASTA file of coding sequences to generate an optimal codon list
         if (species_sel == "custom") {
-            validate(need(input$loadlut, "Please upload a custom optimal codon list using the file upload control."))
-            validate(need({file_ext(input$loadlut$name) == "csv"}, 
-                          "Please provide a .csv file."))
-            # Users should have provided a 2 column matrix with AA and Codon sequence
-            
+            validate(need(input$loadlut, "Please use the file upload control to upload either a custom optimal codon list or a .fasta file of coding sequences that can be used to estimate optimal codons."))
+            validate(need({file_ext(input$loadlut$name) == "csv" | file_ext(input$loadlut$name) == "fasta" | file_ext(input$loadlut$name) == "fa"}, 
+                          "Please provide either a .csv file or a .fasta file."))
+            # If users have provided a 2 column matrix with AA and Codon sequence
+            if (file_ext(input$loadlut$name) == "csv"){
+          
             custom.codons <- suppressWarnings(read.csv(input$loadlut$datapath, 
                                                        header = FALSE, 
                                                        colClasses = "character", 
@@ -154,6 +158,14 @@ server <- function(input, output, session) {
                 col.lengths[.x] == 1 ~ "AA")
             ) %>%
                 dplyr::arrange(AA)
+           
+            } else{
+                withProgress({
+                opt_codons <- generate_usage_table(input$loadlut$datapath) %>%
+                    as_tibble()
+                }, message = "Calculating Codon Usage...")
+            }
+            
         ### Built-in optimal codons         
         } else {
             lut <- lut.tbl %>%
@@ -267,7 +279,7 @@ server <- function(input, output, session) {
         }
     })
     
-    ## Display optimized sequence with and wihout added artificial introns in a tabbed panel
+    ## Display optimized sequence with and without added artificial introns in a tabbed panel
     ## Also display original non-optimized sequence in a panel
     output$tabs <- renderUI({
         req(input$goButton)
@@ -529,6 +541,52 @@ server <- function(input, output, session) {
             "Download",
             class = "btn-primary"
         )
+    })
+    ## Estimation Mode ----
+    # Primary reactive element in the Estimation Mode
+    estimate_usage <- eventReactive (input$goCalculate, {
+        file <- input$loadCDS
+        ext <- tools::file_ext(file$datapath)
+        validate(need(input$loadCDS, "Please upload a CDS fasta file using the file upload control."))
+        validate(need(ext == "fa" | ext == "fasta", 
+                      "Please upload a fasta file."))
+       
+        opt_codons <- generate_usage_table(file$datapath)
+
+    })
+    
+    ## Reactive run of function that uses CDS list to estimate optimal codons
+    ## Can be assigned to an output
+    output$estimated_usage <- renderDT({
+        req(input$goCalculate)
+        withProgress({
+        opt_codons<-estimate_usage()
+        vals$opt_codons <- opt_codons
+        
+        opt_codons.DT <- opt_codons %>%
+            DT::datatable(rownames = FALSE,
+                          options = list(pageLength = 24))
+        }, message = "Calculating Codon Usage...")
+    })
+    
+    #Shiny output for estimation datatable
+    output$downloadbutton_EM <- renderUI({
+        req(input$goCalculate, vals$opt_codons)
+        
+        name <- file_path_sans_ext(input$loadCDS$name)
+        
+        output$download_usage_tbl <- downloadHandler(
+        filename = paste0(name,"_customCodonLUT.csv"),
+        content = function(file){
+            write_csv(vals$opt_codons, file)
+        })
+        
+        downloadButton(
+            "download_usage_tbl",
+            "Download",
+            class = "btn-primary"
+        )
+    
     })
     
     # About Tab: Download codon usage charts ----
