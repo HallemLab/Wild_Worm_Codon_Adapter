@@ -57,11 +57,11 @@ navbarPage(h3("Wild Worm Codon Adapter"),
                                    ### Option to pick intron sequences (pulldown)
                                    selectInput('type_Int',
                                                h6('Built-in sequence source'),
-                                               choices = list("Canonical (Fire lab)",
+                                               choices = list("Canonical (Fire)",
                                                               "PATC-rich",
                                                            "Pristionchus",
                                                            "Custom"),
-                                               selected = "Canonical (Fire lab)"),
+                                               selected = "Canonical (Fire)"),
 
                                    
                                    ### Upload custom intron file (file loader)
@@ -245,7 +245,7 @@ navbarPage(h3("Wild Worm Codon Adapter"),
            ),
            
            ## About Tab ----
-           tabPanel(h4("About (v1.2.0)"),
+           tabPanel(h4("About"),
                     value = "about",
                     fluidRow(
                         column(8,

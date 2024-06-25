@@ -1,5 +1,5 @@
 ### Authors
-This app was created by [Astra S. Bryant, PhD](https://scholar.google.com/citations?user=uSGqqakAAAAJ&hl=en) for the [Hallem Lab](http://www.hallemlab.com/) at UCLA.  
+This app was created by [Astra S. Bryant, PhD](https://www.bryantlabuw.com).  
 
 ### Selected Release Notes
 - **v1.4.0** - May 2024: Adding ability to estimate optimal codons from a coding sequences (CDS) .fasta file. 
@@ -11,4 +11,4 @@ Wild Worm Codon Adapter released on submission to BioRxiv.
 ### Source Code
 - App source code and previous releases are [available on GitHub](https://github.com/HallemLab/Wild_Worm_Codon_Adapter).  
 - Source code for data pre-processing and example analyses is also [available on GitHub](https://github.com/HallemLab/Bryant-and-Hallem-2021).
-- For additional information and citation purposes, see [Bryant and Hallem 2021, *G3*](https://academic.oup.com/g3journal/article/11/7/jkab146/6259089). 
+- For additional information and to cite the Wild Worm Codon Adapter, see [Bryant and Hallem 2021, *G3*](https://academic.oup.com/g3journal/article/11/7/jkab146/6259089). 

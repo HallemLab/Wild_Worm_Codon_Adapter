@@ -218,7 +218,6 @@ server <- function(input, output, session) {
     add_introns <- eventReactive (input$goButton, {
         req(vals$cds_opt)
         cds_opt <- vals$cds_opt
-        
         ## Parse which intron set to insert
         intron_sel <- switch(input$type_Int,
                              "Canonical (Fire)" = "Canon",
