@@ -1,5 +1,5 @@
 # This script includes the the primary computation for analyzing a list of coding
-# sequences for the Strongyloides Codon Adapter App in Analyze Sequences Mode
+# sequences for the Wild Worm Codon Adapter App in Analyze Sequences Mode
 # This script is very similar to analyze_geneID_list.R, except since the user has 
 # already provided coding sequences, the calls to BioMart are skipped. Code will analyse 
 # GC content and CAI values for each gene using calls to `calc_sequence_stats.R`.
@@ -7,8 +7,6 @@
 analyze_cDNA_list <- function(gene.seq, vals){
     withProgress(message = "Calculating...",expr = {
         setProgress(0)
-
-    
     calc.inc <- 0.3/nrow(gene.seq)
     
     # Strongyloides CAI values ----
@@ -119,8 +117,8 @@ analyze_cDNA_list <- function(gene.seq, vals){
                                 .after = "Sr_CAI")
     
     vals$geneIDs <- suppressMessages(info.gene.seq %>%
-                                         left_join(.,gene.seq) %>%
-                                         rename('coding sequence' = coding))
+                                         left_join(.,gene.seq)%>%
+                                         dplyr::rename(coding.sequence = coding)) 
     
     setProgress(1)
     info.gene.seq
