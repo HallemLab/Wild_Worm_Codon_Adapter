@@ -1,7 +1,7 @@
 ### Inputs
 The primary non-responsive data inputs to the Wild Worm Codon Adapter App are CSV files containing the following information:  
-  1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
-  2. Optimal codon lookup table for *Strongyloides spp*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, and *C. elegans* 
+  1. Codon frequency rates and relative adaptiveness values for *S. ratti*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, *P. trichosuri*, and *C. elegans* 
+  2. Optimal codon lookup table for *Strongyloides spp*, *N. brasiliensis*, *B. malayi*, *P. pacificus*, *P. trichosuri*, and *C. elegans* 
   3. <OPTIONAL> Custom optimal codon lookup table (2 column CSV file: single-letter amino acid symbols and corresponding 3-letter optimal codon sequences; one optimal codon per amino acid) 
   4. <OPTIONAL> Custom intron list (FASTA file containing a maximum of 3 introns; intron sequences should begin/end with canonical 5'-GT<intron>AG-3' splice recognition sequences)
 
@@ -16,7 +16,9 @@ Codon frequency rates for *C. elegans* were based on highly expressed *C. elegan
 
 Codon frequency rates for *N. brasiliensis* were calculated from coding sequences of highly expressed *N. brasiliensis* genes (10% highest RNA-seq expression values across all samples); RNA-seq data was downloaded from WormBase ParaSite, based on data originally published in [Eccles *et al* (2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4). 
 
-Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (average frequency in bins 8-11, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer.
+Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (average frequency in bins 8-11, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer.  
+
+Codon frequency rates for *P. trichosuri* were based on coding sequences located on genome contigs with an average GC content lower than 40%. WormBase ParaSite notes of the *P. trichosuri* genome assembly that "In May 2019 Eerik Aunin reported that the genome could be contaminated with bacteria. He observed that the average GC content of scaffold peaks once around 25% and a second time around 70%. Additionally, 685 of 1810 scaffolds, almost exclusively with GC% corresponding to the second peak, are reported as bacterial in an nt BLAST against a reference bacterial database. 483 of the scaffolds match genus *Brevundimonas* of protobacteria, and others match about 30 different bacteria." The specific scaffolds that are at issue are not identified. Therefore, we assumed that scaffolds in which the GC content of coding sequences is, on average, lower than 40% will likely be true *P. trichosuri* genes, and calculated codon frequency rates using only sequencing found on these scaffolds.
 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 The relative adaptiveness values for every possible codon were generated as follows. Individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.

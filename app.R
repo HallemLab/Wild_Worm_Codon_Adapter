@@ -118,6 +118,7 @@ server <- function(input, output, session) {
                               "Strongyloides" = "Sr",
                               "Pristionchus" = "Pp",
                               "Nippostrongylus" = "Nb",
+                              "Parastrongyloides" = "Pt",
                               "Brugia" = "Bm",
                               "C. elegans" = "Ce",
                               "None" = "none",
@@ -173,7 +174,7 @@ server <- function(input, output, session) {
         }
         
         w <- w.tbl %>%
-            dplyr::select(contains(species_sel)) %>%
+            dplyr::select(starts_with(species_sel)) %>%
             pull()
         
         ## Determine whether input sequence in nucleotide or amino acid
@@ -498,10 +499,13 @@ server <- function(input, output, session) {
                               tags$em("B. malayi"), "genes", tags$br(),
                               "Nb_CAI = CAI score relative to",
                               "codon usage in highly expressed",
-                              tags$em("N. brasiliensis"), "genes",tags$br(),
+                              tags$em("N. brasiliensis"), "genes", tags$br(),
                               "Pp_CAI = CAI score relative to",
                               "codon usage in highly expressed",
-                              tags$em("P. pacificus"), "genes"),
+                              tags$em("P. pacificus"), "genes", tags$br(),
+                              "Pt_CAI = CAI score relative to",
+                              "codon usage in",
+                              tags$em("P. trichosuri"), "genes"),
                           
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',

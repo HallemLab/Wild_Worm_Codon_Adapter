@@ -2,6 +2,7 @@
 This app was created by [Astra S. Bryant, PhD](https://www.bryantlabuw.com).  
 
 ### Selected Release Notes
+- **v2.0.0** - March 2025: Added *Parastrongyloides trichosuri*
 - **v1.4.0** - May 2024: Adding ability to estimate optimal codons from a coding sequences (CDS) .fasta file. 
 - **v1.3.0** - March 2024: Adding ability to add introns without codon optimization. 
 - **v1.2.0** - July 29, 2022: Updated to fix bug identified by Yash Shukla that prematurely terminated sequences following addition on non-divisible-by-three intron sequences. 

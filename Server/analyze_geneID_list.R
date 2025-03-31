@@ -1,5 +1,5 @@
 # This script includes the the primary computation for analyzing a list of geneIDs
-# for the Strongyloides Codon Adapter App in Analyze Sequences Mode
+# for the Wild Worm Codon Adapter App in Analyze Sequences Mode
 # If user has provided a list of geneIDs/transcriptIDs, pull coding sequence from BioMart and analyse 
 # GC content and CAI values for each gene using calls to `calc_sequence_stats.R`.
 # 
@@ -15,12 +15,12 @@ analyze_geneID_list <- function(genelist, vals){
         setProgress(.05)
         # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, `NBR`, or `WB`, check if they are geneIDs
        
-        if (any(grepl('SSTP|SVE|SPAL|NBR|WB', genelist$queryID))) {
+        if (any(grepl('SSTP|SVE|SPAL|NBR|WB|PTRK', genelist$queryID))) {
             Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'wbps_transcript_id', 'coding'),
-                              # grab the coding sequences for the given genes from WormBase Parasite
+                              # grab the coding sequences for the given genes from WormBase ParaSite
                               mart = useMart(biomart="parasite_mart", 
                                              dataset = "wbps_gene", 
-                                             host="https://parasite.wormbase.org", 
+                                             host="https://release-18.parasite.wormbase.org", #Using the archived version of biomart because the XLOC gene ids are not useful. 
                                              port = 443),
                               filters = c('species_id_1010', 
                                           'wbps_gene_id'),
@@ -31,7 +31,8 @@ analyze_geneID_list <- function(genelist, vals){
                                               'brmalaprjna10729',
                                               'prpaciprjna12644',
                                               'nibrasprjeb511',
-                                              'caelegprjna13758'),
+                                              'caelegprjna13758',
+                                              'patricprjeb515'),
                                             genelist$queryID),
                               useCache = F) %>%
                 as_tibble() %>%
@@ -114,7 +115,8 @@ analyze_geneID_list <- function(genelist, vals){
                                                 'caelegprjna13758',
                                                 'prpaciprjna12644',
                                                 'nibrasprjeb511',
-                                                'brmalaprjna10729'),
+                                                'brmalaprjna10729',
+                                                'patricprjeb515'),
                                               genelist$queryID),
                                 useCache = F) %>%
             as_tibble() %>%
@@ -236,6 +238,24 @@ analyze_geneID_list <- function(genelist, vals){
             unlist() %>%
             as_tibble_col(column_name = 'Pp_CAI')
         
+        # P. trichosuri CAI values ----
+        # 
+        ## Calculate info each sequence ( P. trichosuri index) 
+        Pt.temp<- lapply(gene.seq$coding, function (x){
+            incProgress(amount = calc.inc)
+            if (!is.na(x)) {
+                s2c(x) %>%
+                    calc_sequence_stats(.,w.tbl$Pt_relAdapt)}
+            else {
+                list(GC = NA, CAI = NA)
+            }
+        }) 
+        
+        Pt.info.gene.seq<- Pt.temp %>%
+            map("CAI") %>%
+            unlist() %>%
+            as_tibble_col(column_name = 'Pt_CAI')
+        
         
         ## Merge tibbles ----
         info.gene.seq <- add_column(info.gene.seq, 
@@ -243,6 +263,7 @@ analyze_geneID_list <- function(genelist, vals){
                                     Bm_CAI = Bm.info.gene.seq$Bm_CAI,
                                     Nb_CAI = Nb.info.gene.seq$Nb_CAI,
                                     Pp_CAI = Pp.info.gene.seq$Pp_CAI,
+                                    Pt_CAI = Pt.info.gene.seq$Pt_CAI,
                                     .after = "Sr_CAI") %>%
             drop_na() #remove any rows that just have NA values
         

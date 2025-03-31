@@ -17,8 +17,9 @@ For user-provided genes/sequences, this tab reports the fractional GC content, c
 * highly expressed *N. brasiliensis* genes [(Eccles *et al* 2018)](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-017-0473-4) 
 * highly expressed *B. malayi* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947)
 * highly expressed *P. pacificus* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947) 
+* *P. trichosuri* genes located on contigs with an average GC content of less than 40%  
 
-To analyze transgenes, coding sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP," "SRAE," "SPAL," "SVE," "NBR," "Bma," "Ppa," or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma-separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may directly provide coding sequences for analysis, either as a 2-column CSV file listing sequence names and coding sequences, or a FASTA file containing named coding sequences.   
+To analyze transgenes, coding sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "NBR", "Bma", "Ppa", "PTRK", or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma-separated text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may directly provide coding sequences for analysis, either as a 2-column CSV file listing sequence names and coding sequences, or a FASTA file containing named coding sequences.   
 
 Users may download an Excel file containing fractional GC content values, codon adaptation indices, and coding sequences for the user-provided genes.
 
