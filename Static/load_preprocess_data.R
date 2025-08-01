@@ -1,15 +1,10 @@
-# This script loads species-specific data and does some minor preprocessing after
+# This script loads species-specific data and does some minor pre-processing after
 # initialization of the Wild Worm Codon Adapter App. 
 # 
 # Specific actions:
 # 
 # 1. generates lookup tables that are parsed by seqinr
-# for optimal codons in different worm species, including:
-# *Strongyloides spp.*  
-# *C. elegans*
-# *Pristionchus pacificus*
-# *Brugia malai*
-# *Nippostrongylus brasiliensis*
+# for optimal codons in different worm species
 # 
 # 2. specifies intron sequences that can be inserted into sequences.
 # There are 3 options for intron sequences:

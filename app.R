@@ -121,6 +121,7 @@ server <- function(input, output, session) {
                               "Parastrongyloides" = "Pt",
                               "Brugia" = "Bm",
                               "C. elegans" = "Ce",
+                              "Rhabditophanes" = "RSKR",
                               "None" = "none",
                               "Custom" = "custom")
         
@@ -505,7 +506,10 @@ server <- function(input, output, session) {
                               tags$em("P. pacificus"), "genes", tags$br(),
                               "Pt_CAI = CAI score relative to",
                               "codon usage in",
-                              tags$em("P. trichosuri"), "genes"),
+                              tags$em("P. trichosuri"), "genes", tags$br(),
+                            "RSKR_CAI = CAI score relative to",
+                          "codon usage in",
+                          tags$em("Rhabditophanes sp. KR3021"), "genes"),
                           
                           options = list(scrollX = TRUE,
                                          scrollY = '400px',

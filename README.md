@@ -1,5 +1,5 @@
 # Wild Worm Codon Adapter
-Web-based Shiny App for automatic codon optimization and analysis based on codon usage rules in non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Pristionchus pacificus*, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Parastrongyloides trichosuri*, as well as any other species of interest via custom codon usage rules provided by users.  
+Web-based Shiny App for automatic codon optimization and analysis based on codon usage rules in non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Pristionchus pacificus*, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Parastrongyloides trichosuri*, *Rhabditophanes sp. KR3021*, as well as any other species of interest via custom codon usage rules provided by users.  
 
 ## Table of Contents  
 1. [General Information](#general-information)
@@ -35,11 +35,11 @@ To run a specific release locally use the following commands in R/RStudio:
 Please note: the download step for runURL/runGitHub may take a substantial amount of time. We recommend downloading this archive and running the application locally.
 
 ## App Features  
-The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Pristionchus pacificus*, *Parastrongyloides trichosuri*, as well as *Caenorhabditis elegans*. It also permits codon optimization via user-provided custom optimal codon sets. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to species-specific codon usage rules. 
+The Wild Worm Codon Adapter Web Tool adapts and automates the process of codon adaptation for a selection of non-*Caenorhabditis* nematode species, including: *Strongyloides* species, *Nippostrongylus brasiliensis*, *Brugia malayi*, *Pristionchus pacificus*, *Parastrongyloides trichosuri*, *Rhabditophanes sp. KR3021*, as well as *Caenorhabditis elegans*. It also permits codon optimization via user-provided custom optimal codon sets. Furthermore, this tool enables users to perform bulk calculations of codon adaptiveness relative to species-specific codon usage rules. 
 
 The app has two usage modes:  
 
-  1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *N. brasiliensis*, *B. malayi*, *P. pacificus*, *Parastrongyloides trichosuri*, and *C. elegans*, as well as user-provided optimal codon sets. 
+  1. **Optimization Mode:** This tab optimizes genetic sequences for expression in *Strongyloides* species, *N. brasiliensis*, *B. malayi*, *P. pacificus*, *Parastrongyloides trichosuri*, *Rhabditophanes sp. KR3021*, and *C. elegans*, as well as user-provided optimal codon sets. 
 
 It accepts either nucleotide or single-letter amino acid sequences, and will generate an optimized nucleotide sequence with and without the desired number of introns. Users may choose between using canonical Fire lab synthetic introns, PATC-rich introns, *P. pacificus* native introns, or a custom set of user-provided introns. Users may input sequences for optimization using the text box provided, or may upload sequences as .fasta/.gb/.txt files.  
 
@@ -53,6 +53,7 @@ Optimized sequences with or without artificial introns may be downloaded as plai
 * highly expressed *B. malayi* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947)
 * highly expressed *P. pacificus* genes [(Han *et al*, 2020)](https://www.genetics.org/content/216/4/947) 
 * *P. trichosuri* genes located on contigs with an average GC content of less than 40%  
+* *Rhabditophanes sp. KR3021* transcripts
 
 To analyze transgenes, coding sequences can be provided via a text box. To analyze native genes, stable gene or transcript IDs with prefixes "SSTP", "SRAE", "SPAL", "SVE", "NBR", "PTRK", "Bma", "Ppa", or "WB" can be provided either through direct input via the appropriate textbox, or in bulk as a comma separated (CSV) text file. Users may also provide a *C. elegans* gene name, provided it is prefaced with the string "Ce-", or *C. elegans* stable transcript IDs as is. Finally, users may direcly provide coding sequences for analysis, either as a 2-column CSV file listing sequence names and coding sequences, or a FASTA file containing named coding sequences.   
 
@@ -79,6 +80,8 @@ Codon frequency rates for *N. brasiliensis* were calculated from coding sequence
 Codon frequency rates for highly expressed *B. malayi* and *P. pacificus* genes (average frequency bins 8-11, ~10% highest expressing genes) are from [Han *et al* (2020)](https://www.genetics.org/content/216/4/947); raw codon frequency data were graciously provided by Dr. Wen-Sui Lo and Dr. Ralf Sommer. 
 
 Codon frequency rates for *P. trichosuri* were based on coding sequences located on genome contigs with an average GC content lower than 40%. WormBase ParaSite notes of the *P. trichosuri* genome assembly that "In May 2019 Eerik Aunin reported that the genome could be contaminated with bacteria. He observed that the average GC content of scaffold peaks once around 25% and a second time around 70%. Additionally, 685 of 1810 scaffolds, almost exclusively with GC% corresponding to the second peak, are reported as bacterial in an nt BLAST against a reference bacterial database. 483 of the scaffolds match genus *Brevundimonas* of protobacteria, and others match about 30 different bacteria." The specific scaffolds that are at issue are not identified. Therefore, we assumed that scaffolds in which the GC content of coding sequences is, on average, lower than 40% will likely be true *P. trichosuri* genes, and calculated codon frequency rates using only sequencing found on these scaffolds.
+
+Codon frequency rates for *Rhabditophanes sp. KR3021* were based on coding sequences downloaded from WormBase ParaSite (WBPS19). We calculated codon frequency rates using the Wild Worm Codon Adapter Calculate Usage tab.
 
 ### Relative Adaptiveness, Optimal Codons, and Optimization
 The relative adaptiveness values for every possible codon were generated as follows. Individual codons were scored by calculating their relative adaptivness: (the frequency that codon "i" encodes amino acid "AA") / (the frequency of the codon most often used for encoding amino acid "AA"). Optimal codons for these species were defined as the codon with the highest relative adaptiveness value for each amino acid.

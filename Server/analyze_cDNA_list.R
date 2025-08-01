@@ -126,6 +126,24 @@ analyze_cDNA_list <- function(gene.seq, vals){
         unlist() %>%
         as_tibble_col(column_name = 'Pt_CAI')
     
+    # Rhabditophanes CAI values ----
+    # 
+    ## Calculate info each sequence ( Rhabditophanes index) 
+    RSKR.temp<- lapply(gene.seq$coding, function (x){
+        incProgress(amount = calc.inc)
+        if (!is.na(x)) {
+            s2c(x) %>%
+                calc_sequence_stats(.,w.tbl$RSKR_relAdapt)}
+        else {
+            list(GC = NA, CAI = NA)
+        }
+    }) 
+    
+    RSKR.info.gene.seq<- RSKR.temp %>%
+        map("CAI") %>%
+        unlist() %>%
+        as_tibble_col(column_name = 'RSKR_CAI')
+    
     ## Merge tibbles ----
     info.gene.seq <- add_column(info.gene.seq, 
                                 Ce_CAI = Ce.info.gene.seq$Ce_CAI,
@@ -133,6 +151,7 @@ analyze_cDNA_list <- function(gene.seq, vals){
                                 Nb_CAI = Nb.info.gene.seq$Nb_CAI,
                                 Pp_CAI = Pp.info.gene.seq$Pp_CAI,
                                 Pt_CAI = Pt.info.gene.seq$Pt_CAI,
+                                RSKR_CAI = RSKR.info.gene.seq$RSKR_CAI,
                                 .after = "Sr_CAI")
     
     vals$geneIDs <- suppressMessages(info.gene.seq %>%

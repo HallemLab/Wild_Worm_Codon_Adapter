@@ -13,9 +13,9 @@ analyze_geneID_list <- function(genelist, vals){
     
     withProgress(message = "Searching for coding sequences...",expr = {
         setProgress(.05)
-        # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, `NBR`, or `WB`, check if they are geneIDs
+        # If any of the items in genelist contain the strings `SSTP`, `SVE`, `SPAL`, `NBR`, `PTRK`, RSKR`, or `WB`, check if they are geneIDs
        
-        if (any(grepl('SSTP|SVE|SPAL|NBR|WB|PTRK', genelist$queryID))) {
+        if (any(grepl('SSTP|SVE|SPAL|NBR|WB|PTRK|RSKR', genelist$queryID))) {
             Sspp.seq <- getBM(attributes=c('wbps_gene_id', 'wbps_transcript_id', 'coding'),
                               # grab the coding sequences for the given genes from WormBase ParaSite
                               mart = useMart(biomart="parasite_mart", 
@@ -32,7 +32,8 @@ analyze_geneID_list <- function(genelist, vals){
                                               'prpaciprjna12644',
                                               'nibrasprjeb511',
                                               'caelegprjna13758',
-                                              'patricprjeb515'),
+                                              'patricprjeb515',
+                                              'rhkr30prjeb1297'),
                                             genelist$queryID),
                               useCache = F) %>%
                 as_tibble() %>%
@@ -116,7 +117,8 @@ analyze_geneID_list <- function(genelist, vals){
                                                 'prpaciprjna12644',
                                                 'nibrasprjeb511',
                                                 'brmalaprjna10729',
-                                                'patricprjeb515'),
+                                                'patricprjeb515',
+                                                'rhkr30prjeb1297'),
                                               genelist$queryID),
                                 useCache = F) %>%
             as_tibble() %>%
@@ -256,6 +258,24 @@ analyze_geneID_list <- function(genelist, vals){
             unlist() %>%
             as_tibble_col(column_name = 'Pt_CAI')
         
+        # Rhabditophanes CAI values ----
+        # 
+        ## Calculate info each sequence ( Rhabditophanes index) 
+        RSKR.temp<- lapply(gene.seq$coding, function (x){
+            incProgress(amount = calc.inc)
+            if (!is.na(x)) {
+                s2c(x) %>%
+                    calc_sequence_stats(.,w.tbl$RSKR_relAdapt)}
+            else {
+                list(GC = NA, CAI = NA)
+            }
+        }) 
+        
+        RSKR.info.gene.seq<- RSKR.temp %>%
+            map("CAI") %>%
+            unlist() %>%
+            as_tibble_col(column_name = 'RSKR_CAI')
+        
         
         ## Merge tibbles ----
         info.gene.seq <- add_column(info.gene.seq, 
@@ -264,6 +284,7 @@ analyze_geneID_list <- function(genelist, vals){
                                     Nb_CAI = Nb.info.gene.seq$Nb_CAI,
                                     Pp_CAI = Pp.info.gene.seq$Pp_CAI,
                                     Pt_CAI = Pt.info.gene.seq$Pt_CAI,
+                                    RSKR_CAI = RSKR.info.gene.seq$RSKR_CAI,
                                     .after = "Sr_CAI") %>%
             drop_na() #remove any rows that just have NA values
         
